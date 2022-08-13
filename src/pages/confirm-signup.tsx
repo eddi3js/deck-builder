@@ -2,21 +2,21 @@ import {
     signIn,
     getSession,
     GetSessionParams,
-    signOut,
     useSession,
 } from 'next-auth/react';
 import { DiscordAccount } from '@/models/beta';
 import Profile from '@/components/profile';
+import { Session } from 'next-auth';
 interface ConfirmSignupProps {
     isConnected: boolean;
     hasBetaAccount: boolean;
     user: DiscordAccount | undefined;
+    session: Session;
 }
 
-export default function ConfirmSignup({
-    hasBetaAccount,
-    user,
-}: ConfirmSignupProps) {
+export default function ConfirmSignup({ hasBetaAccount }: ConfirmSignupProps) {
+    const { data } = useSession();
+
     if (!hasBetaAccount) {
         return (
             <div className="w-full h-screen flex flex-col justify-center items-center">
@@ -36,7 +36,7 @@ export default function ConfirmSignup({
         );
     }
 
-    if (!user) {
+    if (!data?.user) {
         return (
             <div className="max-w-2xl mx-auto p-8 flex flex-col justify-center items-center">
                 <h1>You are not signed in.</h1>
@@ -52,7 +52,7 @@ export default function ConfirmSignup({
 
     return (
         <div className="max-w-2xl mx-auto p-8 flex flex-col text-center justify-center items-center">
-            <Profile user={user as DiscordAccount} />
+            <Profile user={data.user as DiscordAccount} />
             <button
                 onClick={() => {
                     window.location.href = '/';
@@ -76,7 +76,6 @@ export const getServerSideProps = async (
     return {
         props: {
             hasBetaAccount: Boolean(hasBetaAccount),
-            user: session?.user ?? null,
         },
     };
 };
