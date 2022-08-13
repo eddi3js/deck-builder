@@ -1,5 +1,6 @@
 import Profile from '@/components/profile';
 import { DiscordAccount } from '@/models/beta';
+import hasBetaAccount from '@/utils/hasBetaAccount';
 import type { NextPage } from 'next';
 import { getSession, GetSessionParams } from 'next-auth/react';
 import Head from 'next/head';
@@ -25,28 +26,7 @@ const Home: NextPage = props => {
 
 export const getServerSideProps = async (context: GetSessionParams) => {
     const session = await getSession(context);
-
-    const redirect = {
-        redirect: {
-            destination: '/login',
-        },
-    };
-
-    if (!session) {
-        return redirect;
-    }
-
-    const hasBetaAccount = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/beta/${session.user?.email}`
-    );
-
-    if (hasBetaAccount.status !== 200) {
-        return redirect;
-    }
-
-    return {
-        props: { user: session?.user },
-    };
+    return await hasBetaAccount(session);
 };
 
 export default Home;
