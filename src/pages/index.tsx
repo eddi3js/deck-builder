@@ -1,26 +1,32 @@
+import Profile from '@/components/profile';
+import { DiscordAccount } from '@/models/beta';
 import type { NextPage } from 'next';
 import { Session } from 'next-auth';
 import { getSession, GetSessionParams, signOut } from 'next-auth/react';
 import Head from 'next/head';
 
+interface HomeProps {
+    user: DiscordAccount | null;
+}
+
 const Home: NextPage = props => {
-    const { session } = props as { session: Session };
+    const user = (props as HomeProps)?.user;
     return (
         <div>
             <Head>
                 <title>Nascency Deck Builder</title>
             </Head>
 
-            <p>Hello</p>
-            <button onClick={() => signOut()}>Sign out</button>
-
-            {JSON.stringify(session)}
+            <div className="max-w-2xl mx-auto p-8 flex flex-col text-center justify-center items-center">
+                <Profile user={user as DiscordAccount} />
+            </div>
         </div>
     );
 };
 
 export const getServerSideProps = async (context: GetSessionParams) => {
     const session = await getSession(context);
+
     const redirect = {
         redirect: {
             destination: '/login',
@@ -40,7 +46,7 @@ export const getServerSideProps = async (context: GetSessionParams) => {
     }
 
     return {
-        props: { session },
+        props: { user: session?.user },
     };
 };
 

@@ -1,9 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 import { signIn, getSession, GetSessionParams, signOut } from 'next-auth/react';
 import { DiscordAccount } from '@/models/beta';
-
-const btn = 'bg-black px-3 py-2 text-md text-white rounded w-fit my-3';
-
+import Profile from '@/components/profile';
 interface ConfirmSignupProps {
     user: DiscordAccount | null;
     isConnected: boolean;
@@ -36,7 +33,10 @@ export default function ConfirmSignup({
         return (
             <div className="max-w-2xl mx-auto p-8 flex flex-col justify-center items-center">
                 <h1>You are not signed in.</h1>
-                <button onClick={() => signIn()} className={btn}>
+                <button
+                    onClick={() => signIn()}
+                    className="bg-black px-3 py-2 text-md text-white rounded w-fit my-3"
+                >
                     Sign In
                 </button>
             </div>
@@ -44,16 +44,15 @@ export default function ConfirmSignup({
     }
 
     return (
-        <div className="max-w-2xl mx-auto p-8 flex flex-col justify-center text-center items-center">
-            <p>You are logged in: {user?.email}</p>
-            <img
-                src={user?.image as string}
-                alt={user?.name as string}
-                className="rounded-full h-16 w-16 mt-4"
-            />
-
-            <button onClick={() => signOut()} className={btn}>
-                Sign Out
+        <div className="max-w-2xl mx-auto p-8 flex flex-col text-center justify-center items-center">
+            <Profile user={user as DiscordAccount} />
+            <button
+                onClick={() => {
+                    window.location.href = '/';
+                }}
+                className="bg-black px-3 py-2 text-md text-white rounded w-fit my-3"
+            >
+                Go Home
             </button>
         </div>
     );
