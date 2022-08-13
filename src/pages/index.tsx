@@ -1,8 +1,7 @@
 import Profile from '@/components/profile';
 import { DiscordAccount } from '@/models/beta';
 import type { NextPage } from 'next';
-import { Session } from 'next-auth';
-import { getSession, GetSessionParams, signOut } from 'next-auth/react';
+import { getSession, GetSessionParams } from 'next-auth/react';
 import Head from 'next/head';
 
 interface HomeProps {

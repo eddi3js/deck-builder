@@ -62,6 +62,7 @@ export const getServerSideProps = async (
     context: GetSessionParams | undefined
 ) => {
     const session = await getSession(context);
+    console.log(session, 'session');
     let data = { props: { isConnected: false, user: session?.user ?? null } };
 
     if (!session)
