@@ -1,16 +1,23 @@
-import { signIn, getSession, GetSessionParams, signOut } from 'next-auth/react';
+import {
+    signIn,
+    getSession,
+    GetSessionParams,
+    signOut,
+    useSession,
+} from 'next-auth/react';
 import { DiscordAccount } from '@/models/beta';
 import Profile from '@/components/profile';
 interface ConfirmSignupProps {
-    user: DiscordAccount | null;
     isConnected: boolean;
+    hasBetaAccount: boolean;
+    user: DiscordAccount | undefined;
 }
 
 export default function ConfirmSignup({
+    hasBetaAccount,
     user,
-    isConnected,
 }: ConfirmSignupProps) {
-    if (isConnected && !user) {
+    if (!hasBetaAccount) {
         return (
             <div className="w-full h-screen flex flex-col justify-center items-center">
                 <div className="max-w-2xl mx-auto p-4 text-center">
@@ -29,7 +36,7 @@ export default function ConfirmSignup({
         );
     }
 
-    if (isConnected && !user) {
+    if (!user) {
         return (
             <div className="max-w-2xl mx-auto p-8 flex flex-col justify-center items-center">
                 <h1>You are not signed in.</h1>
@@ -62,24 +69,14 @@ export const getServerSideProps = async (
     context: GetSessionParams | undefined
 ) => {
     const session = await getSession(context);
-    console.log(session, 'session');
-    let data = { props: { isConnected: false, user: session?.user ?? null } };
-
-    if (!session)
-        return {
-            redirect: {
-                destination: '/login',
-            },
-        };
-    data.props.isConnected = true;
-
     const hasBetaAccount = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/beta/${session.user?.email}`
+        `${process.env.NEXTAUTH_URL}/api/beta/${session?.user?.email}`
     );
 
-    if (hasBetaAccount.status !== 200) {
-        data.props.user = null;
-    }
-
-    return data;
+    return {
+        props: {
+            hasBetaAccount: Boolean(hasBetaAccount),
+            user: session?.user ?? null,
+        },
+    };
 };
