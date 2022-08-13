@@ -75,7 +75,7 @@ export const getServerSideProps = async (
 
     return {
         props: {
-            hasBetaAccount: Boolean(hasBetaAccount),
+            hasBetaAccount: Boolean(hasBetaAccount.status === 200),
         },
     };
 };
