@@ -1,8 +1,19 @@
-import "@/styles/globals.css";
-import type { AppProps } from "next/app";
+import '@/pages/styles/globals.css';
+import type { AppProps } from 'next/app';
+import { SessionProvider } from 'next-auth/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+export default function App({
+    Component,
+    pageProps: { session, ...pageProps },
+}: AppProps) {
+    const queryClient = new QueryClient();
+
+    return (
+        <SessionProvider session={session}>
+            <QueryClientProvider client={queryClient}>
+                <Component {...pageProps} />
+            </QueryClientProvider>
+        </SessionProvider>
+    );
 }
-
-export default MyApp;

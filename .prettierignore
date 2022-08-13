@@ -1,0 +1,5 @@
+*.yml
+*.yaml
+./node_modules/
+./dist/
+./public/
