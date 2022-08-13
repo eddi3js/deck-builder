@@ -12,7 +12,7 @@ export default async function hasBetaAccount(session: Session | null) {
     }
 
     const hasBetaAccount = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/beta/${session.user?.email}`
+        `${process.env.NEXTAUTH_URL}/api/users/${session.user?.email}`
     );
 
     if (hasBetaAccount.status !== 200) {

@@ -41,7 +41,7 @@ export const getServerSideProps = async (
 ) => {
     const session = await getSession(context);
     const hasBetaAccount = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/beta/${session?.user?.email}`
+        `${process.env.NEXTAUTH_URL}/api/users/${session?.user?.email}`
     );
 
     if (Boolean(hasBetaAccount.status === 200)) {
