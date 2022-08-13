@@ -16,7 +16,7 @@ export default async function handler(
     }
 
     const db = (await clientPromise).db('nascency');
-    const collection = db.collection('beta');
+    const collection = db.collection('users');
 
     // find if there's already a document with this email
     const existing = await collection.findOne({ email: req.query.email });
