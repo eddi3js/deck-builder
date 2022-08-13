@@ -1,22 +1,9 @@
-import {
-    signIn,
-    getSession,
-    GetSessionParams,
-    useSession,
-} from 'next-auth/react';
-import { DiscordAccount } from '@/models/beta';
-import Profile from '@/components/profile';
-import { Session } from 'next-auth';
+import { signIn, getSession, GetSessionParams } from 'next-auth/react';
 interface ConfirmSignupProps {
-    isConnected: boolean;
     hasBetaAccount: boolean;
-    user: DiscordAccount | undefined;
-    session: Session;
 }
 
 export default function ConfirmSignup({ hasBetaAccount }: ConfirmSignupProps) {
-    const { data } = useSession();
-
     if (!hasBetaAccount) {
         return (
             <div className="w-full h-screen flex flex-col justify-center items-center">
@@ -36,30 +23,14 @@ export default function ConfirmSignup({ hasBetaAccount }: ConfirmSignupProps) {
         );
     }
 
-    if (!data?.user) {
-        return (
-            <div className="max-w-2xl mx-auto p-8 flex flex-col justify-center items-center">
-                <h1>You are not signed in.</h1>
-                <button
-                    onClick={() => signIn()}
-                    className="bg-black px-3 py-2 text-md text-white rounded w-fit my-3"
-                >
-                    Sign In
-                </button>
-            </div>
-        );
-    }
-
     return (
-        <div className="max-w-2xl mx-auto p-8 flex flex-col text-center justify-center items-center">
-            <Profile user={data.user as DiscordAccount} />
+        <div className="max-w-2xl mx-auto p-8 flex flex-col justify-center items-center">
+            <h1>You are not signed in.</h1>
             <button
-                onClick={() => {
-                    window.location.href = '/';
-                }}
+                onClick={() => signIn()}
                 className="bg-black px-3 py-2 text-md text-white rounded w-fit my-3"
             >
-                Go Home
+                Sign In
             </button>
         </div>
     );
@@ -73,9 +44,17 @@ export const getServerSideProps = async (
         `${process.env.NEXTAUTH_URL}/api/beta/${session?.user?.email}`
     );
 
+    if (Boolean(hasBetaAccount.status === 200)) {
+        return {
+            redirect: {
+                destination: '/',
+            },
+        };
+    }
+
     return {
         props: {
-            hasBetaAccount: Boolean(hasBetaAccount.status === 200),
+            hasBetaAccount: false,
         },
     };
 };
