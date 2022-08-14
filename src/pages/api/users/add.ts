@@ -1,3 +1,4 @@
+import { DB_NAME, USERS_COLLECTION } from '@/lib/consts';
 import clientPromise from '@/lib/mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -15,8 +16,8 @@ export default async function handler(
         return;
     }
 
-    const db = (await clientPromise).db('nascency');
-    const collection = db.collection('users');
+    const db = (await clientPromise).db(DB_NAME);
+    const collection = db.collection(USERS_COLLECTION);
 
     // find if there's already a document with this email
     const existing = await collection.findOne({ email: req.query.email });

@@ -1,3 +1,4 @@
+import { Routes } from '@/lib/consts';
 import { DiscordAccount } from '@/models/beta';
 import type { Session } from 'next-auth';
 
@@ -21,7 +22,7 @@ export default async function authenticateUser(
 ): Promise<AuthenticatedResult | RedirectResult> {
     const redirect = {
         redirect: {
-            destination: redirectUrl ?? '/login',
+            destination: redirectUrl ?? Routes.Login,
         },
     };
 
