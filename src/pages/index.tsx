@@ -1,6 +1,7 @@
+import Page from '@/components/page';
 import Profile from '@/components/profile';
 import { DiscordAccount } from '@/models/beta';
-import hasBetaAccount from '@/utils/hasBetaAccount';
+import authenticateUser from '@/utils/authenticateUser';
 import type { NextPage } from 'next';
 import { getSession, GetSessionParams } from 'next-auth/react';
 import Head from 'next/head';
@@ -14,19 +15,19 @@ const Home: NextPage = props => {
     return (
         <div>
             <Head>
-                <title>Nascency Deck Builder</title>
+                <title>DeckBuilder.gg</title>
             </Head>
 
-            <div className="max-w-2xl mx-auto p-8 flex flex-col text-center justify-center items-center">
+            <Page user={user ?? undefined}>
                 <Profile user={user as DiscordAccount} />
-            </div>
+            </Page>
         </div>
     );
 };
 
 export const getServerSideProps = async (context: GetSessionParams) => {
     const session = await getSession(context);
-    return await hasBetaAccount(session);
+    return await authenticateUser(session);
 };
 
 export default Home;
