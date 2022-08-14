@@ -1,6 +1,6 @@
 import Page from '@/components/page';
 import { DiscordAccount } from '@/models/user';
-import authenticateUser from '@/utils/authenticateUser';
+import authenticatePage from '@/utils/authenticatePage';
 import type { NextPage } from 'next';
 import { getSession, GetSessionParams } from 'next-auth/react';
 
@@ -29,7 +29,7 @@ const Home: NextPage = props => {
 
 export const getServerSideProps = async (context: GetSessionParams) => {
     const session = await getSession(context);
-    return await authenticateUser(session);
+    return await authenticatePage(session);
 };
 
 export default Home;

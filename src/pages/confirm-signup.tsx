@@ -1,7 +1,7 @@
 import { DiscordAccount } from '@/models/user';
-import authenticateUser, {
+import authenticatePage, {
     AuthenticatedResult,
-} from '@/utils/authenticateUser';
+} from '@/utils/authenticatePage';
 import { signIn, getSession, GetSessionParams, signOut } from 'next-auth/react';
 interface ConfirmSignupProps {
     user: DiscordAccount | null;
@@ -36,7 +36,7 @@ export const getServerSideProps = async (
     context: GetSessionParams | undefined
 ) => {
     const session = await getSession(context);
-    const auth = await authenticateUser(session, '/', true);
+    const auth = await authenticatePage(session, '/', true);
     if ((auth as AuthenticatedResult)?.props?.hasBetaAccess) {
         return {
             redirect: {

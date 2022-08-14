@@ -1,11 +1,13 @@
 import { DB_NAME, GAMES_COLLECTION, USERS_COLLECTION } from '@/lib/consts';
-import clientPromise from '@/lib/mongodb';
+import clientPromise, { authGate } from '@/lib/mongodb';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
 ) {
+    await authGate(req, res);
+
     const db = (await clientPromise).db(DB_NAME);
     const collection = db.collection(GAMES_COLLECTION);
     const userCollection = db.collection(USERS_COLLECTION);
@@ -18,7 +20,7 @@ export default async function handler(
 
     const user = await userCollection.findOne({ email });
     if (!user) {
-        return res.status(400).json({ message: 'User not found' });
+        return res.status(403).json({ message: 'Unauthorized' });
     }
 
     const slug = name

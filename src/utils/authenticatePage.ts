@@ -15,7 +15,7 @@ export interface RedirectResult {
     };
 }
 
-export default async function authenticateUser(
+export default async function authenticatePage(
     session: Session | null,
     redirectUrl?: string,
     haltRedirect?: boolean
@@ -31,7 +31,7 @@ export default async function authenticateUser(
     }
 
     const hasBetaAccount = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/users/${session.user?.email}`
+        `${process.env.NEXTAUTH_URL}/api/users/me`
     );
 
     if (hasBetaAccount.status !== 200 && !haltRedirect) {

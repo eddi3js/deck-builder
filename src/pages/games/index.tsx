@@ -1,6 +1,6 @@
 import Page from '@/components/page';
 import { getSession, GetSessionParams } from 'next-auth/react';
-import authenticateUser, { RedirectResult } from '@/utils/authenticateUser';
+import authenticatePage, { RedirectResult } from '@/utils/authenticatePage';
 import { Routes } from '@/lib/consts';
 import { Game } from '@/models/game';
 import { Response } from '@/models/api';
@@ -100,7 +100,7 @@ const NoGames = () => (
 
 export const getServerSideProps = async (context: GetSessionParams) => {
     const session = await getSession(context);
-    const auth = await authenticateUser(session);
+    const auth = await authenticatePage(session);
     if ((auth as RedirectResult)?.redirect) {
         return auth;
     }

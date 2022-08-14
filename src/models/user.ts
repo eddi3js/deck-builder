@@ -8,4 +8,5 @@ export interface User {
 export interface DiscordAccount extends Omit<User, '_id' | 'games'> {
     name: string;
     image: string;
+    role?: 'admin' | 'user';
 }

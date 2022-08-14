@@ -1,5 +1,5 @@
 import { DB_NAME, GAMES_COLLECTION, USERS_COLLECTION } from '@/lib/consts';
-import clientPromise from '@/lib/mongodb';
+import clientPromise, { authGate } from '@/lib/mongodb';
 import { Response } from '@/models/api';
 import { Game } from '@/models/game';
 import getCollectionData from '@/utils/getCollectionData';
@@ -9,9 +9,11 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Response<Game[]>>
 ) {
+    const session = await authGate(req, res);
+
     const db = (await clientPromise).db(DB_NAME);
     const user = await getCollectionData(USERS_COLLECTION, db, {
-        email: req.query.email,
+        email: session?.user?.email,
     });
     if (!user) {
         return res.status(400).json({ message: 'User Not Found' });
@@ -30,7 +32,8 @@ export default async function handler(
         return res.status(404).json({ message: 'Games not found' });
     }
 
-    return res.status(200).json({
+    res.status(200).json({
         data: games as Game[],
     });
+    res.end();
 }

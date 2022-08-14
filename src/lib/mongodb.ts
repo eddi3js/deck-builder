@@ -1,4 +1,6 @@
 import { MongoClient } from 'mongodb';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { getSession } from 'next-auth/react';
 
 declare global {
     var _mongoClientPromise: Promise<MongoClient>;
@@ -31,3 +33,11 @@ if (process.env.NODE_ENV === 'development') {
 // Export a module-scoped MongoClient promise. By doing this in a
 // separate module, the client can be shared across functions.
 export default clientPromise;
+
+export const authGate = async (req: NextApiRequest, res: NextApiResponse) => {
+    const session = await getSession({ req });
+    if (!session) {
+        return res.status(403).json({ message: 'Not authorized' });
+    }
+    return session;
+};

@@ -1,7 +1,7 @@
 import Page from '@/components/page';
 import { Routes } from '@/lib/consts';
 import { Game } from '@/models/game';
-import authenticateUser, { RedirectResult } from '@/utils/authenticateUser';
+import authenticatePage, { RedirectResult } from '@/utils/authenticatePage';
 import { getSession } from 'next-auth/react';
 
 export default function GameDetailsPage({ game }: { game: Game }) {
@@ -16,7 +16,7 @@ export default function GameDetailsPage({ game }: { game: Game }) {
 
 export const getServerSideProps = async (context: any) => {
     const session = await getSession(context);
-    const auth = await authenticateUser(session);
+    const auth = await authenticatePage(session);
     if ((auth as RedirectResult)?.redirect) {
         return auth;
     }
