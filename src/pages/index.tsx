@@ -19,7 +19,15 @@ const Home: NextPage = props => {
             </Head>
 
             <Page>
-                <Profile user={user as DiscordAccount} />
+                <h1 className="text-2xl text-gray-200 my-4">
+                    Welcome to DeckBuilder.gg
+                </h1>
+                <p className="text-sm">
+                    You are logged in as:{' '}
+                    <span className="text-purple-400 font-bold">
+                        {user?.email}
+                    </span>
+                </p>
             </Page>
         </div>
     );
