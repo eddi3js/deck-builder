@@ -18,7 +18,7 @@ const Home: NextPage = props => {
                 <title>DeckBuilder.gg</title>
             </Head>
 
-            <Page user={user ?? undefined}>
+            <Page>
                 <Profile user={user as DiscordAccount} />
             </Page>
         </div>
