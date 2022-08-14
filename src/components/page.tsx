@@ -2,8 +2,6 @@ import React from 'react';
 import Header from '@/components/header';
 import Sidebar from '@/components/sidebar';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { Routes } from '@/lib/consts';
 
 export default function Page({
     children,
@@ -14,27 +12,10 @@ export default function Page({
     title?: string;
     hideSidebar?: boolean;
 }) {
-    const router = useRouter();
-
-    const pageTitle = () => {
-        switch (router.pathname) {
-            case Routes.Login:
-                return ' - Login';
-            case Routes.Home:
-                return ' - Home';
-            case Routes.Games:
-                return ' - Games';
-            case Routes.CreateGame:
-                return ' - Create Game';
-            default:
-                return null;
-        }
-    };
-
     return (
         <>
             <Head>
-                <title>DeckBuilder.gg {pageTitle()}</title>
+                <title className="uppercase">DeckBuilder.gg</title>
             </Head>
             <div className="flex h-screen w-full flex-col overflow-hidden">
                 <Header />

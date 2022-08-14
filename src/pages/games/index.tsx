@@ -4,26 +4,37 @@ import authenticateUser, { RedirectResult } from '@/utils/authenticateUser';
 import { Routes } from '@/lib/consts';
 import { Game } from '@/models/game';
 import { Response } from '@/models/api';
+import { Card } from 'flowbite-react';
 
 export default function Games({ games }: { games: Game[] }) {
     return (
-        <Page title="My Games">
+        <Page>
+            <h1 className="text-xl">My Games</h1>
             {games.length === 0 && <NoGames />}
 
             <div className="flex flex-col md:flex-row flex-wrap gap-5">
                 {games.map(game => {
                     return (
-                        <div
-                            style={{ minWidth: 200 }}
-                            className="flex flex-row ring-1 items-stretch ring-slate-900/5 rounded overflow-hidden shadow-lg bg-black/[0.50] p-4 pt-2"
-                            key={game._id.toString()}
-                        >
-                            <div className="flex flex-col h-full w-full">
-                                <div className="w-full gap-2 flex flex-row justify-end text-gray-300">
-                                    <button>
+                        <Card key={game._id.toString()}>
+                            <div className="flex flex-col h-full w-full relative">
+                                <div className="flex flex-col flex-1">
+                                    <p
+                                        className="text-md"
+                                        style={{ maxWidth: '80%' }}
+                                    >
+                                        {game.name}
+                                    </p>
+                                    <p className="text-xs mt-1">Decks: 0 / ~</p>
+                                    <div className="text-xs mt-1 text-gray-400">
+                                        Last Edit: 08/01/2022 at 12:00am
+                                    </div>
+                                </div>
+
+                                <div className="-mb-4 mt-2 w-full flex flex-row justify-end text-gray-300">
+                                    <button className="p-2 hover:bg-gray-700 duration-75 rounded">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="h-4 w-4 hover:text-white"
+                                            className="h-5 w-5 hover:text-white"
                                             viewBox="0 0 20 20"
                                             fill="currentColor"
                                         >
@@ -35,10 +46,10 @@ export default function Games({ games }: { games: Game[] }) {
                                         </svg>
                                     </button>
 
-                                    <button className="-mr-2">
+                                    <button className="p-2 hover:bg-gray-700 duration-75 rounded -mr-3">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="h-4 w-4 hover:text-white"
+                                            className="h-5 w-5 hover:text-white"
                                             viewBox="0 0 20 20"
                                             fill="currentColor"
                                         >
@@ -51,15 +62,8 @@ export default function Games({ games }: { games: Game[] }) {
                                         </svg>
                                     </button>
                                 </div>
-                                <div className="flex flex-col flex-1">
-                                    <p className="text-md">{game.name}</p>
-                                    <p className="text-xs mt-1">Decks: 0 / ~</p>
-                                    <div className="text-xs mt-1 text-gray-400">
-                                        Last Edit: 08/01/2022 at 12:00am
-                                    </div>
-                                </div>
                             </div>
-                        </div>
+                        </Card>
                     );
                 })}
             </div>
@@ -69,7 +73,7 @@ export default function Games({ games }: { games: Game[] }) {
 
 const NoGames = () => (
     <>
-        <p className="text-md my-3">You have no games</p>
+        <p>You have no games</p>
         <a
             href={Routes.CreateGame}
             className="px-3 py-2 flex flex-row items-center justify-between rounded bg-blue-500 hover:bg-blue-700 transition ease-in-out duration-75 text-white text-sm w-fit"

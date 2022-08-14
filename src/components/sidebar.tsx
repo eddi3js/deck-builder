@@ -12,10 +12,10 @@ export default function GlobalSidebar() {
             <div
                 className={`${
                     sidebarIsOpen ? 'fixed' : 'hidden'
-                } md:hidden left-0 bottom-0 right-0 overflow-auto bg-black/50 top-14`}
+                } md:hidden z-30 left-0 bottom-0 right-0 overflow-auto bg-black/50 top-14`}
             />
             <div
-                className={`h-full ${
+                className={`z-40 h-full ${
                     sidebarIsOpen ? 'ml-0' : '-ml-80'
                 } md:ml-0 fixed md:relative rounded flex flex-col w-fit duration-300`}
             >
