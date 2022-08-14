@@ -6,7 +6,7 @@ import { signOut, useSession } from 'next-auth/react';
 export default function GlobalSidebar() {
     const { data } = useSession();
     const sidebarIsOpen = useReadLocalStorage('mobileSidebarOpen');
-    console.log('sidebarIsOpen', sidebarIsOpen);
+
     return (
         <>
             <div

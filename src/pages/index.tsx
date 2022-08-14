@@ -3,7 +3,6 @@ import { DiscordAccount } from '@/models/user';
 import authenticateUser from '@/utils/authenticateUser';
 import type { NextPage } from 'next';
 import { getSession, GetSessionParams } from 'next-auth/react';
-import Head from 'next/head';
 
 interface HomeProps {
     user: DiscordAccount | null;
@@ -13,10 +12,6 @@ const Home: NextPage = props => {
     const user = (props as HomeProps)?.user;
     return (
         <div>
-            <Head>
-                <title>DeckBuilder.gg</title>
-            </Head>
-
             <Page>
                 <h1 className="text-2xl text-gray-200 my-4">
                     Welcome to DeckBuilder.gg

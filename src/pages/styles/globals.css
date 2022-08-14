@@ -5,3 +5,11 @@
 body {
     @apply text-gray-200 bg-black/[0.90];
 }
+
+.discord-bg {
+    background-color: #7289da;
+    transition: all 0.1s ease-in-out;
+}
+.discord-bg:hover {
+    background-color: #7289da90;
+}
