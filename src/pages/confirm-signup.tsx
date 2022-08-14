@@ -14,7 +14,7 @@ export default function ConfirmSignup({ user }: ConfirmSignupProps) {
                 <h2 className="text-xl font-bold mb-3">
                     You do not have access to sign up for the beta yet.
                 </h2>
-                <p>Please try again later.</p>
+                <p>Please try again later</p>
                 <button
                     onClick={() => {
                         if (user) {
