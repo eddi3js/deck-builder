@@ -9,3 +9,14 @@ export enum Routes {
     Login = '/login',
     Home = '/',
 }
+
+const gamesBaseUrl = `${Routes.Games}`;
+export const gameDetailsSubnavigationLinks = (slug: string) => [
+    { title: 'Overview', href: `${gamesBaseUrl}/${slug}`, slug: '/' },
+    { title: 'Decks', href: `${gamesBaseUrl}/${slug}/decks`, slug: 'decks' },
+    {
+        title: 'Lore Builder',
+        slug: 'lore',
+        href: `${gamesBaseUrl}/${slug}/lore`,
+    },
+];

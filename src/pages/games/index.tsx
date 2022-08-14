@@ -14,8 +14,7 @@ export default function Games() {
     const games = (data as any)?.data ?? [];
 
     return (
-        <Page>
-            <h1 className="text-xl">My Games</h1>
+        <Page title="My Games">
             {!isLoading && games.length === 0 && <NoGames />}
             {isLoading ? <Spinner size="lg" /> : <GamesList games={games} />}
         </Page>

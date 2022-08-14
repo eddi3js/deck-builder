@@ -2,15 +2,20 @@ import React from 'react';
 import Header from '@/components/header';
 import Sidebar from '@/components/sidebar';
 import Head from 'next/head';
+import Subnavigation, { SubnavigationLinkProps } from './subnavigation';
 
 export default function Page({
     children,
     title,
     hideSidebar,
+    subnavigation,
+    gutters = true,
 }: {
     children: React.ReactNode;
     title?: string;
     hideSidebar?: boolean;
+    gutters?: boolean;
+    subnavigation?: SubnavigationLinkProps[];
 }) {
     return (
         <>
@@ -21,13 +26,21 @@ export default function Page({
                 <Header />
                 <div className="flex h-full overflow-hidden bg-white dark:bg-gray-900">
                     {!hideSidebar && <Sidebar />}
-                    <div className="flex-1 overflow-auto p-8">
-                        <div className="mx-auto flex max-w-4xl flex-col gap-8 dark:text-white">
+                    <div
+                        className={`flex-1 overflow-auto ${
+                            gutters === false ? 'p-0' : 'p-8'
+                        }`}
+                    >
+                        {subnavigation && (
+                            <Subnavigation links={subnavigation} />
+                        )}
+                        <div className={`flex flex-col dark:text-white pl-3`}>
                             {title && (
-                                <h1 className="text-2xl font-bold mb-7">
+                                <h1 className="text-xl font-bold mb-3">
                                     {title}
                                 </h1>
                             )}
+
                             {children}
                         </div>
                     </div>
