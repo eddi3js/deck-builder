@@ -1,5 +1,5 @@
 import { Routes } from '@/lib/consts';
-import { DiscordAccount } from '@/models/beta';
+import { DiscordAccount } from '@/models/user';
 import type { Session } from 'next-auth';
 
 export interface AuthenticatedResult {

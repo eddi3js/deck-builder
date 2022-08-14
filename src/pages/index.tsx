@@ -1,6 +1,5 @@
 import Page from '@/components/page';
-import Profile from '@/components/profile';
-import { DiscordAccount } from '@/models/beta';
+import { DiscordAccount } from '@/models/user';
 import authenticateUser from '@/utils/authenticateUser';
 import type { NextPage } from 'next';
 import { getSession, GetSessionParams } from 'next-auth/react';

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { DiscordAccount } from '@/models/beta';
+import { DiscordAccount } from '@/models/user';
 import { signOut } from 'next-auth/react';
 
 export default function Profile({ user }: { user: DiscordAccount }) {

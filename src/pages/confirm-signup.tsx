@@ -1,4 +1,4 @@
-import { DiscordAccount } from '@/models/beta';
+import { DiscordAccount } from '@/models/user';
 import authenticateUser, {
     AuthenticatedResult,
 } from '@/utils/authenticateUser';
