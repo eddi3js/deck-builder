@@ -3,7 +3,7 @@ import { signIn } from 'next-auth/react';
 
 export default function Login() {
     return (
-        <Page>
+        <Page hideSidebar>
             You are not logged in
             <button
                 onClick={() => signIn()}
