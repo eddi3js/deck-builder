@@ -13,3 +13,17 @@ body {
 .discord-bg:hover {
     background-color: #7289da90;
 }
+
+/* Works on Chrome/Edge/Safari */
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+*::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+}
+*::-webkit-scrollbar-thumb {
+    @apply bg-gray-700;
+    border-radius: 0;
+    border: none;
+}

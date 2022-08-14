@@ -13,12 +13,14 @@ export default async function handler(
     const gamesCollection = db.collection(GAMES_COLLECTION);
 
     const user = await userCollection.findOne({ email: req.query.email });
+
     if (!user) {
         return res.status(400).json({ message: 'Email is unknown' });
     }
 
     const game = await gamesCollection.findOne({
-        _id: req.query.gameId,
+        slug: req.query.gameSlug,
+        userId: user._id,
     });
 
     if (!game) {
@@ -27,7 +29,7 @@ export default async function handler(
             .json({ message: 'Game not found', type: 'error' });
     }
 
-    return res.status(200).json({
+    res.status(200).json({
         data: game as Game,
     });
 }

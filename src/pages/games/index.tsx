@@ -46,7 +46,10 @@ export default function Games({ games }: { games: Game[] }) {
                                         </svg>
                                     </button>
 
-                                    <button className="p-2 hover:bg-gray-700 duration-75 rounded -mr-3">
+                                    <a
+                                        href={`${Routes.Games}/${game.slug}`}
+                                        className="p-2 hover:bg-gray-700 duration-75 rounded -mr-3"
+                                    >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             className="h-5 w-5 hover:text-white"
@@ -60,7 +63,7 @@ export default function Games({ games }: { games: Game[] }) {
                                                 clipRule="evenodd"
                                             />
                                         </svg>
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </Card>

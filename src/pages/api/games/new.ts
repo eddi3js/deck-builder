@@ -21,7 +21,12 @@ export default async function handler(
         return res.status(400).json({ message: 'User not found' });
     }
 
-    const newDoc = await collection.insertOne({ name, userId: user._id });
+    const slug = name
+        .replace(/[^a-zA-Z0-9 ]/g, '')
+        .replace(/\s+/g, '-')
+        .toLowerCase();
+
+    const newDoc = await collection.insertOne({ name, userId: user._id, slug });
 
     return res.status(200).json({
         data: newDoc,
