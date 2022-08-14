@@ -1,6 +1,7 @@
 import Page from '@/components/page';
+import authenticatePage from '@/utils/authenticatePage';
 import { useMutation } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { getSession, GetSessionParams, useSession } from 'next-auth/react';
 
 export default function CreateGame() {
     const { data: session } = useSession();
@@ -10,7 +11,7 @@ export default function CreateGame() {
             return await fetch(`/api/games/new`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    name: 'test2',
+                    name: 'Nascency and the end of the world',
                     email: session?.user?.email,
                 }),
             });
@@ -24,3 +25,8 @@ export default function CreateGame() {
         </Page>
     );
 }
+
+export const getServerSideProps = async (context: GetSessionParams) => {
+    const session = await getSession(context);
+    return await authenticatePage(session);
+};

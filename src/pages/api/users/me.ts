@@ -9,17 +9,14 @@ export default async function handler(
     res: NextApiResponse<Response<DiscordAccount>>
 ) {
     const session = await authGate(req, res);
-
-    if (req.query.email === 'unknown') {
-        res.status(400).json({ message: 'Email is unknown', type: 'error' });
-    }
-
     const db = (await clientPromise).db(DB_NAME);
     const collection = db.collection(USERS_COLLECTION);
 
     const profile = await collection.findOne({
         email: session?.user?.email,
     });
+
+    console.log('session', profile);
 
     if (!profile) {
         return res.status(400).json({
@@ -28,7 +25,7 @@ export default async function handler(
         });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
         data: profile as unknown as DiscordAccount,
     });
 }

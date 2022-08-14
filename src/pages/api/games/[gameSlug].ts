@@ -31,7 +31,7 @@ export default async function handler(
             .json({ message: 'Game not found', type: 'error' });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
         data: game as Game,
     });
 }

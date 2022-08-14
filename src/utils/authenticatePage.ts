@@ -5,7 +5,6 @@ import type { Session } from 'next-auth';
 export interface AuthenticatedResult {
     props: {
         user: DiscordAccount | null;
-        hasBetaAccess: boolean;
     };
 }
 
@@ -18,7 +17,7 @@ export interface RedirectResult {
 export default async function authenticatePage(
     session: Session | null,
     redirectUrl?: string,
-    haltRedirect?: boolean
+    additionalProps?: object
 ): Promise<AuthenticatedResult | RedirectResult> {
     const redirect = {
         redirect: {
@@ -30,19 +29,11 @@ export default async function authenticatePage(
         return redirect;
     }
 
-    const hasBetaAccount = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/users/me`
-    );
-
-    if (hasBetaAccount.status !== 200 && !haltRedirect) {
-        return redirect;
-    }
-
     const user = session?.user ?? null;
     return {
         props: {
             user: user as DiscordAccount | null,
-            hasBetaAccess: Boolean(hasBetaAccount.status === 200),
+            ...additionalProps,
         },
     };
 }

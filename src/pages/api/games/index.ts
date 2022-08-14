@@ -1,13 +1,12 @@
 import { DB_NAME, GAMES_COLLECTION, USERS_COLLECTION } from '@/lib/consts';
 import clientPromise, { authGate } from '@/lib/mongodb';
-import { Response } from '@/models/api';
 import { Game } from '@/models/game';
 import getCollectionData from '@/utils/getCollectionData';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<Response<Game[]>>
+    res: NextApiResponse
 ) {
     const session = await authGate(req, res);
 
@@ -35,5 +34,4 @@ export default async function handler(
     res.status(200).json({
         data: games as Game[],
     });
-    res.end();
 }
