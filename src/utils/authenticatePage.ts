@@ -32,7 +32,7 @@ export default async function authenticatePage(
     const user = session?.user ?? null;
     return {
         props: {
-            user: user as DiscordAccount | null,
+            user: user as any,
             ...additionalProps,
         },
     };

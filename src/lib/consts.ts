@@ -6,7 +6,8 @@ export enum Routes {
     ConfirmSignup = '/confirm-signup',
     Games = '/games',
     CreateGame = '/games/create',
-    Login = '/login',
+    Login = '/api/auth/signin',
+    Logout = '/api/auth/signout',
     Home = '/',
 }
 

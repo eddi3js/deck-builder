@@ -8,8 +8,8 @@ interface HomeProps {
     user: DiscordAccount | null;
 }
 
-const Home: NextPage = props => {
-    const user = (props as HomeProps)?.user;
+const Home: NextPage = ({ user }: any) => {
+    console.log(user, 'THE USER');
     return (
         <div>
             <Page>
