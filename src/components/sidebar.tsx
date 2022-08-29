@@ -1,4 +1,4 @@
-import { Routes } from '@/lib/consts';
+import { Routes } from '@/utils/constants';
 import { Avatar, Badge, Sidebar } from 'flowbite-react';
 import { useReadLocalStorage } from 'usehooks-ts';
 import { signOut, useSession } from 'next-auth/react';

@@ -2,38 +2,27 @@ import React from 'react';
 import Header from '@/components/header';
 import Sidebar from '@/components/sidebar';
 import Head from 'next/head';
-import Subnavigation, { SubnavigationLinkProps } from './subnavigation';
+import { useReadLocalStorage } from 'usehooks-ts';
 
-export default function Page({
+export default function Layout({
     children,
     title,
-    hideSidebar,
-    subnavigation,
-    gutters = true,
 }: {
     children: React.ReactNode;
     title?: string;
-    hideSidebar?: boolean;
-    gutters?: boolean;
-    subnavigation?: SubnavigationLinkProps[];
 }) {
+    const sidebarIsOpen = useReadLocalStorage('mobileSidebarOpen');
     return (
         <>
             <Head>
-                <title className="uppercase">DeckBuilder.gg</title>
+                <title>DeckBuilder.gg</title>
+                <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className="flex h-screen w-full flex-col overflow-hidden">
                 <Header />
                 <div className="flex h-full overflow-hidden bg-white dark:bg-gray-900">
-                    {!hideSidebar && <Sidebar />}
-                    <div
-                        className={`flex-1 overflow-auto ${
-                            gutters === false ? 'p-0' : 'p-8'
-                        }`}
-                    >
-                        {subnavigation && (
-                            <Subnavigation links={subnavigation} />
-                        )}
+                    {!sidebarIsOpen && <Sidebar />}
+                    <div className="flex-1 overflow-auto p-8">
                         <div className={`flex flex-col dark:text-white pl-3`}>
                             {title && (
                                 <h1 className="text-xl font-bold mb-3">

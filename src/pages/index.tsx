@@ -1,35 +1,21 @@
-import Page from '@/components/page';
-import { DiscordAccount } from '@/models/user';
-import authenticatePage from '@/utils/authenticatePage';
+import Layout from '@/components/layout';
 import type { NextPage } from 'next';
-import { getSession, GetSessionParams } from 'next-auth/react';
-
-interface HomeProps {
-    user: DiscordAccount | null;
-}
+import { trpc } from '@/utils/trpc';
+import { AuthContext, authPage } from '@/utils/authPage';
 
 const Home: NextPage = ({ user }: any) => {
-    console.log(user, 'THE USER');
+    const data = trpc.useQuery(['user.me']);
+    // console.log('data', data);
+
     return (
-        <div>
-            <Page>
-                <h1 className="text-2xl text-gray-200 my-4">
-                    Welcome to DeckBuilder.gg
-                </h1>
-                <p className="text-sm">
-                    You are logged in as:{' '}
-                    <span className="text-purple-400 font-bold">
-                        {user?.email}
-                    </span>
-                </p>
-            </Page>
-        </div>
+        <Layout>
+            <h1>Homepage</h1>
+        </Layout>
     );
 };
 
-export const getServerSideProps = async (context: GetSessionParams) => {
-    const session = await getSession(context);
-    return await authenticatePage(session);
-};
+export async function getServerSideProps(context: AuthContext) {
+    return await authPage(context);
+}
 
 export default Home;
