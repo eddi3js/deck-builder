@@ -17,7 +17,7 @@ export default function Layout({
     const navigate = useRouter();
     const { data } = trpc.useQuery(['user.me']);
     useEffect(() => {
-        if (data && data[0]?.emailVerified === null) {
+        if (data && data?.emailVerified === null) {
             // not authorized
             navigate.push(Routes.Unauthorized);
         }

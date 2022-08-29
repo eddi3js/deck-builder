@@ -7,7 +7,7 @@ export const userRouter = createRouter().query('me', {
             throw new TRPCError({ code: 'UNAUTHORIZED' });
         }
 
-        const user = ctx.prisma.user.findMany({
+        const user = ctx.prisma.user.findUnique({
             where: {
                 email: ctx.user.email as string,
             },
