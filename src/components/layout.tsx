@@ -21,7 +21,7 @@ export default function Layout({
             // not authorized
             navigate.push(Routes.Unauthorized);
         }
-    }, [data]);
+    }, [data, navigate]);
 
     const sidebarIsOpen = useReadLocalStorage('mobileSidebarOpen');
     return (

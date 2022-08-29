@@ -8,7 +8,7 @@ export type AuthContext = {
     req:
         | (IncomingMessage & { cookies: Partial<{ [key: string]: string }> })
         | NextApiRequest;
-    res: ServerResponse | NextApiResponse<any>;
+    res: ServerResponse | NextApiResponse<unknown>;
 };
 
 export async function authPage(context: AuthContext) {

@@ -1,4 +1,5 @@
 import { NextPage } from 'next';
+import Link from 'next/link';
 
 const Unauthorized: NextPage = () => {
     return (
@@ -8,12 +9,12 @@ const Unauthorized: NextPage = () => {
                 <p>You have not been added as a beta tester yet.</p>
                 <p>
                     Please try again later or{' '}
-                    <a
+                    <Link
                         href="/api/auth/signin"
                         className="underline text-blue-500"
                     >
-                        signin
-                    </a>
+                        <a>signin</a>
+                    </Link>
                     .
                 </p>
             </div>
