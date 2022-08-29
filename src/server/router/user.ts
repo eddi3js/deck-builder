@@ -6,8 +6,17 @@ export const userRouter = createRouter().query('me', {
         if (!ctx.user) {
             throw new TRPCError({ code: 'UNAUTHORIZED' });
         }
-        return {
-            secret: 'sauce',
-        };
+
+        const user = ctx.prisma.user.findMany({
+            where: {
+                email: ctx.user.email as string,
+            },
+        });
+
+        if (!user) {
+            throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+
+        if (user) return user;
     },
 });

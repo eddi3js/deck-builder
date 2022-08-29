@@ -3,7 +3,7 @@ export const USERS_COLLECTION = 'users';
 export const GAMES_COLLECTION = 'games';
 
 export enum Routes {
-    ConfirmSignup = '/confirm-signup',
+    Unauthorized = '/unauthorized',
     Games = '/games',
     CreateGame = '/games/create',
     Login = '/api/auth/signin',

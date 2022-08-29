@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from '@/components/header';
 import Sidebar from '@/components/sidebar';
 import Head from 'next/head';
 import { useReadLocalStorage } from 'usehooks-ts';
+import { trpc } from '@/utils/trpc';
+import { useRouter } from 'next/router';
+import { Routes } from '@/utils/constants';
 
 export default function Layout({
     children,
@@ -11,6 +14,15 @@ export default function Layout({
     children: React.ReactNode;
     title?: string;
 }) {
+    const navigate = useRouter();
+    const { data } = trpc.useQuery(['user.me']);
+    useEffect(() => {
+        if (data && data[0]?.emailVerified === null) {
+            // not authorized
+            navigate.push(Routes.Unauthorized);
+        }
+    }, [data]);
+
     const sidebarIsOpen = useReadLocalStorage('mobileSidebarOpen');
     return (
         <>

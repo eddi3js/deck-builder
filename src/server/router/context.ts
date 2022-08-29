@@ -23,8 +23,9 @@ export const createContextInner = async (
         opts.res,
         authOptions
     );
+
     return {
-        user: session,
+        user: session?.user,
         prisma,
     };
 };
