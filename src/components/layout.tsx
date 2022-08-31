@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import Header from '@/components/header';
 import Sidebar from '@/components/sidebar';
 import Head from 'next/head';
-import { useReadLocalStorage } from 'usehooks-ts';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
 import { Routes } from '@/utils/constants';
@@ -10,9 +9,11 @@ import { Routes } from '@/utils/constants';
 export default function Layout({
     children,
     title,
+    callToAction,
 }: {
     children: React.ReactNode;
     title?: string;
+    callToAction?: React.ReactNode;
 }) {
     const navigate = useRouter();
     const { data } = trpc.useQuery(['user.me']);
@@ -23,7 +24,6 @@ export default function Layout({
         }
     }, [data, navigate]);
 
-    const sidebarIsOpen = useReadLocalStorage('mobileSidebarOpen');
     return (
         <>
             <Head>
@@ -33,13 +33,16 @@ export default function Layout({
             <div className="flex h-screen w-full flex-col overflow-hidden">
                 <Header />
                 <div className="flex h-full overflow-hidden bg-white dark:bg-gray-900">
-                    {!sidebarIsOpen && <Sidebar />}
+                    <Sidebar />
                     <div className="flex-1 overflow-auto p-8">
-                        <div className={`flex flex-col dark:text-white pl-3`}>
+                        <div className={`flex flex-col h-full dark:text-white`}>
                             {title && (
-                                <h1 className="text-xl font-bold mb-3">
-                                    {title}
-                                </h1>
+                                <div className="flex flex-row mb-7 pb-3  justify-between items-center border-b border-gray-700">
+                                    <h1 className="text-3xl font-bold">
+                                        {title}
+                                    </h1>
+                                    {callToAction}
+                                </div>
                             )}
 
                             {children}

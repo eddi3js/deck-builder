@@ -12,12 +12,12 @@ export default function GlobalSidebar() {
             <div
                 className={`${
                     sidebarIsOpen ? 'fixed' : 'hidden'
-                } md:hidden z-30 left-0 bottom-0 right-0 overflow-auto bg-black/50 top-14`}
+                } z-30 left-0 bottom-0 right-0 overflow-auto bg-black/50 top-14`}
             />
             <div
                 className={`z-40 h-full ${
                     sidebarIsOpen ? 'ml-0' : '-ml-80'
-                } md:ml-0 fixed md:relative rounded flex flex-col w-fit duration-300`}
+                } lg:ml-0 fixed lg:relative rounded flex flex-col w-fit duration-300`}
             >
                 <div className="h-full overflow-y-auto overflow-x-hidden bg-inherit p-3">
                     <Sidebar>
@@ -42,8 +42,8 @@ export default function GlobalSidebar() {
                                 <Sidebar.Item href={Routes.Home}>
                                     Dashboard
                                 </Sidebar.Item>
-                                <Sidebar.Item href={Routes.Games}>
-                                    Games
+                                <Sidebar.Item href={Routes.Templates}>
+                                    Card Templates
                                 </Sidebar.Item>
                             </Sidebar.ItemGroup>
                             <Sidebar.ItemGroup>
