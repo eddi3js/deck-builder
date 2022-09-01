@@ -6,7 +6,7 @@ generator client {
 datasource db {
     provider             = "mysql"
     url                  = env("DATABASE_URL")
-    shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
+    // shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
     referentialIntegrity = "prisma"
 }
 
@@ -53,4 +53,26 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model CardTemplate {
+    id             String         @id @default(cuid())
+    userId         String
+    name           String
+    width          Int
+    height         Int
+    frontCardImage String
+    backCardImage  String
+    createdAt      DateTime       @default(now())
+    updatedAt      DateTime       @updatedAt
+    metadata       CardMetaData[]
+}
+
+model CardMetaData {
+    id             String        @id @default(cuid())
+    name           String
+    value          String        @db.VarChar(255)
+    type           String
+    cardTemplateId String?
+    cardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
 }
