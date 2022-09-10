@@ -2,7 +2,10 @@ import aspectRatio from '@/utils/canvas/aspectRatio';
 import createElement from '@/utils/canvas/createElement';
 import getElementAtPosition, {
     adjustElementCoordinates,
+    cursorForPosition,
     ElementObject,
+    resizedCoordinates,
+    SelectedElement,
 } from '@/utils/canvas/getElementAtPosition';
 import React from 'react';
 import { ElementTypes } from '../new';
@@ -93,8 +96,13 @@ export default function TemplatePreview({
                     ...element,
                     offsetX: mouseX,
                     offsetY: mouseY,
-                });
-                setAction('moving');
+                } as SelectedElement);
+
+                if (element.position === 'inside') {
+                    setAction('moving');
+                } else {
+                    setAction('resizing');
+                }
             }
         } else {
             const id = elements.length;
@@ -107,21 +115,21 @@ export default function TemplatePreview({
                 elType
             );
             setElements([...elements, element]);
-
+            setSelectedElement(element);
             setAction('drawing');
         }
     };
 
     const handleMouseUp = () => {
-        if (action === 'drawing') {
-            const i = elements.length - 1;
+        const i = selectedElement?.index;
+        if (action === 'drawing' || action === 'resizing') {
             const {
                 index,
                 roughElement: { shape },
-            } = elements[i] as ElementObject;
+            } = elements[i as number] as ElementObject;
             if (index) {
                 const { x1, y1, x2, y2 } = adjustElementCoordinates(
-                    elements[i] as ElementObject
+                    elements[i as number] as ElementObject
                 );
                 updateElement(
                     index,
@@ -143,13 +151,10 @@ export default function TemplatePreview({
         const mouseX = clientX - canvasRef.current!.offsetLeft;
         const mouseY = clientY - canvasRef.current!.offsetTop;
 
-        if (elementType === 'select') {
-            event.target.style.cursor = getElementAtPosition(
-                mouseX,
-                mouseY,
-                elements
-            )
-                ? 'move'
+        if (elementType === 'select' || elementType === 'resize') {
+            const e = getElementAtPosition(mouseX, mouseY, elements);
+            event.target.style.cursor = e
+                ? cursorForPosition(e.position as string)
                 : 'default';
         }
 
@@ -167,13 +172,13 @@ export default function TemplatePreview({
                 x2,
                 y1,
                 y2,
-            } = selectedElement as ElementObject;
+            } = selectedElement as SelectedElement;
 
             const width = x2 - x1;
             const height = y2 - y1;
 
-            const newX = mouseX - offsetX;
-            const newY = mouseY - offsetY;
+            const newX = mouseX - offsetX!;
+            const newY = mouseY - offsetY!;
 
             updateElement(
                 id,
@@ -183,6 +188,21 @@ export default function TemplatePreview({
                 newY + height,
                 shape as 'circle' | 'rectangle'
             );
+        } else if (action === 'resizing') {
+            const {
+                index: id,
+                roughElement: { shape },
+                position,
+                ...coords
+            } = selectedElement as SelectedElement;
+
+            const { x1, x2, y1, y2 } = resizedCoordinates(
+                mouseX,
+                mouseY,
+                position,
+                coords
+            );
+            updateElement(id, x1, y1, x2, y2, shape as 'circle' | 'rectangle');
         }
     };
 
