@@ -85,6 +85,16 @@ export default function TemplatePreview({
         const clientX = event.clientX - canvasRef.current!.offsetLeft;
         const clientY = event.clientY - canvasRef.current!.offsetTop;
 
+        if (elementType === 'remove') {
+            const element = getElementAtPosition(clientX, clientY, elements);
+            if (element) {
+                const newElements = elements.filter(
+                    el => el.index !== element.index
+                );
+                setElements(newElements);
+            }
+        }
+
         if (elementType === 'select') {
             const element = getElementAtPosition(clientX, clientY, elements);
 
@@ -104,7 +114,9 @@ export default function TemplatePreview({
                     setAction('resizing');
                 }
             }
-        } else {
+        }
+
+        if (elementType !== 'remove' && elementType !== 'select') {
             const id = elements.length;
             const element = createElement(
                 id,
@@ -151,11 +163,19 @@ export default function TemplatePreview({
         const mouseX = clientX - canvasRef.current!.offsetLeft;
         const mouseY = clientY - canvasRef.current!.offsetTop;
 
-        if (elementType === 'select' || elementType === 'resize') {
+        if (
+            elementType === 'select' ||
+            action === 'resizing' ||
+            elementType === 'remove'
+        ) {
             const e = getElementAtPosition(mouseX, mouseY, elements);
-            event.target.style.cursor = e
-                ? cursorForPosition(e.position as string)
-                : 'default';
+            if (e && elementType === 'remove') {
+                event.target.style.cursor = 'not-allowed';
+            } else {
+                event.target.style.cursor = e
+                    ? cursorForPosition(e.position as string)
+                    : 'default';
+            }
         }
 
         if (action === 'drawing') {
