@@ -16,8 +16,19 @@ export default function NewTemplate() {
         React.useState<ElementTypes>('rectangle');
 
     const isActive = (type: ElementTypes) => {
+        const borderColor = () => {
+            switch (type) {
+                case 'remove':
+                    return 'red';
+                case 'select':
+                    return 'gray';
+                default:
+                    return 'blue';
+            }
+        };
+
         return elementType === type
-            ? `border border-blue-500 p-1 border-2 ${
+            ? `border border-${borderColor()}-500 p-1 border-2 ${
                   type === 'circle' ? 'rounded-full' : 'rounded-md'
               }`
             : 'p-1 border-2 border-transparent';
@@ -33,7 +44,7 @@ export default function NewTemplate() {
             }
         >
             <div className="flex flex-row justify-between gap-8">
-                <div className="w-1/2">
+                <div className="flex flex-col flex-1">
                     <div className="flex flex-row gap-5">
                         <h2 className="text-xl font-bold">Card Preview</h2>
                         <div>
@@ -59,7 +70,7 @@ export default function NewTemplate() {
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        d="M10.05 4.575a1.575 1.575 0 10-3.15 0v3m3.15-3v-1.5a1.575 1.575 0 013.15 0v1.5m-3.15 0l.075 5.925m3.075.75V4.575m0 0a1.575 1.575 0 013.15 0V15M6.9 7.575a1.575 1.575 0 10-3.15 0v8.175a6.75 6.75 0 006.75 6.75h2.018a5.25 5.25 0 003.712-1.538l1.732-1.732a5.25 5.25 0 001.538-3.712l.003-2.024a.668.668 0 01.198-.471 1.575 1.575 0 10-2.228-2.228 3.818 3.818 0 00-1.12 2.687M6.9 7.575V12m6.27 4.318A4.49 4.49 0 0116.35 15m.002 0h-.002"
+                                        d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
                                     />
                                 </svg>
                             </button>
@@ -94,9 +105,9 @@ export default function NewTemplate() {
                     </div>
                 </div>
 
-                <div className="w-1/2">
+                <div className="w-1/2 lg:w-2/3">
                     <div className="flex flex-row gap-4">
-                        <h2 className="text-xl font-bold mb-4">Tools</h2>
+                        <h2 className="text-xl font-bold mb-4">Areas:</h2>
                     </div>
                 </div>
             </div>
