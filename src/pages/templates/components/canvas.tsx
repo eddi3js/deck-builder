@@ -1,33 +1,27 @@
-import aspectRatio from '@/utils/aspectRatio';
-import createElement, { generator } from '@/utils/canvas/createElement';
+import aspectRatio from '@/utils/canvas/aspectRatio';
+import createElement from '@/utils/canvas/createElement';
+import getElementAtPosition, {
+    adjustElementCoordinates,
+    ElementObject,
+} from '@/utils/canvas/getElementAtPosition';
 import React from 'react';
+import { ElementTypes } from '../new';
 const rough = require('roughjs/bundled/rough.cjs');
-
 interface TemplatePreviewProps {
     ratios: number[];
+    elementType: ElementTypes;
 }
 
-interface ElementObject {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-    roughElement: {
-        shape: string;
-        sets: any[];
-        options: any;
-    };
-}
-
-export type ElementTypes = 'circle' | 'rectangle' | 'resize' | 'select';
-
-export default function TemplatePreview({ ratios }: TemplatePreviewProps) {
+export default function TemplatePreview({
+    ratios,
+    elementType,
+}: TemplatePreviewProps) {
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const [canvasSize, setCanvasSize] = React.useState<number[]>([0, 0]);
-    const [drawing, setDrawing] = React.useState<boolean>(false);
-    const [elementType, setElementType] =
-        React.useState<ElementTypes>('rectangle');
+    const [action, setAction] = React.useState<string>('none');
     const [elements, setElements] = React.useState<ElementObject[]>([]);
+    const [selectedElement, setSelectedElement] =
+        React.useState<ElementObject | null>(null);
 
     const elType = elementType === 'circle' ? 'circle' : 'rectangle';
 
@@ -75,8 +69,6 @@ export default function TemplatePreview({ ratios }: TemplatePreviewProps) {
                 const rc = rough.canvas(canvasRef.current);
 
                 elements.forEach(({ roughElement }: ElementObject) => {
-                    // const el = createElement(x1, y1, x2, y2, 'rectangle');
-                    // console.log('el', el);
                     rc?.draw(roughElement);
                 });
             }
@@ -87,34 +79,122 @@ export default function TemplatePreview({ ratios }: TemplatePreviewProps) {
     const aspectHeight = aspectRatio(ratios, 'height');
 
     const handleMouseDown = (event: React.MouseEvent) => {
-        setDrawing(true);
+        const clientX = event.clientX - canvasRef.current!.offsetLeft;
+        const clientY = event.clientY - canvasRef.current!.offsetTop;
 
-        const { clientX, clientY } = event;
-        const mouseX = clientX - canvasRef.current!.offsetLeft;
-        const mouseY = clientY - canvasRef.current!.offsetTop;
+        if (elementType === 'select') {
+            const element = getElementAtPosition(clientX, clientY, elements);
 
-        console.log('mouseX', mouseX);
-        console.log('mouseY', mouseY);
+            if (element) {
+                const mouseX = clientX - element.x1;
+                const mouseY = clientY - element.y1;
 
-        const element = createElement(mouseX, mouseY, mouseX, mouseY, elType);
+                setSelectedElement({
+                    ...element,
+                    offsetX: mouseX,
+                    offsetY: mouseY,
+                });
+                setAction('moving');
+            }
+        } else {
+            const id = elements.length;
+            const element = createElement(
+                id,
+                clientX,
+                clientY,
+                clientX,
+                clientY,
+                elType
+            );
+            setElements([...elements, element]);
 
-        setElements([...elements, element]);
+            setAction('drawing');
+        }
     };
 
     const handleMouseUp = () => {
-        setDrawing(false);
+        if (action === 'drawing') {
+            const i = elements.length - 1;
+            const {
+                index,
+                roughElement: { shape },
+            } = elements[i] as ElementObject;
+            if (index) {
+                const { x1, y1, x2, y2 } = adjustElementCoordinates(
+                    elements[i] as ElementObject
+                );
+                updateElement(
+                    index,
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    shape as 'rectangle' | 'circle'
+                );
+            }
+        }
+
+        setAction('none');
+        setSelectedElement(null);
     };
 
     const handleMouseMove = (event: React.MouseEvent) => {
-        if (!drawing) return;
-
         const { clientX, clientY } = event;
         const mouseX = clientX - canvasRef.current!.offsetLeft;
         const mouseY = clientY - canvasRef.current!.offsetTop;
 
-        const index = elements.length - 1;
-        const { x1, y1 } = elements[index] as ElementObject;
-        const updatedElement = createElement(x1, y1, mouseX, mouseY, elType);
+        if (elementType === 'select') {
+            event.target.style.cursor = getElementAtPosition(
+                mouseX,
+                mouseY,
+                elements
+            )
+                ? 'move'
+                : 'default';
+        }
+
+        if (action === 'drawing') {
+            const index = elements.length - 1;
+            const { x1, y1 } = elements[index] as ElementObject;
+            updateElement(index, x1, y1, mouseX, mouseY, elType);
+        } else if (action === 'moving') {
+            const {
+                index: id,
+                roughElement: { shape },
+                offsetX,
+                offsetY,
+                x1,
+                x2,
+                y1,
+                y2,
+            } = selectedElement as ElementObject;
+
+            const width = x2 - x1;
+            const height = y2 - y1;
+
+            const newX = mouseX - offsetX;
+            const newY = mouseY - offsetY;
+
+            updateElement(
+                id,
+                newX,
+                newY,
+                newX + width,
+                newY + height,
+                shape as 'circle' | 'rectangle'
+            );
+        }
+    };
+
+    const updateElement = (
+        index: number,
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number,
+        type: 'circle' | 'rectangle'
+    ) => {
+        const updatedElement = createElement(index, x1, y1, x2, y2, type);
 
         const updatedElements = [...elements];
         updatedElements[index] = updatedElement;

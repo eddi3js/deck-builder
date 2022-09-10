@@ -13,6 +13,7 @@ export const generator = rough.generator({
 });
 
 export default function createElement(
+    index: number,
     x1: number,
     y1: number,
     x2: number,
@@ -28,6 +29,7 @@ export default function createElement(
         y1,
         x2,
         y2,
+        index,
         roughElement,
     };
 }
