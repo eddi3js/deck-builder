@@ -1,7 +1,7 @@
 import Layout from '@/components/layout';
 import { ElementObject, SelectedElement } from '@/utils/canvas/getElementAtPosition';
 import { Tooltip } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Areas from './components/areas';
 import Header from './components/header';
 import TemplatePreview from './components/templatePreview';
@@ -22,29 +22,6 @@ export default function NewTemplate() {
     const [ratios, setRatios] = useState<number[]>([3.5, 2.5]);
     const [elementType, setElementType] = useState<ElementTypes>('rectangle');
     const [areas, setAreas] = useState<AreaFields[]>([]);
-
-    useEffect(() => {
-        let newElements = [...elements];
-
-        if (selectedElement) {
-            // newElements[selectedElement.index]!.roughElement.options.stroke =
-            newElements = newElements.map((element, index) => {
-                console.log(index, selectedElement.index);
-                if (index === selectedElement.index) {
-                    element.roughElement.options.stroke = 'red';
-                } else {
-                    element.roughElement.options.stroke = 'white';
-                }
-                return element;
-            });
-        } else {
-            // reset all the roughElement.options.stroke to #ffffff
-            newElements.forEach(element => {
-                element.roughElement.options.stroke = '#ffffff';
-            });
-        }
-        setElements(newElements);
-    }, [selectedElement, elementType]);
 
     const isActive = (type: ElementTypes) => {
         const borderColor = () => {
