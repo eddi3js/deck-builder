@@ -241,6 +241,11 @@ export default function TemplatePreview({
             style={{
                 maxHeight: 'calc(100vh - 300px)',
                 aspectRatio: `${aspectWidth}/${aspectHeight}`,
+                backgroundImage:
+                    'url(https://c1.scryfall.com/file/scryfall-cards/large/front/9/9/994bb02d-6fef-454b-b1b1-d3d1af8dcd1a.jpg?1562055453)',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
             }}
         >
             <canvas

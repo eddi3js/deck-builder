@@ -169,7 +169,7 @@ export default function NewTemplate() {
                         </div>
                     </div>
 
-                    <div className="w-1/2">
+                    <div className="flex flex-col flex-1">
                         <h2 className="text-xl font-bold mb-4">Areas:</h2>
                         <Areas
                             elements={elements}

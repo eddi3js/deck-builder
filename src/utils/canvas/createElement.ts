@@ -6,6 +6,8 @@ export const generator: RoughGenerator = rough.generator({
         roughness: 1,
         bowing: 1,
         stroke: '#6aabfc',
+        fillType: 'zigzag',
+        fill: '#6aabfc',
         strokeWidth: 1,
         curveStepCount: 9,
         simplification: 0,
