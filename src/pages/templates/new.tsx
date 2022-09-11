@@ -1,19 +1,50 @@
 import Layout from '@/components/layout';
-import React from 'react';
-import TemplatePreview from './components/canvas';
-
-export interface DefaultFields {
+import { ElementObject, SelectedElement } from '@/utils/canvas/getElementAtPosition';
+import { Tooltip } from 'flowbite-react';
+import { useEffect, useState } from 'react';
+import Areas from './components/areas';
+import Header from './components/header';
+import TemplatePreview from './components/templatePreview';
+export interface AreaFields {
     name: string;
-    label: string;
-    value: string;
-    placeholder: string;
+    type: 'string' | 'number' | 'image';
 }
 export type ElementTypes = 'circle' | 'rectangle' | 'remove' | 'select';
 
 export default function NewTemplate() {
-    const [ratios, setRatios] = React.useState<number[]>([3.5, 2.5]);
-    const [elementType, setElementType] =
-        React.useState<ElementTypes>('rectangle');
+    const [templateName, setTemplateName] = useState<string>('New Card Template');
+
+    const [elements, setElements] = useState<ElementObject[]>([]);
+    const [selectedElement, setSelectedElement] = useState<
+        SelectedElement | ElementObject | null
+    >(null);
+
+    const [ratios, setRatios] = useState<number[]>([3.5, 2.5]);
+    const [elementType, setElementType] = useState<ElementTypes>('rectangle');
+    const [areas, setAreas] = useState<AreaFields[]>([]);
+
+    useEffect(() => {
+        let newElements = [...elements];
+
+        if (selectedElement) {
+            // newElements[selectedElement.index]!.roughElement.options.stroke =
+            newElements = newElements.map((element, index) => {
+                console.log(index, selectedElement.index);
+                if (index === selectedElement.index) {
+                    element.roughElement.options.stroke = 'red';
+                } else {
+                    element.roughElement.options.stroke = 'white';
+                }
+                return element;
+            });
+        } else {
+            // reset all the roughElement.options.stroke to #ffffff
+            newElements.forEach(element => {
+                element.roughElement.options.stroke = '#ffffff';
+            });
+        }
+        setElements(newElements);
+    }, [selectedElement, elementType]);
 
     const isActive = (type: ElementTypes) => {
         const borderColor = () => {
@@ -29,34 +60,62 @@ export default function NewTemplate() {
 
         return elementType === type
             ? `border border-${borderColor()}-500 p-1 border-2 ${
-                  type === 'circle' ? 'rounded-full' : 'rounded-md'
+                  type === 'circle' ? 'rounded-full' : 'rounded-md text-white'
               }`
-            : 'p-1 border-2 border-transparent';
+            : 'p-1 border-2 border-transparent text-gray-400 hover:text-white';
+    };
+
+    const removeElementByIndex = (index: number) => {
+        const newElements = [...elements];
+        newElements.splice(index, 1);
+        setElements(newElements);
+    };
+
+    const handleSwitchElementType = (type: ElementTypes) => {
+        setElementType(type);
+        setSelectedElement(null);
     };
 
     return (
-        <Layout
-            title="New Card Template"
-            callToAction={
-                <button className="bg-purple-500 hover:bg-purple-700 text-white text-md px-5 py-2 rounded">
-                    Save
-                </button>
-            }
-        >
-            <div className="flex flex-row justify-between gap-8">
-                <div className="flex flex-col flex-1">
-                    <div className="flex flex-row gap-5">
-                        <h2 className="text-xl font-bold">Card Preview</h2>
-                        <div>
+        <Layout>
+            <>
+                <Header
+                    title={templateName}
+                    setTemplateName={setTemplateName}
+                    saveTemplate={
+                        <button className="bg-blue-500 hover:bg-purple-700 text-white text-md px-5 py-2 rounded">
+                            Save New Template
+                        </button>
+                    }
+                />
+                <div className="flex flex-row justify-between gap-8">
+                    <div className="flex flex-col h-fit p-2 bg-paper rounded gap-4">
+                        <Tooltip content="Create Area" placement="right">
                             <button
-                                onClick={() => setElementType('rectangle')}
+                                onClick={() => handleSwitchElementType('rectangle')}
                                 className={isActive('rectangle')}
                             >
-                                <div className="w-5 h-5 rounded bg-white" />
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6"
+                                    />
+                                </svg>
                             </button>
+                        </Tooltip>
 
+                        <Tooltip content="Move/Resize Area" placement="right">
                             <button
-                                onClick={() => setElementType('select')}
+                                disabled={elements.length === 0}
+                                onClick={() => handleSwitchElementType('select')}
                                 className={isActive('select')}
                             >
                                 <svg
@@ -74,9 +133,12 @@ export default function NewTemplate() {
                                     />
                                 </svg>
                             </button>
+                        </Tooltip>
 
+                        <Tooltip content="Remove Area" placement="right">
                             <button
-                                onClick={() => setElementType('remove')}
+                                disabled={elements.length === 0}
+                                onClick={() => handleSwitchElementType('remove')}
                                 className={isActive('remove')}
                             >
                                 <svg
@@ -94,23 +156,52 @@ export default function NewTemplate() {
                                     />
                                 </svg>
                             </button>
+                        </Tooltip>
+
+                        <Tooltip content="Preview" placement="right">
+                            <button className="p-1 border-2 border-transparent text-gray-400 hover:text-white">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-5 h-5 text-gray-400 hover:text-white"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                                    />
+                                </svg>
+                            </button>
+                        </Tooltip>
+                    </div>
+                    <div className="flex flex-col flex-1">
+                        <h2 className="text-xl font-bold">Card Preview</h2>
+
+                        <div className="pt-4">
+                            <TemplatePreview
+                                selectedElement={selectedElement}
+                                setSelectedElement={setSelectedElement}
+                                elements={elements}
+                                setElements={setElements}
+                                ratios={ratios}
+                                elementType={elementType}
+                            />
                         </div>
                     </div>
 
-                    <div className="pt-4">
-                        <TemplatePreview
-                            ratios={ratios}
-                            elementType={elementType}
+                    <div className="w-1/2">
+                        <h2 className="text-xl font-bold mb-4">Areas:</h2>
+                        <Areas
+                            elements={elements}
+                            removeElement={removeElementByIndex}
+                            selectedIndex={selectedElement?.index ?? -1}
                         />
                     </div>
                 </div>
-
-                <div className="w-1/2 lg:w-2/3">
-                    <div className="flex flex-row gap-4">
-                        <h2 className="text-xl font-bold mb-4">Areas:</h2>
-                    </div>
-                </div>
-            </div>
+            </>
         </Layout>
     );
 }

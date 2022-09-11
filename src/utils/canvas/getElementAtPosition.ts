@@ -46,7 +46,7 @@ function nearPoint(
         : undefined;
 }
 
-export function cursorForPosition(position: string | null) {
+export function cursorForPosition(position: string | null, remove?: boolean) {
     switch (position) {
         case 'tl':
         case 'br':
@@ -55,7 +55,7 @@ export function cursorForPosition(position: string | null) {
         case 'bl':
             return 'nesw-resize';
         case 'inside':
-            return 'move';
+            return remove ? 'not-allowed' : 'move';
         default:
             return 'default';
     }

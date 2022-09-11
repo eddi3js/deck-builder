@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+const { colors: defaultColors } = require('tailwindcss/defaultTheme');
+
 module.exports = {
     darkMode: 'class',
     content: [
@@ -7,7 +10,12 @@ module.exports = {
         './public/**/*.html',
     ],
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                ...defaultColors,
+                paper: '#202A37',
+            },
+        },
     },
     plugins: [require('@headlessui/react')],
 };

@@ -1,10 +1,10 @@
+import { RoughGenerator } from 'roughjs/bin/generator';
 const rough = require('roughjs/bundled/rough.cjs');
 
-export const generator = rough.generator({
+export const generator: RoughGenerator = rough.generator({
     options: {
         roughness: 1,
         bowing: 1,
-        fill: 'rgba(106, 171, 252, 0.25)',
         stroke: '#6aabfc',
         strokeWidth: 1,
         curveStepCount: 9,
