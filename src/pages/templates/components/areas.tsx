@@ -1,23 +1,21 @@
-import { ElementObject } from '@/utils/canvas/getElementAtPosition';
+import { useCardTemplateStore } from '@/stores/cardTemplates';
 
-interface AreaProps {
-    elements: ElementObject[];
-    removeElement: (index: number) => void;
-    selectedIndex: number;
-}
-
-export default function Areas({ elements, removeElement, selectedIndex }: AreaProps) {
-    if (elements.length === 0) {
-        return <p className="text-gray-400">No areas created</p>;
-    }
+export default function Areas() {
+    const { elements, removeElement, selectedElement } = useCardTemplateStore();
+    const selectedIndex = selectedElement?.index ?? -1;
 
     return (
-        <div className="areas flex w-full flex-col gap-8">
+        <div className="rounded flex w-full h-fit mt-4 flex-col gap-2 bg-white/[0.1] p-4">
+            <h2 className="text-sm">Template Areas ({elements.length}):</h2>
+            {elements.length === 0 && <p className="text-gray-400">No areas created</p>}
             {elements.map((_, index) => {
                 return (
-                    <div className="area flex flex-col gap-4">
+                    <div
+                        className="area flex flex-col gap-4"
+                        key={`element-fields-${index}`}
+                    >
                         <div
-                            className={`flex flex-row justify-between items-start gap-4 p-4 border-2 border-${
+                            className={`flex flex-row justify-between items-start gap-2 p-1 border-2 border-${
                                 selectedIndex === index ? 'blue-500' : 'transparent'
                             } rounded`}
                         >
@@ -26,26 +24,26 @@ export default function Areas({ elements, removeElement, selectedIndex }: AreaPr
                                     <div className="flex flex-col gap-2 w-2/3">
                                         <label
                                             htmlFor={`area-name-${index}`}
-                                            className="text-sm "
+                                            className="text-xs text-gray-400"
                                         >
                                             Key Name
                                         </label>
                                         <input
                                             type="text"
                                             id={`area-name-${index}`}
-                                            className="bg-transparent border border-gray-500 rounded-md p-2 py-1.5"
+                                            className="bg-transparent border text-sm border-gray-500 rounded-md p-2 py-1.5"
                                         />
                                     </div>
                                     <div className="flex flex-col gap-2 flex-1">
                                         <label
                                             htmlFor={`area-type-${index}`}
-                                            className="text-sm "
+                                            className="text-xs text-gray-400"
                                         >
                                             Type
                                         </label>
                                         <select
                                             id={`area-type-${index}`}
-                                            className="bg-transparent border border-gray-500 rounded-md p-2"
+                                            className="bg-transparent border text-sm border-gray-500 rounded-md p-2 pt-1.5"
                                         >
                                             <option value="string">String</option>
                                             <option value="number">Number</option>
@@ -56,7 +54,7 @@ export default function Areas({ elements, removeElement, selectedIndex }: AreaPr
                                 <div className="flex flex-col gap-2 w-full mt-2">
                                     <label
                                         htmlFor={`area-type-${index}`}
-                                        className="text-sm "
+                                        className="text-xs text-gray-400"
                                     >
                                         Default Value
                                     </label>

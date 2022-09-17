@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { useCardTemplateStore } from '@/stores/cardTemplates';
 import aspectRatio from '@/utils/canvas/aspectRatio';
 import createElement from '@/utils/canvas/createElement';
 import getElementAtPosition, {
@@ -8,32 +10,31 @@ import getElementAtPosition, {
     SelectedElement,
 } from '@/utils/canvas/getElementAtPosition';
 import React from 'react';
-import { ElementTypes } from '../new';
+import Toolbar from './toolbar';
 const rough = require('roughjs/bundled/rough.cjs');
-interface TemplatePreviewProps {
-    ratios: number[];
-    elementType: ElementTypes;
-    elements: ElementObject[];
-    setElements: React.Dispatch<React.SetStateAction<ElementObject[]>>;
-    selectedElement: SelectedElement | ElementObject | null;
-    setSelectedElement: React.Dispatch<
-        React.SetStateAction<SelectedElement | ElementObject | null>
-    >;
-}
 
-export default function TemplatePreview({
-    ratios,
-    elementType,
-    elements,
-    setElements,
-    selectedElement,
-    setSelectedElement,
-}: TemplatePreviewProps) {
+export default function TemplatePreview() {
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const [canvasSize, setCanvasSize] = React.useState<number[]>([0, 0]);
     const [action, setAction] = React.useState<string>('none');
 
+    const {
+        ratios,
+        selectedElement,
+        elementType,
+        elements,
+        setElements,
+        setSelectedElement,
+        changeElementType: handleSwitchElementType,
+    } = useCardTemplateStore();
+
+    const aspectWidth = aspectRatio(ratios, 'width');
+    const aspectHeight = aspectRatio(ratios, 'height');
+
+    console.log(aspectHeight, aspectWidth);
+
     React.useEffect(() => {
+        // set initial canvas size
         if (canvasRef.current && canvasSize[0] === 0) {
             const canvasContainer = document.getElementById('canvas-container');
             const width = canvasContainer?.clientWidth as number;
@@ -65,8 +66,8 @@ export default function TemplatePreview({
     React.useLayoutEffect(() => {
         if (canvasRef.current) {
             const [width, height] = [
-                canvasRef.current!.clientWidth,
-                canvasRef.current!.clientHeight,
+                canvasRef.current?.clientWidth ?? 2.5,
+                canvasRef.current?.clientHeight ?? 3.5,
             ];
             const ctx = canvasRef.current.getContext('2d');
 
@@ -75,21 +76,18 @@ export default function TemplatePreview({
 
                 const rc = rough.canvas(canvasRef.current);
 
-                elements.forEach(({ roughElement }: ElementObject, index: number) => {
-                    // add text to element
-
+                elements.forEach(({ roughElement }: ElementObject) => {
                     rc?.draw(roughElement);
                 });
             }
         }
-    }, [elements]);
-
-    const aspectWidth = aspectRatio(ratios, 'width');
-    const aspectHeight = aspectRatio(ratios, 'height');
+    }, [elements, aspectWidth, aspectHeight]);
 
     const handleMouseDown = (event: React.MouseEvent) => {
-        const clientX = event.clientX - canvasRef.current!.offsetLeft;
-        const clientY = event.clientY - canvasRef.current!.offsetTop;
+        if (!canvasRef.current) return;
+
+        const clientX = event.clientX - canvasRef.current.offsetLeft ?? 0;
+        const clientY = event.clientY - canvasRef.current.offsetTop;
         const element = getElementAtPosition(clientX, clientY, elements);
 
         if (!element) {
@@ -153,16 +151,24 @@ export default function TemplatePreview({
     };
 
     const handleMouseMove = (event: React.MouseEvent) => {
+        if (!canvasRef.current) return;
+
         const { clientX, clientY } = event;
-        const mouseX = clientX - canvasRef.current!.offsetLeft;
-        const mouseY = clientY - canvasRef.current!.offsetTop;
+        const mouseX = clientX - canvasRef.current.offsetLeft;
+        const mouseY = clientY - canvasRef.current.offsetTop;
+
+        const e = getElementAtPosition(mouseX, mouseY, elements);
+
+        if (!e && elementType !== 'rectangle') {
+            setSelectedElement(null);
+            handleSwitchElementType('select');
+        }
 
         if (
             elementType === 'select' ||
             action === 'resizing' ||
             elementType === 'remove'
         ) {
-            const e = getElementAtPosition(mouseX, mouseY, elements);
             event.target.style.cursor = e
                 ? cursorForPosition(
                       e.position as string,
@@ -190,8 +196,8 @@ export default function TemplatePreview({
             const width = x2 - x1;
             const height = y2 - y1;
 
-            const newX = mouseX - offsetX!;
-            const newY = mouseY - offsetY!;
+            const newX = mouseX - offsetX;
+            const newY = mouseY - offsetY;
 
             updateElement(
                 id,
@@ -235,27 +241,39 @@ export default function TemplatePreview({
     };
 
     return (
-        <div
-            id="canvas-container"
-            className="border border-gray-600 rounded self-center object-contain flex flex-col justify-center items-center"
-            style={{
-                maxHeight: 'calc(100vh - 300px)',
-                aspectRatio: `${aspectWidth}/${aspectHeight}`,
-                backgroundImage:
-                    'url(https://c1.scryfall.com/file/scryfall-cards/large/front/9/9/994bb02d-6fef-454b-b1b1-d3d1af8dcd1a.jpg?1562055453)',
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-            }}
-        >
-            <canvas
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onMouseMove={handleMouseMove}
-                width={canvasSize[0]}
-                height={canvasSize[1]}
-                ref={canvasRef}
-            />
+        <div>
+            <div
+                style={{ width: canvasSize[0] }}
+                className={canvasSize[0] === 0 ? 'hidden' : ''}
+            >
+                <Toolbar
+                    elementsLength={elements.length}
+                    activeElementType={elementType}
+                    handleSwitchElementType={handleSwitchElementType}
+                />
+            </div>
+            <div
+                id="canvas-container"
+                className="border border-white/[0.1] rounded object-contain flex flex-col justify-center items-center"
+                style={{
+                    maxHeight: 'calc(100vh - 300px)',
+                    aspectRatio: `${aspectWidth}/${aspectHeight}`,
+                    backgroundImage:
+                        'url(https://c1.scryfall.com/file/scryfall-cards/large/front/9/9/994bb02d-6fef-454b-b1b1-d3d1af8dcd1a.jpg?1562055453)',
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                }}
+            >
+                <canvas
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}
+                    onMouseMove={handleMouseMove}
+                    width={canvasSize[0]}
+                    height={canvasSize[1]}
+                    ref={canvasRef}
+                />
+            </div>
         </div>
     );
 }

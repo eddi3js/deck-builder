@@ -1,4 +1,5 @@
 import Layout from '@/components/layout';
+import { AuthContext, authPage } from '@/utils/authPage';
 import { Routes } from '@/utils/constants';
 import { Card } from 'flowbite-react';
 
@@ -33,4 +34,8 @@ export default function CardTemplates() {
             </div>
         </Layout>
     );
+}
+
+export async function getServerSideProps(context: AuthContext) {
+    return await authPage(context);
 }

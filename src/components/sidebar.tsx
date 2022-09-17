@@ -39,9 +39,7 @@ export default function GlobalSidebar() {
                                 </Sidebar.Item>
                             </Sidebar.ItemGroup>
                             <Sidebar.ItemGroup>
-                                <Sidebar.Item href={Routes.Home}>
-                                    Dashboard
-                                </Sidebar.Item>
+                                <Sidebar.Item href={Routes.Home}>Dashboard</Sidebar.Item>
                                 <Sidebar.Item href={Routes.Templates}>
                                     Card Templates
                                 </Sidebar.Item>
@@ -67,9 +65,8 @@ export default function GlobalSidebar() {
                                 </div>
 
                                 <p className="mb-3 text-xs text-blue-900 dark:text-blue-400">
-                                    Deckbuilder.gg is currently in a beta state.
-                                    Please report any bugs or suggestions in the
-                                    Discord
+                                    Deckbuilder.gg is currently in a beta state. Please
+                                    report any bugs or suggestions in the Discord
                                 </p>
                             </div>
                         </Sidebar.CTA>

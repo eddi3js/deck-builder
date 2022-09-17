@@ -1,17 +1,10 @@
+import { useCardTemplateStore } from '@/stores/cardTemplates';
 import React from 'react';
 
-interface HeaderProps {
-    title: string;
-    saveTemplate: React.ReactElement;
-    setTemplateName: React.Dispatch<React.SetStateAction<string>>;
-}
+export default function Header() {
+    const { templateName, changeTemplateName } = useCardTemplateStore();
 
-export default function Header({
-    title,
-    saveTemplate,
-    setTemplateName,
-}: HeaderProps) {
-    const [edit, setEdit] = React.useState<boolean>(false);
+    const [edit, setEdit] = React.useState<boolean>(true);
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     React.useEffect(() => {
@@ -21,7 +14,7 @@ export default function Header({
     }, [edit]);
 
     return (
-        <div className="flex flex-row mb-7 pb-3  justify-between items-center border-b border-gray-700">
+        <div className="flex flex-row pb-3 justify-between items-center border-b border-white/[0.1]">
             {!edit && (
                 <h1
                     className="text-3xl font-bold"
@@ -29,7 +22,7 @@ export default function Header({
                         setEdit(true);
                     }}
                 >
-                    {title}
+                    {templateName}
                 </h1>
             )}
             {edit && (
@@ -37,13 +30,15 @@ export default function Header({
                     ref={inputRef}
                     className="bg-transparent text-3xl font-bold"
                     type="text"
-                    value={title}
+                    value={templateName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setTemplateName(e.target.value)
+                        changeTemplateName(e.target.value)
                     }
                 />
             )}
-            {saveTemplate}
+            <button className="bg-blue-500 hover:bg-purple-700 text-white text-md px-5 py-2 rounded">
+                Save New Template
+            </button>
         </div>
     );
 }

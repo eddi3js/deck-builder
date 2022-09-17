@@ -7,7 +7,7 @@ export default function Header() {
     );
 
     return (
-        <div className="border-gray-200 items-center bg-white px-2 py-2.5 flex-row flex dark:border-gray-800 dark:bg-gray-800 sm:px-4">
+        <div className="border-gray-800 items-center px-2 py-2.5 flex-row flex bg-white/[0.1] sm:px-4">
             <button
                 className="p-2 flex lg:hidden bg-gray-600 rounded mr-3"
                 onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
