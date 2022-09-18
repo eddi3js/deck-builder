@@ -4,8 +4,6 @@ export default function DefaultCardFields() {
     const { ratios, changeRatios } = useCardTemplateStore();
     const [width, height] = ratios;
 
-    console.log('ratios', ratios);
-
     return (
         <div className="mt-4 flex w-full flex-row gap-3">
             <div className="flex flex-col flex-1">

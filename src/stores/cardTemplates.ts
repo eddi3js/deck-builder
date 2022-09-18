@@ -27,7 +27,7 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     ratios: [2.5, 3.5],
     elements: [],
     selectedElement: null,
-    elementType: 'rectangle' as ElementTypes,
+    elementType: 'select' as ElementTypes,
 
     templateName: 'New Card Template',
     areas: [] as AreaFields[],
@@ -36,8 +36,16 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     setSelectedElement: element => set({ selectedElement: element }),
     removeElement: (index: number) => {
         set((state: CardTemplateState) => {
-            const elements = [...state.elements];
+            let elements = [...state.elements];
+            // remove element
             elements.splice(index, 1);
+            // Update indexes
+            elements = elements.map((element, index) => {
+                return {
+                    ...element,
+                    index,
+                };
+            });
             return { elements };
         });
     },

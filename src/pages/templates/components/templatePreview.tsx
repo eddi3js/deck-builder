@@ -18,11 +18,16 @@ export default function TemplatePreview() {
     const [canvasSize, setCanvasSize] = React.useState<number[]>([0, 0]);
     const [action, setAction] = React.useState<string>('none');
 
+    const selectedElRef = React.useRef<ElementObject | null>(null);
+    const elementsRef = React.useRef<ElementObject[]>([]);
+
     const {
         ratios,
         selectedElement,
         elementType,
+        changeElementType,
         elements,
+        removeElement,
         setElements,
         setSelectedElement,
         changeElementType: handleSwitchElementType,
@@ -31,7 +36,43 @@ export default function TemplatePreview() {
     const aspectWidth = aspectRatio(ratios, 'width');
     const aspectHeight = aspectRatio(ratios, 'height');
 
-    console.log(aspectHeight, aspectWidth);
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Delete' && selectedElRef.current) {
+            removeElement(selectedElRef.current.index);
+            const elementsWithoutDeleted = elementsRef.current.splice(
+                selectedElRef.current.index,
+                1
+            );
+            const updatedElements = elementsWithoutDeleted.map((el, index) => ({
+                ...el,
+                index,
+            }));
+            elementsRef.current = updatedElements;
+
+            setSelectedElement(null);
+            selectedElRef.current = null;
+            setAction('none');
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && selectedElRef.current) {
+            const { roughElement, x1, x2, y1, y2 } = selectedElRef.current;
+            const copiedElement = {
+                roughElement,
+                x1: x1 + 5,
+                x2: x2 + 5,
+                y1: y1 + 5,
+                y2: y2 + 5,
+                index: elementsRef.current?.length ?? 0,
+            };
+            setElements([...elementsRef.current, copiedElement]);
+        }
+    };
+
+    React.useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
 
     React.useEffect(() => {
         // set initial canvas size
@@ -63,6 +104,10 @@ export default function TemplatePreview() {
         }
     }, [canvasRef]);
 
+    React.useEffect(() => {
+        elementsRef.current = elements;
+    }, [elements]);
+
     React.useLayoutEffect(() => {
         if (canvasRef.current) {
             const [width, height] = [
@@ -90,8 +135,16 @@ export default function TemplatePreview() {
         const clientY = event.clientY - canvasRef.current.offsetTop;
         const element = getElementAtPosition(clientX, clientY, elements);
 
-        if (!element) {
+        if (!element && elementType === 'select') {
             setSelectedElement(null);
+            selectedElRef.current = null;
+        }
+
+        if (element && elementType === 'rectangle') {
+            setSelectedElement(element);
+            selectedElRef.current = element;
+            changeElementType('select');
+            return;
         }
 
         if (element && elementType === 'remove') {
@@ -102,12 +155,14 @@ export default function TemplatePreview() {
         if (element && elementType === 'select') {
             const mouseX = clientX - element.x1;
             const mouseY = clientY - element.y1;
-
-            setSelectedElement({
+            const selectedEl = {
                 ...element,
                 offsetX: mouseX,
                 offsetY: mouseY,
-            } as SelectedElement);
+            } as SelectedElement;
+
+            setSelectedElement(selectedEl);
+            selectedElRef.current = selectedEl;
 
             if (element.position === 'inside') {
                 setAction('moving');
@@ -126,8 +181,10 @@ export default function TemplatePreview() {
                 clientY,
                 'rectangle'
             );
+
             setElements([...elements, element]);
             setSelectedElement(element);
+            selectedElRef.current = element;
             setAction('drawing');
         }
     };
@@ -144,9 +201,9 @@ export default function TemplatePreview() {
                     elements[i as number] as ElementObject
                 );
                 updateElement(index, x1, y1, x2, y2, shape as 'rectangle' | 'circle');
+                selectedElRef.current = createElement(index, x1, y1, x2, y2, 'rectangle');
             }
         }
-
         setAction('none');
     };
 
@@ -156,13 +213,7 @@ export default function TemplatePreview() {
         const { clientX, clientY } = event;
         const mouseX = clientX - canvasRef.current.offsetLeft;
         const mouseY = clientY - canvasRef.current.offsetTop;
-
         const e = getElementAtPosition(mouseX, mouseY, elements);
-
-        if (!e && elementType !== 'rectangle') {
-            setSelectedElement(null);
-            handleSwitchElementType('select');
-        }
 
         if (
             elementType === 'select' ||
@@ -237,11 +288,12 @@ export default function TemplatePreview() {
 
         const updatedElements = [...elements];
         updatedElements[index] = updatedElement;
+        elementsRef.current = updatedElements;
         setElements(updatedElements);
     };
 
     return (
-        <div>
+        <div style={{ minWidth: 500 }}>
             <div
                 style={{ width: canvasSize[0] }}
                 className={canvasSize[0] === 0 ? 'hidden' : ''}

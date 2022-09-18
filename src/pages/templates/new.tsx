@@ -9,10 +9,12 @@ export default function NewTemplate() {
     return (
         <Layout>
             <Header />
-            <div className="grid grid-cols-3 gap-10">
+            <div className="flex flex-row gap-10">
                 <TemplatePreview />
-                <DefaultCardFields />
-                <Areas />
+                <div className="flex flex-col lg:flex-row gap-10">
+                    <DefaultCardFields />
+                    <Areas />
+                </div>
             </div>
         </Layout>
     );

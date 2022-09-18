@@ -70,8 +70,7 @@ function positionWithinElement(x: number, y: number, element: ElementObject) {
         const bottomLeft = nearPoint(x, y, x1, y2, 'bl');
         const bottomRight = nearPoint(x, y, x2, y2, 'br');
 
-        const inside =
-            x >= x1 && x <= x2 && y >= y1 && y <= y2 ? 'inside' : undefined;
+        const inside = x >= x1 && x <= x2 && y >= y1 && y <= y2 ? 'inside' : undefined;
 
         return topLeft || topRight || bottomLeft || bottomRight || inside;
     } else {
@@ -79,7 +78,8 @@ function positionWithinElement(x: number, y: number, element: ElementObject) {
     }
 }
 
-export const adjustElementCoordinates = (element: ElementObject) => {
+export const adjustElementCoordinates = (el: ElementObject): ElementObject => {
+    const element = el;
     const { roughElement, x1, x2, y1, y2 } = element;
 
     if (roughElement.shape === 'rectangle') {
