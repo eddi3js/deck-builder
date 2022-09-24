@@ -14,10 +14,12 @@ export interface CardTemplateState {
     selectedElement: ElementObject | null;
     elementType: ElementTypes;
     templateName: string;
+    cardRadius: number;
 
     setElements: (elements: ElementObject[]) => void;
     setSelectedElement: (element: ElementObject | null) => void;
     changeRatios: (ratio: number, index: number) => void;
+    changeRadius: (radius: number) => void;
     changeElementType: (type: ElementTypes) => void;
     changeTemplateName: (name: string) => void;
     removeElement: (index: number) => void;
@@ -28,6 +30,7 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     elements: [],
     selectedElement: null,
     elementType: 'select' as ElementTypes,
+    cardRadius: 0,
 
     templateName: 'New Card Template',
     areas: [] as AreaFields[],
@@ -57,6 +60,7 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
             return { ratios };
         });
     },
+    changeRadius: (radius: number) => set({ cardRadius: radius }),
     changeElementType: (elementType: ElementTypes) => set({ elementType }),
     changeTemplateName: (templateName: string) => set({ templateName }),
 }));

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { useCardTemplateStore } from '@/stores/cardTemplates';
-import aspectRatio from '@/utils/canvas/aspectRatio';
 import createElement from '@/utils/canvas/createElement';
 import getElementAtPosition, {
     adjustElementCoordinates,
@@ -9,6 +8,7 @@ import getElementAtPosition, {
     resizedCoordinates,
     SelectedElement,
 } from '@/utils/canvas/getElementAtPosition';
+import { radiusHash, RadiusRange } from '@/utils/canvas/ranges';
 import React from 'react';
 import Toolbar from './toolbar';
 const rough = require('roughjs/bundled/rough.cjs');
@@ -23,6 +23,7 @@ export default function TemplatePreview() {
 
     const {
         ratios,
+        cardRadius: cardBevel,
         selectedElement,
         elementType,
         changeElementType,
@@ -32,9 +33,6 @@ export default function TemplatePreview() {
         setSelectedElement,
         changeElementType: handleSwitchElementType,
     } = useCardTemplateStore();
-
-    const aspectWidth = aspectRatio(ratios, 'width');
-    const aspectHeight = aspectRatio(ratios, 'height');
 
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Delete' && selectedElRef.current) {
@@ -72,12 +70,13 @@ export default function TemplatePreview() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    });
 
     React.useEffect(() => {
         // set initial canvas size
         if (canvasRef.current && canvasSize[0] === 0) {
             const canvasContainer = document.getElementById('canvas-container');
+            console.log(canvasContainer, 'canvasContainer');
             const width = canvasContainer?.clientWidth as number;
             const height = canvasContainer?.clientHeight as number;
 
@@ -102,7 +101,7 @@ export default function TemplatePreview() {
                 });
             };
         }
-    }, [canvasRef]);
+    }, [canvasRef, ratios]);
 
     React.useEffect(() => {
         elementsRef.current = elements;
@@ -126,7 +125,7 @@ export default function TemplatePreview() {
                 });
             }
         }
-    }, [elements, aspectWidth, aspectHeight]);
+    }, [elements]);
 
     const handleMouseDown = (event: React.MouseEvent) => {
         if (!canvasRef.current) return;
@@ -294,22 +293,19 @@ export default function TemplatePreview() {
 
     return (
         <div style={{ minWidth: 500 }}>
-            <div
-                style={{ width: canvasSize[0] }}
-                className={canvasSize[0] === 0 ? 'hidden' : ''}
-            >
-                <Toolbar
-                    elementsLength={elements.length}
-                    activeElementType={elementType}
-                    handleSwitchElementType={handleSwitchElementType}
-                />
-            </div>
+            <Toolbar
+                elementsLength={elements.length}
+                activeElementType={elementType}
+                handleSwitchElementType={handleSwitchElementType}
+            />
             <div
                 id="canvas-container"
-                className="border border-white/[0.1] rounded object-contain flex flex-col justify-center items-center"
+                className={`border border-white/[0.1] ${
+                    radiusHash[cardBevel as RadiusRange]
+                } object-contain flex flex-col justify-center items-center`}
                 style={{
                     maxHeight: 'calc(100vh - 300px)',
-                    aspectRatio: `${aspectWidth}/${aspectHeight}`,
+                    aspectRatio: `${ratios[0]}/${ratios[1]}`,
                     backgroundImage:
                         'url(https://c1.scryfall.com/file/scryfall-cards/large/front/9/9/994bb02d-6fef-454b-b1b1-d3d1af8dcd1a.jpg?1562055453)',
                     backgroundSize: 'cover',

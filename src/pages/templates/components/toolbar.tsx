@@ -32,7 +32,7 @@ export default function Toolbar({
     };
 
     return (
-        <div className="flex flex-row h-fit w-fit mx-auto p-2 bg-white/[0.1] rounded gap-4 rounded-t-none mb-4">
+        <div className="flex flex-row h-fit w-fit p-2 bg-white/[0.1] rounded gap-4 rounded-t-none mb-4">
             <Tooltip content="Move/Resize Area" placement="top" style="light">
                 <button
                     disabled={elementsLength === 0}

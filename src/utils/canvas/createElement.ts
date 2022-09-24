@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { RoughGenerator } from 'roughjs/bin/generator';
 const rough = require('roughjs/bundled/rough.cjs');
 
