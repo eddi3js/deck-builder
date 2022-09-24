@@ -15,6 +15,8 @@ export interface CardTemplateState {
     elementType: ElementTypes;
     templateName: string;
     cardRadius: number;
+    cardBackgroundColor: string;
+    templateImages: any;
 
     setElements: (elements: ElementObject[]) => void;
     setSelectedElement: (element: ElementObject | null) => void;
@@ -23,6 +25,8 @@ export interface CardTemplateState {
     changeElementType: (type: ElementTypes) => void;
     changeTemplateName: (name: string) => void;
     removeElement: (index: number) => void;
+    changeBackgroundColor: (color: string) => void;
+    setTemplateImages: (images: any) => void;
 }
 
 export const useCardTemplateStore = create<CardTemplateState>(set => ({
@@ -31,11 +35,13 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     selectedElement: null,
     elementType: 'select' as ElementTypes,
     cardRadius: 0,
-
+    cardBackgroundColor: '#ffffff',
+    templateImages: [],
     templateName: 'New Card Template',
     areas: [] as AreaFields[],
 
     setElements: elements => set({ elements }),
+    setTemplateImages: images => set({ templateImages: images }),
     setSelectedElement: element => set({ selectedElement: element }),
     removeElement: (index: number) => {
         set((state: CardTemplateState) => {
@@ -61,6 +67,8 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
         });
     },
     changeRadius: (radius: number) => set({ cardRadius: radius }),
-    changeElementType: (elementType: ElementTypes) => set({ elementType }),
+    changeElementType: (elementType: ElementTypes) =>
+        set({ elementType, selectedElement: null }),
     changeTemplateName: (templateName: string) => set({ templateName }),
+    changeBackgroundColor: (color: string) => set({ cardBackgroundColor: color }),
 }));

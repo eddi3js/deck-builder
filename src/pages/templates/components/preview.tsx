@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { useCardTemplateStore } from '@/stores/cardTemplates';
+import aspectRatio, { getCanvasSize } from '@/utils/canvas/aspectRatio';
 import createElement from '@/utils/canvas/createElement';
 import getElementAtPosition, {
     adjustElementCoordinates,
@@ -9,21 +11,21 @@ import getElementAtPosition, {
     SelectedElement,
 } from '@/utils/canvas/getElementAtPosition';
 import { radiusHash, RadiusRange } from '@/utils/canvas/ranges';
-import React from 'react';
+import useCanvasEvents from '@/utils/canvas/useCanvas';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import Toolbar from './toolbar';
 const rough = require('roughjs/bundled/rough.cjs');
 
 export default function TemplatePreview() {
-    const canvasRef = React.useRef<HTMLCanvasElement>(null);
-    const [canvasSize, setCanvasSize] = React.useState<number[]>([0, 0]);
-    const [action, setAction] = React.useState<string>('none');
-
-    const selectedElRef = React.useRef<ElementObject | null>(null);
-    const elementsRef = React.useRef<ElementObject[]>([]);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const canvasContainerRef = useRef<HTMLDivElement>(null);
+    const selectedElRef = useRef<ElementObject | null>(null);
+    const elementsRef = useRef<ElementObject[]>([]);
 
     const {
         ratios,
-        cardRadius: cardBevel,
+        cardBackgroundColor,
+        cardRadius,
         selectedElement,
         elementType,
         changeElementType,
@@ -34,80 +36,51 @@ export default function TemplatePreview() {
         changeElementType: handleSwitchElementType,
     } = useCardTemplateStore();
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Delete' && selectedElRef.current) {
-            removeElement(selectedElRef.current.index);
-            const elementsWithoutDeleted = elementsRef.current.splice(
-                selectedElRef.current.index,
-                1
-            );
-            const updatedElements = elementsWithoutDeleted.map((el, index) => ({
-                ...el,
-                index,
-            }));
-            elementsRef.current = updatedElements;
+    const { width: canvasWidth, height: canvasHeight } = getCanvasSize(ratios);
 
-            setSelectedElement(null);
-            selectedElRef.current = null;
-            setAction('none');
-        }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && selectedElRef.current) {
-            const { roughElement, x1, x2, y1, y2 } = selectedElRef.current;
-            const copiedElement = {
-                roughElement,
-                x1: x1 + 5,
-                x2: x2 + 5,
-                y1: y1 + 5,
-                y2: y2 + 5,
-                index: elementsRef.current?.length ?? 0,
-            };
-            setElements([...elementsRef.current, copiedElement]);
-        }
-    };
+    const { canvasSize, showGrid, setShowGrid, action, setAction } = useCanvasEvents({
+        canvasRef,
+        containerRef: canvasContainerRef,
+        keybindings: {
+            valid: Boolean(selectedElRef.current),
+            delete: () => {
+                if (!selectedElRef.current) return null;
+                removeElement(selectedElRef.current.index);
+                const elementsWithoutDeleted = elementsRef.current.splice(
+                    selectedElRef.current.index,
+                    1
+                );
+                const updatedElements = elementsWithoutDeleted.map((el, index) => ({
+                    ...el,
+                    index,
+                }));
+                elementsRef.current = updatedElements;
 
-    React.useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
+                setSelectedElement(null);
+                selectedElRef.current = null;
+                setAction('none');
+            },
+            copy: () => {
+                if (!selectedElRef.current) return null;
+                const { roughElement, x1, x2, y1, y2 } = selectedElRef.current;
+                const copiedElement = {
+                    roughElement,
+                    x1: x1 + 5,
+                    x2: x2 + 5,
+                    y1: y1 + 5,
+                    y2: y2 + 5,
+                    index: elementsRef.current?.length ?? 0,
+                };
+                setElements([...elementsRef.current, copiedElement]);
+            },
+        },
     });
 
-    React.useEffect(() => {
-        // set initial canvas size
-        if (canvasRef.current && canvasSize[0] === 0) {
-            const canvasContainer = document.getElementById('canvas-container');
-            console.log(canvasContainer, 'canvasContainer');
-            const width = canvasContainer?.clientWidth as number;
-            const height = canvasContainer?.clientHeight as number;
-
-            setCanvasSize([width, height]);
-        }
-    }, [canvasRef, canvasSize]);
-
-    React.useEffect(() => {
-        if (canvasRef.current) {
-            window.addEventListener('resize', () => {
-                const canvasWidth = canvasRef?.current?.clientWidth;
-                const canvasHeight = canvasRef?.current?.clientHeight;
-
-                if (canvasWidth && canvasHeight) {
-                    setCanvasSize([canvasWidth, canvasHeight]);
-                }
-            });
-
-            return () => {
-                window.removeEventListener('resize', () => {
-                    setCanvasSize([0, 0]);
-                });
-            };
-        }
-    }, [canvasRef, ratios]);
-
-    React.useEffect(() => {
+    useEffect(() => {
         elementsRef.current = elements;
     }, [elements]);
 
-    React.useLayoutEffect(() => {
+    useLayoutEffect(() => {
         if (canvasRef.current) {
             const [width, height] = [
                 canvasRef.current?.clientWidth ?? 2.5,
@@ -117,6 +90,21 @@ export default function TemplatePreview() {
 
             if (ctx) {
                 ctx.clearRect(0, 0, width, height);
+                if (showGrid) {
+                    // draw grid lines
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#1C1C1C';
+                    ctx.lineWidth = 1;
+                    for (let i = 0; i < canvasWidth!; i += 50) {
+                        ctx.moveTo(i, 0);
+                        ctx.lineTo(i, canvasHeight!);
+                    }
+                    for (let i = 0; i < canvasHeight!; i += 50) {
+                        ctx.moveTo(0, i);
+                        ctx.lineTo(canvasWidth!, i);
+                    }
+                    ctx.stroke();
+                }
 
                 const rc = rough.canvas(canvasRef.current);
 
@@ -125,7 +113,7 @@ export default function TemplatePreview() {
                 });
             }
         }
-    }, [elements]);
+    });
 
     const handleMouseDown = (event: React.MouseEvent) => {
         if (!canvasRef.current) return;
@@ -298,27 +286,32 @@ export default function TemplatePreview() {
                 activeElementType={elementType}
                 handleSwitchElementType={handleSwitchElementType}
             />
+            <div className="flex flex-row gap-10 my-2">
+                <div className="flex flex-row gap-2 items-center text-sm text-gray-300">
+                    <input
+                        type="checkbox"
+                        checked={showGrid}
+                        onChange={() => setShowGrid(!showGrid)}
+                    />
+                    <label>Show Grid</label>
+                </div>
+            </div>
             <div
                 id="canvas-container"
-                className={`border border-white/[0.1] ${
-                    radiusHash[cardBevel as RadiusRange]
-                } object-contain flex flex-col justify-center items-center`}
+                ref={canvasContainerRef}
+                className={`${
+                    radiusHash[cardRadius as RadiusRange]
+                } object-contain shadow shadow-gray-700 w-fit ring-inset flex flex-col justify-center items-center`}
                 style={{
-                    maxHeight: 'calc(100vh - 300px)',
-                    aspectRatio: `${ratios[0]}/${ratios[1]}`,
-                    backgroundImage:
-                        'url(https://c1.scryfall.com/file/scryfall-cards/large/front/9/9/994bb02d-6fef-454b-b1b1-d3d1af8dcd1a.jpg?1562055453)',
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
+                    backgroundColor: cardBackgroundColor,
                 }}
             >
                 <canvas
                     onMouseDown={handleMouseDown}
                     onMouseUp={handleMouseUp}
                     onMouseMove={handleMouseMove}
-                    width={canvasSize[0]}
-                    height={canvasSize[1]}
+                    width={getCanvasSize(ratios).width}
+                    height={getCanvasSize(ratios).height}
                     ref={canvasRef}
                 />
             </div>

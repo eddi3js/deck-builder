@@ -5,9 +5,11 @@ export default function Areas() {
     const selectedIndex = selectedElement?.index ?? -1;
 
     return (
-        <div className="rounded flex w-full h-fit mt-4 flex-col gap-2 bg-white/[0.1] p-4">
+        <>
             <h2 className="text-sm">Template Areas ({elements.length}):</h2>
-            {elements.length === 0 && <p className="text-gray-400">No areas created</p>}
+            {elements.length === 0 && (
+                <p className="text-white/[0.5] text-sm">No areas created</p>
+            )}
             {elements.map((_, index) => {
                 return (
                     <div
@@ -51,19 +53,6 @@ export default function Areas() {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="flex flex-col gap-2 w-full mt-2">
-                                    <label
-                                        htmlFor={`area-type-${index}`}
-                                        className="text-xs text-gray-400"
-                                    >
-                                        Default Value
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id={`area-name-${index}`}
-                                        className="bg-transparent border border-gray-500 rounded-md p-2 py-1.5"
-                                    />
-                                </div>
                             </div>
                             <button
                                 onClick={() => removeElement(index)}
@@ -75,7 +64,7 @@ export default function Areas() {
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className="w-6 h-6 text-gray-500 hover:text-red-500"
+                                    className="w-4 h-4 text-gray-500 hover:text-red-500"
                                 >
                                     <path
                                         strokeLinecap="round"
@@ -88,6 +77,6 @@ export default function Areas() {
                     </div>
                 );
             })}
-        </div>
+        </>
     );
 }

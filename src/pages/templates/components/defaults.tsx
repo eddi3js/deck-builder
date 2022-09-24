@@ -1,5 +1,6 @@
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import React from 'react';
+import ColorPicker from './colorPicker';
 import RangeSlider from './range';
 
 export default function DefaultCardFields() {
@@ -8,7 +9,7 @@ export default function DefaultCardFields() {
 
     return (
         <div className="flex flex-col">
-            <div className="mt-4 flex w-full flex-row gap-3">
+            <div className="mt-4 flex w-full flex-row gap-3 mb-4">
                 <div className="flex flex-col flex-1">
                     <label className="text-xs text-gray-400">Width</label>
                     <input
@@ -35,6 +36,7 @@ export default function DefaultCardFields() {
                 </div>
             </div>
             <RangeSlider type="radius" />
+            <ColorPicker />
         </div>
     );
 }

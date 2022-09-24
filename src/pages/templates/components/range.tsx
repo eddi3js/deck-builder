@@ -42,7 +42,7 @@ const RangeSlider = ({ type }: RangeSliderProps) => {
     const max = minMaxValues().max;
 
     return (
-        <div className="flex flex-row gap-4 justify-between items-center mt-8">
+        <div className="flex flex-row gap-4 justify-between items-center my-4">
             <div className="flex flex-1 items-center gap-4">
                 <label
                     htmlFor="default-range"
