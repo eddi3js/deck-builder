@@ -3,7 +3,7 @@ import { AuthContext, authPage } from '@/utils/authPage';
 import Areas from './components/areas';
 import DefaultCardFields from './components/defaults';
 import Header from './components/header';
-import TemplatePreview from './components/templatePreview';
+import TemplatePreview from './components/preview';
 
 export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
