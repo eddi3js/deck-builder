@@ -311,8 +311,8 @@ export default function TemplatePreview() {
                     onMouseDown={handleMouseDown}
                     onMouseUp={handleMouseUp}
                     onMouseMove={handleMouseMove}
-                    width={getCanvasSize(ratios).width}
-                    height={getCanvasSize(ratios).height}
+                    width={canvasWidth}
+                    height={canvasHeight}
                     ref={canvasRef}
                 />
             </div>
