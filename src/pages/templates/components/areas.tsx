@@ -1,16 +1,21 @@
 import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { ElementObject } from '@/utils/canvas/getElementAtPosition';
 
 export default function Areas() {
     const { elements, removeElement, selectedElement } = useCardTemplateStore();
     const selectedIndex = selectedElement?.index ?? -1;
 
+    const areaElements = elements.filter(
+        element => (element as ElementObject)?.roughElement
+    );
+
     return (
         <>
-            <h2 className="text-sm">Template Areas ({elements.length}):</h2>
-            {elements.length === 0 && (
+            <h2 className="text-sm">Template Areas ({areaElements.length}):</h2>
+            {areaElements.length === 0 && (
                 <p className="text-white/[0.5] text-sm">No areas created</p>
             )}
-            {elements.map((_, index) => {
+            {areaElements.map((_, index) => {
                 return (
                     <div
                         className="area flex flex-col gap-4"

@@ -1,36 +1,14 @@
-import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { useEffect, useState } from 'react';
 
 interface CanvasProps {
-    canvasRef: React.RefObject<HTMLCanvasElement>;
-    containerRef: React.RefObject<HTMLDivElement>;
-    keybindings: {
-        valid: boolean;
-        delete: () => void;
-        copy: () => void;
-    };
+    valid: boolean;
+    remove: () => void;
+    copy: () => void;
 }
 
-export default function useCanvasEvents({
-    canvasRef,
-    keybindings,
-    containerRef,
-}: CanvasProps) {
-    const [canvasSize, setCanvasSize] = useState<number[]>([0, 0]);
-    const [showGrid, setShowGrid] = useState<boolean>(false);
+export default function useCanvasEvents({ valid, remove, copy }: CanvasProps) {
+    const [showGrid, setShowGrid] = useState<boolean>(true);
     const [action, setAction] = useState<string>('none');
-
-    const canvasContainer = containerRef.current;
-    const { ratios } = useCardTemplateStore();
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Delete' && keybindings.valid) {
-            keybindings.delete();
-        }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && keybindings.valid) {
-            keybindings.copy();
-        }
-    };
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -39,36 +17,32 @@ export default function useCanvasEvents({
         };
     });
 
-    useEffect(() => {
-        if (canvasRef.current && canvasSize[0] === 0) {
-            changeCanvasSize();
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Delete' && valid) {
+            remove();
         }
-    }, [canvasRef]);
-
-    useEffect(() => {
-        if (canvasRef.current) {
-            changeCanvasSize();
-
-            window.addEventListener('resize', () => {
-                changeCanvasSize();
-            });
-
-            return () => {
-                window.removeEventListener('resize', () => {
-                    setCanvasSize([0, 0]);
-                });
-            };
+        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && valid) {
+            copy();
         }
-    }, [canvasRef, ratios]);
+    };
 
-    const changeCanvasSize = () => {
-        const width = canvasContainer?.clientWidth as number;
-        const height = canvasContainer?.clientHeight as number;
-        setCanvasSize([width, height]);
+    const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+        ctx.beginPath();
+        ctx.strokeStyle = '#eeeeee';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < width; i += 50) {
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, height);
+        }
+        for (let i = 0; i < height; i += 50) {
+            ctx.moveTo(0, i);
+            ctx.lineTo(width, i);
+        }
+        ctx.stroke();
     };
 
     return {
-        canvasSize,
+        drawGrid,
         showGrid,
         setShowGrid,
         action,

@@ -1,3 +1,7 @@
+import { ImageElement } from './createElement';
+
+export type Element = ElementObject | ImageElement;
+
 export interface ElementObject {
     index: number;
     x1: number;
@@ -19,11 +23,7 @@ export interface SelectedElement extends ElementObject {
     offsetY: number;
 }
 
-export default function getElementAtPosition(
-    x: number,
-    y: number,
-    elements: ElementObject[]
-) {
+export default function getElementAtPosition(x: number, y: number, elements: Element[]) {
     return elements
         .map(element => {
             return {
@@ -61,10 +61,17 @@ export function cursorForPosition(position: string | null, remove?: boolean) {
     }
 }
 
-function positionWithinElement(x: number, y: number, element: ElementObject) {
-    const { roughElement, x1, x2, y1, y2 } = element;
+function positionWithinElement(
+    x: number,
+    y: number,
+    element: ElementObject | ImageElement
+) {
+    const { x1, x2, y1, y2 } = element;
 
-    if (roughElement.shape === 'rectangle') {
+    if (
+        (element as ElementObject).roughElement?.shape === 'rectangle' ||
+        (element as ImageElement).image
+    ) {
         const topLeft = nearPoint(x, y, x1, y1, 'tl');
         const topRight = nearPoint(x, y, x2, y1, 'tr');
         const bottomLeft = nearPoint(x, y, x1, y2, 'bl');
@@ -78,11 +85,14 @@ function positionWithinElement(x: number, y: number, element: ElementObject) {
     }
 }
 
-export const adjustElementCoordinates = (el: ElementObject): ElementObject => {
+export const adjustElementCoordinates = (el: Element): Element => {
     const element = el;
-    const { roughElement, x1, x2, y1, y2 } = element;
+    const { x1, x2, y1, y2 } = element;
 
-    if (roughElement.shape === 'rectangle') {
+    if (
+        (element as ElementObject).roughElement.shape === 'rectangle' ||
+        (element as ImageElement).image
+    ) {
         const minX = Math.min(x1, x2);
         const maxX = Math.max(x1, x2);
         const minY = Math.min(y1, y2);

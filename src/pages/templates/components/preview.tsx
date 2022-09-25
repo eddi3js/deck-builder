@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { useCardTemplateStore } from '@/stores/cardTemplates';
-import aspectRatio, { getCanvasSize } from '@/utils/canvas/aspectRatio';
-import createElement from '@/utils/canvas/createElement';
+import { getCanvasSize } from '@/utils/canvas/aspectRatio';
+import createElement, { ImageElement } from '@/utils/canvas/createElement';
 import getElementAtPosition, {
     adjustElementCoordinates,
     cursorForPosition,
+    Element,
     ElementObject,
     resizedCoordinates,
     SelectedElement,
@@ -13,14 +14,15 @@ import getElementAtPosition, {
 import { radiusHash, RadiusRange } from '@/utils/canvas/ranges';
 import useCanvasEvents from '@/utils/canvas/useCanvas';
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import { RoughCanvas } from 'roughjs/bin/canvas';
 import Toolbar from './toolbar';
 const rough = require('roughjs/bundled/rough.cjs');
 
 export default function TemplatePreview() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
-    const selectedElRef = useRef<ElementObject | null>(null);
-    const elementsRef = useRef<ElementObject[]>([]);
+    const selectedElRef = useRef<Element | null>(null);
+    const elementsRef = useRef<Element[]>([]);
 
     const {
         ratios,
@@ -33,47 +35,46 @@ export default function TemplatePreview() {
         removeElement,
         setElements,
         setSelectedElement,
-        changeElementType: handleSwitchElementType,
     } = useCardTemplateStore();
 
     const { width: canvasWidth, height: canvasHeight } = getCanvasSize(ratios);
 
-    const { canvasSize, showGrid, setShowGrid, action, setAction } = useCanvasEvents({
-        canvasRef,
-        containerRef: canvasContainerRef,
-        keybindings: {
-            valid: Boolean(selectedElRef.current),
-            delete: () => {
-                if (!selectedElRef.current) return null;
-                removeElement(selectedElRef.current.index);
-                const elementsWithoutDeleted = elementsRef.current.splice(
-                    selectedElRef.current.index,
-                    1
-                );
-                const updatedElements = elementsWithoutDeleted.map((el, index) => ({
-                    ...el,
-                    index,
-                }));
-                elementsRef.current = updatedElements;
+    const handleCopy = () => {
+        if (!(selectedElRef.current as ElementObject)?.roughElement) return null;
+        const { roughElement, x1, x2, y1, y2 } = selectedElRef.current as ElementObject;
+        const copiedElement = {
+            roughElement,
+            x1: x1 + 5,
+            x2: x2 + 5,
+            y1: y1 + 5,
+            y2: y2 + 5,
+            index: elementsRef.current?.length ?? 0,
+        };
+        setElements([...elementsRef.current, copiedElement]);
+    };
 
-                setSelectedElement(null);
-                selectedElRef.current = null;
-                setAction('none');
-            },
-            copy: () => {
-                if (!selectedElRef.current) return null;
-                const { roughElement, x1, x2, y1, y2 } = selectedElRef.current;
-                const copiedElement = {
-                    roughElement,
-                    x1: x1 + 5,
-                    x2: x2 + 5,
-                    y1: y1 + 5,
-                    y2: y2 + 5,
-                    index: elementsRef.current?.length ?? 0,
-                };
-                setElements([...elementsRef.current, copiedElement]);
-            },
-        },
+    const handleDelete = () => {
+        if (!selectedElRef.current) return null;
+        removeElement(selectedElRef.current.index);
+        const elementsWithoutDeleted = elementsRef.current.splice(
+            selectedElRef.current.index,
+            1
+        );
+        const updatedElements = elementsWithoutDeleted.map((el, index) => ({
+            ...el,
+            index,
+        }));
+        elementsRef.current = updatedElements;
+
+        setSelectedElement(null);
+        selectedElRef.current = null;
+        setAction('none');
+    };
+
+    const { showGrid, setShowGrid, action, setAction, drawGrid } = useCanvasEvents({
+        valid: Boolean(selectedElRef.current),
+        remove: handleDelete,
+        copy: handleCopy,
     });
 
     useEffect(() => {
@@ -82,38 +83,31 @@ export default function TemplatePreview() {
 
     useLayoutEffect(() => {
         if (canvasRef.current) {
-            const [width, height] = [
-                canvasRef.current?.clientWidth ?? 2.5,
-                canvasRef.current?.clientHeight ?? 3.5,
-            ];
-            const ctx = canvasRef.current.getContext('2d');
-
+            const ctx = canvasRef?.current?.getContext('2d');
             if (ctx) {
-                ctx.clearRect(0, 0, width, height);
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
                 if (showGrid) {
-                    // draw grid lines
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#1C1C1C';
-                    ctx.lineWidth = 1;
-                    for (let i = 0; i < canvasWidth!; i += 50) {
-                        ctx.moveTo(i, 0);
-                        ctx.lineTo(i, canvasHeight!);
-                    }
-                    for (let i = 0; i < canvasHeight!; i += 50) {
-                        ctx.moveTo(0, i);
-                        ctx.lineTo(canvasWidth!, i);
-                    }
-                    ctx.stroke();
+                    drawGrid(ctx, canvasWidth, canvasHeight);
                 }
 
-                const rc = rough.canvas(canvasRef.current);
+                const rc: RoughCanvas = rough.canvas(canvasRef.current);
 
-                elements.forEach(({ roughElement }: ElementObject) => {
-                    rc?.draw(roughElement);
+                elements.forEach((e: ElementObject | ImageElement) => {
+                    if ((e as ImageElement)?.image) {
+                        const { image } = e as ImageElement;
+                        const img = new Image();
+                        img.src = image.src;
+                        img.addEventListener('load', () => {
+                            ctx.drawImage(img, 0, 0);
+                        });
+                    } else {
+                        rc?.draw((e as ElementObject).roughElement);
+                    }
                 });
             }
         }
-    });
+    }, [elements, canvasRef.current]);
 
     const handleMouseDown = (event: React.MouseEvent) => {
         if (!canvasRef.current) return;
@@ -170,8 +164,8 @@ export default function TemplatePreview() {
             );
 
             setElements([...elements, element]);
-            setSelectedElement(element);
-            selectedElRef.current = element;
+            setSelectedElement(element as Element);
+            selectedElRef.current = element as ElementObject;
             setAction('drawing');
         }
     };
@@ -188,7 +182,14 @@ export default function TemplatePreview() {
                     elements[i as number] as ElementObject
                 );
                 updateElement(index, x1, y1, x2, y2, shape as 'rectangle' | 'circle');
-                selectedElRef.current = createElement(index, x1, y1, x2, y2, 'rectangle');
+                selectedElRef.current = createElement(
+                    index,
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    'rectangle'
+                ) as ElementObject;
             }
         }
         setAction('none');
@@ -274,7 +275,7 @@ export default function TemplatePreview() {
         const updatedElement = createElement(index, x1, y1, x2, y2, type);
 
         const updatedElements = [...elements];
-        updatedElements[index] = updatedElement;
+        updatedElements[index] = updatedElement as ElementObject;
         elementsRef.current = updatedElements;
         setElements(updatedElements);
     };
@@ -284,7 +285,7 @@ export default function TemplatePreview() {
             <Toolbar
                 elementsLength={elements.length}
                 activeElementType={elementType}
-                handleSwitchElementType={handleSwitchElementType}
+                handleSwitchElementType={changeElementType}
             />
             <div className="flex flex-row gap-10 my-2">
                 <div className="flex flex-row gap-2 items-center text-sm text-gray-300">

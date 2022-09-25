@@ -1,4 +1,4 @@
-import { ElementObject } from '@/utils/canvas/getElementAtPosition';
+import { Element } from '@/utils/canvas/getElementAtPosition';
 import create from 'zustand';
 
 export type ElementTypes = 'circle' | 'rectangle' | 'remove' | 'select';
@@ -10,23 +10,21 @@ export interface AreaFields {
 export interface CardTemplateState {
     ratios: number[];
     areas: AreaFields[];
-    elements: ElementObject[];
-    selectedElement: ElementObject | null;
+    elements: Element[];
+    selectedElement: Element | null;
     elementType: ElementTypes;
     templateName: string;
     cardRadius: number;
     cardBackgroundColor: string;
-    templateImages: any;
 
-    setElements: (elements: ElementObject[]) => void;
-    setSelectedElement: (element: ElementObject | null) => void;
+    setElements: (elements: Element[]) => void;
+    setSelectedElement: (element: Element | null) => void;
     changeRatios: (ratio: number, index: number) => void;
     changeRadius: (radius: number) => void;
     changeElementType: (type: ElementTypes) => void;
     changeTemplateName: (name: string) => void;
     removeElement: (index: number) => void;
     changeBackgroundColor: (color: string) => void;
-    setTemplateImages: (images: any) => void;
 }
 
 export const useCardTemplateStore = create<CardTemplateState>(set => ({
@@ -35,13 +33,12 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     selectedElement: null,
     elementType: 'select' as ElementTypes,
     cardRadius: 0,
-    cardBackgroundColor: '#ffffff',
+    cardBackgroundColor: '#cdcdcd',
     templateImages: [],
     templateName: 'New Card Template',
     areas: [] as AreaFields[],
 
     setElements: elements => set({ elements }),
-    setTemplateImages: images => set({ templateImages: images }),
     setSelectedElement: element => set({ selectedElement: element }),
     removeElement: (index: number) => {
         set((state: CardTemplateState) => {
