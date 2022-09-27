@@ -1,17 +1,16 @@
 import Layout from '@/components/layout';
 import { AuthContext, authPage } from '@/utils/authPage';
 import { Routes } from '@/utils/constants';
-import { Card } from 'flowbite-react';
 
 export default function CardTemplates() {
     return (
         <Layout title="Card Templates">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                <Card>
+                <div className="card shadow-lg">
                     <div className="flex h-32 md:h-40 lg:h-60 w-full flex-col justify-center items-center">
                         <a
                             href={`${Routes.Templates}/new`}
-                            className="flex flex-col w-full items-center text-gray-400 hover:text-blue-300"
+                            className="flex flex-col w-full items-center"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +29,7 @@ export default function CardTemplates() {
                             New Template
                         </a>
                     </div>
-                </Card>
+                </div>
             </div>
         </Layout>
     );

@@ -1,4 +1,3 @@
-import { Tooltip } from 'flowbite-react';
 import { ElementTypes } from '../../new';
 import ImageLayer from './ImageLayer';
 
@@ -27,14 +26,14 @@ export default function Toolbar({
 
         return activeElementType === type
             ? `border border-${borderColor()}-500 p-1 border-2 ${
-                  type === 'circle' ? 'rounded-full' : 'rounded-md text-white'
+                  type === 'circle' ? 'rounded-full' : 'rounded-md'
               }`
-            : 'p-1 border-2 border-transparent text-gray-400 hover:text-white';
+            : 'p-1 border-2 border-transparent text-gray-400';
     };
 
     return (
-        <div className="flex flex-row h-fit w-fit p-2 bg-white/[0.1] rounded gap-4 rounded-t-none mb-4">
-            <Tooltip content="Move/Resize" placement="top" style="light">
+        <div className="flex flex-row h-fit w-fit p-2 rounded gap-4 rounded-t-none mb-4 relative">
+            <div className="tooltip tooltip-info" data-tip="Move/Resize">
                 <button
                     disabled={elementsLength === 0}
                     onClick={() => handleSwitchElementType('select')}
@@ -55,9 +54,9 @@ export default function Toolbar({
                         />
                     </svg>
                 </button>
-            </Tooltip>
+            </div>
 
-            <Tooltip content="Create Area Layer" placement="top" style="light">
+            <div className="tooltip tooltip-info" data-tip="Create Area Layer">
                 <button
                     onClick={() => handleSwitchElementType('rectangle')}
                     className={isActive('rectangle')}
@@ -77,9 +76,9 @@ export default function Toolbar({
                         />
                     </svg>
                 </button>
-            </Tooltip>
+            </div>
 
-            <Tooltip content="Remove Selected" placement="top" style="light">
+            <div className="tooltip tooltip-info" data-tip="Remove Selected">
                 <button
                     disabled={elementsLength === 0}
                     onClick={() => handleSwitchElementType('remove')}
@@ -100,7 +99,7 @@ export default function Toolbar({
                         />
                     </svg>
                 </button>
-            </Tooltip>
+            </div>
 
             <ImageLayer />
         </div>

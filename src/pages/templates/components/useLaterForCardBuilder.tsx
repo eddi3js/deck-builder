@@ -1,4 +1,3 @@
-import { Select } from 'flowbite-react';
 import { SetStateAction, useEffect, useRef, useState } from 'react';
 
 export type MetaFieldTypes = 'string' | 'number' | 'image';

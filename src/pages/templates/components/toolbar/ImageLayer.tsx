@@ -1,6 +1,5 @@
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import createElement from '@/utils/canvas/createElement';
-import { Tooltip } from 'flowbite-react';
 
 export default function ImageLayer() {
     const { elements, setElements } = useCardTemplateStore();
@@ -15,7 +14,7 @@ export default function ImageLayer() {
     };
 
     return (
-        <Tooltip content="Add Image Layer" placement="top" style="light">
+        <div className="tooltip tooltip-info" data-tip="Add Image Layer">
             <button
                 onClick={() => {
                     const input = document.getElementById('file') as HTMLInputElement;
@@ -45,6 +44,6 @@ export default function ImageLayer() {
                 onChange={handleUploadImage}
                 hidden
             />
-        </Tooltip>
+        </div>
     );
 }

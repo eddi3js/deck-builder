@@ -1,46 +1,60 @@
-import { useLocalStorage } from 'usehooks-ts';
+import { useSession, signOut } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import ThemeSwitcher from './theme/switcher';
 
 export default function Header() {
-    const [mobileSidebarOpen, setMobileSidebarOpen] = useLocalStorage(
-        'mobileSidebarOpen',
-        false
-    );
-
+    const { data } = useSession();
     return (
-        <div className="border-gray-800 items-center px-2 py-2.5 flex-row flex bg-white/[0.1] sm:px-4">
-            <button
-                className="p-2 flex lg:hidden bg-gray-600 rounded mr-3"
-                onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-            >
-                {!mobileSidebarOpen ? (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                            clipRule="evenodd"
+        <div className="navbar shadow">
+            <div className="flex-1">
+                <div className="btn btn-ghost normal-case text-xl">
+                    <Link href="/">DeckBuilder.gg</Link>
+                </div>
+            </div>
+            <div className="flex-none">
+                <ThemeSwitcher />
+                <div className="dropdown dropdown-end">
+                    <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                        <Image
+                            layout="fill"
+                            src={data?.user?.image ?? ''}
+                            className="w-8 h-8 rounded-full"
+                            alt="avatar"
                         />
-                    </svg>
-                ) : (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+                    </label>
+                    <ul
+                        tabIndex={0}
+                        className="menu menu-compact dropdown-content mt-3 p-2 shadow-lg bg-base-100 rounded-box w-fit"
                     >
-                        <path
-                            fillRule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                )}
-            </button>
-            <p className="text-lg">Deckbuilder.gg</p>
+                        <li className="text-xs p-4 pt-2">
+                            Signedin as: {data?.user?.email}
+                        </li>
+                        <li>
+                            <button
+                                className="w-full flex flex-row"
+                                onClick={() => signOut()}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                                    />
+                                </svg>
+                                Logout
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     );
 }
