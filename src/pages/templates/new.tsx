@@ -1,5 +1,6 @@
 import Layout from '@/components/layout';
 import { AuthContext, authPage } from '@/utils/authPage';
+import { Routes } from '@/utils/constants';
 import Areas from './components/areas';
 import DefaultCardFields from './components/defaults';
 import Header from './components/header';
@@ -10,18 +11,33 @@ export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
 export default function NewTemplate() {
     return (
-        <Layout>
-            <Header />
-            <div className="flex flex-row gap-10">
-                <div className="flex flex-col 2xl:flex-row 2xl:gap-10 flex-1">
+        <Layout
+            breadcrumbLinks={[
+                {
+                    icon: 'folder',
+                    label: 'Card Templates',
+                    href: Routes.Templates,
+                },
+                {
+                    icon: 'document',
+                    label: 'New Template',
+                    href: `${Routes.Templates}/new`,
+                    active: true,
+                },
+            ]}
+        >
+            <div className="flex flex-row gap-1 w-full flex-1 justify-between">
+                <div className="flex flex-col bg-base-200 h-full w-72 p-4">
                     <DefaultCardFields />
-                    <div className="rounded flex w-full h-fit mt-4 flex-col gap-2 bg-white/[0.1] p-4">
-                        <Images />
-                        <Areas />
-                    </div>
                 </div>
-                <div className="w-1/2">
+
+                <div>
                     <TemplatePreview />
+                </div>
+
+                <div className="flex flex-col w-80 bg-base-200 h-full py-4">
+                    <Images />
+                    <Areas />
                 </div>
             </div>
         </Layout>

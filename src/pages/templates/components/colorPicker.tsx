@@ -17,16 +17,14 @@ export default function ColorPicker() {
 
     return (
         <div className="flex flex-row gap-4 mb-4 color-picker relative items-end">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
-                Background Color
-            </p>
+            <p className="text-xs">Background Color</p>
             <div className="relative">
                 <input
                     type="text"
                     readOnly
                     value={cardBackgroundColor}
                     onClick={() => setPickerOpen(true)}
-                    className="h-10 w-fit rounded bg-white/[0.1] pl-3"
+                    className="input input-bordered w-full max-w-xs input-sm"
                 />
                 <div ref={ref} className={`absolute ${pickerOpen ? 'block' : 'hidden'}`}>
                     <HexColorPicker

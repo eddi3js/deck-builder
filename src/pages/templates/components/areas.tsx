@@ -10,10 +10,10 @@ export default function Areas() {
     );
 
     return (
-        <>
-            <h2 className="text-sm">Template Areas ({areaElements.length}):</h2>
+        <div className="flex flex-1 flex-col">
+            <h2 className="text-sm mb-2 px-4">Template Areas ({areaElements.length}):</h2>
             {areaElements.length === 0 && (
-                <p className="text-white/[0.5] text-sm">No areas created</p>
+                <p className="text-sm px-4">No areas created</p>
             )}
             {areaElements.map((_, index) => {
                 return (
@@ -22,35 +22,25 @@ export default function Areas() {
                         key={`element-fields-${index}`}
                     >
                         <div
-                            className={`flex flex-row justify-between items-start gap-2 p-1 border-2 border-${
-                                selectedIndex === index ? 'blue-500' : 'transparent'
+                            className={`flex flex-row justify-between items-start gap-2 p-4 border-2 border-${
+                                selectedIndex === index ? 'primary' : 'transparent'
                             } rounded`}
                         >
                             <div className="flex flex-col flex-1">
                                 <div className="flex flex-row gap-4 flex-1">
-                                    <div className="flex flex-col gap-2 w-2/3">
-                                        <label
-                                            htmlFor={`area-name-${index}`}
-                                            className="text-xs text-gray-400"
-                                        >
-                                            Key Name
-                                        </label>
+                                    <div className="flex flex-col">
+                                        <p className="text-sm mb-1">Key Name</p>
                                         <input
                                             type="text"
                                             id={`area-name-${index}`}
-                                            className="bg-transparent border text-sm border-gray-500 rounded-md p-2 py-1.5"
+                                            className="input input-bordered w-full input-sm"
                                         />
                                     </div>
-                                    <div className="flex flex-col gap-2 flex-1">
-                                        <label
-                                            htmlFor={`area-type-${index}`}
-                                            className="text-xs text-gray-400"
-                                        >
-                                            Type
-                                        </label>
+                                    <div className="flex flex-col">
+                                        <p className="text-sm mb-1">Type</p>
                                         <select
                                             id={`area-type-${index}`}
-                                            className="bg-transparent border text-sm border-gray-500 rounded-md p-2 pt-1.5"
+                                            className="select select-bordered w-full select-sm"
                                         >
                                             <option value="string">String</option>
                                             <option value="number">Number</option>
@@ -82,6 +72,6 @@ export default function Areas() {
                     </div>
                 );
             })}
-        </>
+        </div>
     );
 }

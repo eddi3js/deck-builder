@@ -13,31 +13,22 @@ export default function Toolbar({
     activeElementType,
 }: TooltipProps) {
     const isActive = (type: ElementTypes) => {
-        const borderColor = () => {
-            switch (type) {
-                case 'remove':
-                    return 'red';
-                case 'select':
-                    return 'gray';
-                default:
-                    return 'blue';
-            }
-        };
-
         return activeElementType === type
-            ? `border border-${borderColor()}-500 p-1 border-2 ${
+            ? `border border-2 p-1 border-2 ${
                   type === 'circle' ? 'rounded-full' : 'rounded-md'
               }`
-            : 'p-1 border-2 border-transparent text-gray-400';
+            : 'p-1 border-2 border-transparent hover:border-inherit rounded-md';
     };
 
     return (
-        <div className="flex flex-row h-fit w-fit p-2 rounded gap-4 rounded-t-none mb-4 relative">
-            <div className="tooltip tooltip-info" data-tip="Move/Resize">
+        <div className="flex flex-row h-fit w-fit p-2 rounded gap-4 rounded-t-none mb-4 relative mx-auto">
+            <div className="tooltip tooltip-bottom" data-tip="Move/Resize">
                 <button
                     disabled={elementsLength === 0}
                     onClick={() => handleSwitchElementType('select')}
-                    className={`${isActive('select')} cursor-pointer`}
+                    className={`${isActive(
+                        'select'
+                    )} cursor-pointer hover:border-2 hover:border-primary`}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +47,7 @@ export default function Toolbar({
                 </button>
             </div>
 
-            <div className="tooltip tooltip-info" data-tip="Create Area Layer">
+            <div className="tooltip tooltip-bottom" data-tip="Create Area Layer">
                 <button
                     onClick={() => handleSwitchElementType('rectangle')}
                     className={isActive('rectangle')}
@@ -78,7 +69,7 @@ export default function Toolbar({
                 </button>
             </div>
 
-            <div className="tooltip tooltip-info" data-tip="Remove Selected">
+            <div className="tooltip tooltip-bottom" data-tip="Remove Selected">
                 <button
                     disabled={elementsLength === 0}
                     onClick={() => handleSwitchElementType('remove')}

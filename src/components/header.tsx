@@ -6,7 +6,7 @@ import ThemeSwitcher from './theme/switcher';
 export default function Header() {
     const { data } = useSession();
     return (
-        <div className="navbar shadow">
+        <div className="navbar">
             <div className="flex-1">
                 <div className="btn btn-ghost normal-case text-xl">
                     <Link href="/">DeckBuilder.gg</Link>

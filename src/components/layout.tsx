@@ -4,15 +4,16 @@ import Head from 'next/head';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
 import { Routes } from '@/utils/constants';
+import Breadcrumbs, { NavLink } from './breadcrumbs';
 
 export default function Layout({
     children,
-    title,
-    callToAction,
+    gutters,
+    breadcrumbLinks,
 }: {
     children: React.ReactNode;
-    title?: string;
-    callToAction?: React.ReactNode;
+    gutters?: boolean;
+    breadcrumbLinks?: NavLink[];
 }) {
     const navigate = useRouter();
     const { data } = trpc.useQuery(['user.me']);
@@ -32,18 +33,14 @@ export default function Layout({
             </Head>
             <div className="flex h-screen w-full flex-col overflow-hidden">
                 <Header />
+                <Breadcrumbs links={breadcrumbLinks ?? []} />
                 <div className="flex h-full overflow-hidden">
-                    <div className="flex-1 overflow-auto p-8">
-                        <div className={`flex flex-col h-full`}>
-                            {title && (
-                                <div className="flex flex-row mb-7 pb-3 justify-between items-center border-b">
-                                    <h1 className="text-3xl font-bold">{title}</h1>
-                                    {callToAction}
-                                </div>
-                            )}
-
-                            {children}
-                        </div>
+                    <div
+                        className={`flex-1 ${
+                            gutters !== undefined && gutters === false ? '' : 'p-8 pt-3'
+                        }`}
+                    >
+                        <div className={`flex flex-col h-full`}>{children}</div>
                     </div>
                 </div>
             </div>

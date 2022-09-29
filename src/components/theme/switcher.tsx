@@ -1,9 +1,14 @@
+import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
+
+const defaultBgColors = ['#cdcdcd', '#000000'];
 
 export default function ThemeSwitcher() {
     const [mounted, setMounted] = useState(false);
     const [theme, setTheme] = useLocalStorage('theme', 'business');
+
+    const { cardBackgroundColor, changeBackgroundColor } = useCardTemplateStore();
 
     useEffect(() => setMounted(true), []);
     useEffect(() => {
@@ -17,8 +22,13 @@ export default function ThemeSwitcher() {
     const isDarkTheme = theme === 'business';
 
     const handleChangeTheme = () => {
-        const newTheme = isDarkTheme ? 'emerald' : 'business';
+        const newTheme = isDarkTheme ? 'wireframe' : 'business';
         document.documentElement.dataset.theme = newTheme;
+
+        if (defaultBgColors.includes(cardBackgroundColor)) {
+            changeBackgroundColor(!isDarkTheme ? '#000000' : '#cdcdcd');
+        }
+
         setTheme(newTheme);
     };
 

@@ -281,28 +281,29 @@ export default function TemplatePreview() {
     };
 
     return (
-        <div style={{ minWidth: 500 }}>
+        <>
             <Toolbar
                 elementsLength={elements.length}
                 activeElementType={elementType}
                 handleSwitchElementType={changeElementType}
             />
-            <div className="flex flex-row gap-10 my-2">
-                <div className="flex flex-row gap-2 items-center text-sm text-gray-300">
+            {/* <div className="flex flex-row gap-10 my-2">
+                <div className="flex flex-row gap-2 items-center text-sm">
                     <input
                         type="checkbox"
                         checked={showGrid}
                         onChange={() => setShowGrid(!showGrid)}
+                        className="checkbox checkbox-xs checkbox-primary"
                     />
                     <label>Show Grid</label>
                 </div>
-            </div>
+            </div> */}
             <div
                 id="canvas-container"
                 ref={canvasContainerRef}
                 className={`${
                     radiusHash[cardRadius as RadiusRange]
-                } object-contain shadow shadow-gray-700 w-fit ring-inset flex flex-col justify-center items-center`}
+                } object-contain w-fit flex flex-col justify-center items-center`}
                 style={{
                     backgroundColor: cardBackgroundColor,
                 }}
@@ -316,6 +317,6 @@ export default function TemplatePreview() {
                     ref={canvasRef}
                 />
             </div>
-        </div>
+        </>
     );
 }

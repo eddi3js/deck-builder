@@ -35,7 +35,7 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     cardRadius: 0,
     cardBackgroundColor: '#cdcdcd',
     templateImages: [],
-    templateName: 'New Card Template',
+    templateName: '',
     areas: [] as AreaFields[],
 
     setElements: elements => set({ elements }),

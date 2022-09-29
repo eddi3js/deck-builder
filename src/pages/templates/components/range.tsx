@@ -43,14 +43,10 @@ const RangeSlider = ({ type }: RangeSliderProps) => {
 
     return (
         <div className="flex flex-row gap-4 justify-between items-center my-4">
-            <div className="flex flex-1 items-center gap-4">
-                <label
-                    htmlFor="default-range"
-                    className="text-sm font-medium text-gray-900 dark:text-gray-300 w-1/2"
-                >
-                    Corner Bevel
-                </label>
-
+            <label htmlFor="default-range" className="text-xs">
+                Corner Bevel
+            </label>
+            <div className="flex flex-row gap-3 text-sm items-center">
                 <input
                     id="default-range"
                     type="range"
@@ -58,10 +54,10 @@ const RangeSlider = ({ type }: RangeSliderProps) => {
                     max={max}
                     value={value}
                     onChange={handleChange}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                    className="range rang-xs"
                 />
+                {value}
             </div>
-            {value}
         </div>
     );
 };

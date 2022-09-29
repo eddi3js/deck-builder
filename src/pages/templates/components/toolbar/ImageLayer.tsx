@@ -14,13 +14,13 @@ export default function ImageLayer() {
     };
 
     return (
-        <div className="tooltip tooltip-info" data-tip="Add Image Layer">
+        <div className="tooltip tooltip-bottom" data-tip="Add Image Layer">
             <button
                 onClick={() => {
                     const input = document.getElementById('file') as HTMLInputElement;
                     input.click();
                 }}
-                className="p-1 cursor-pointer border-2 border-transparent text-gray-400 hover:text-white"
+                className="p-1 cursor-pointer border-2 border-transparent"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +28,7 @@ export default function ImageLayer() {
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="w-5 h-5 text-gray-400 hover:text-white"
+                    className="w-5 h-5"
                 >
                     <path
                         strokeLinecap="round"
