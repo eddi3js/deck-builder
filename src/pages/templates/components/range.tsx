@@ -29,7 +29,7 @@ const RangeSlider = ({ type }: RangeSliderProps) => {
             case 'radius':
                 return {
                     min: 1,
-                    max: 7,
+                    max: 8,
                 };
             default:
                 return {

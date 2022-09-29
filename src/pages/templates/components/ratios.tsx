@@ -11,12 +11,13 @@ export default function Ratios() {
                 <div className="form-control w-full max-w-xs">
                     <input
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            changeRatios(parseFloat(e.target.value), 1)
+                            changeRatios(parseFloat(e.target.value), 0)
                         }
+                        name="width"
                         value={width}
                         step={0.5}
                         type="number"
-                        placeholder="Type here"
+                        placeholder="width in inches"
                         className="input input-bordered w-full max-w-xs input-sm"
                     />
                     <label className="label">
@@ -29,10 +30,11 @@ export default function Ratios() {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             changeRatios(parseFloat(e.target.value), 1)
                         }
+                        name="height"
                         value={height}
                         step={0.5}
                         type="number"
-                        placeholder="Type here"
+                        placeholder="height in inches"
                         className="input input-bordered w-full max-w-xs input-sm"
                     />
                     <label className="label">
