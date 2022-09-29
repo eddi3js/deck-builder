@@ -15,7 +15,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         themeChange(false);
     }, []);
     return (
-        <SessionProvider session={pageProps.session}>
+        <SessionProvider session={(pageProps as any)?.session}>
             <Component {...pageProps} />
         </SessionProvider>
     );

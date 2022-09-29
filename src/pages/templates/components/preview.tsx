@@ -208,7 +208,7 @@ export default function TemplatePreview() {
             action === 'resizing' ||
             elementType === 'remove'
         ) {
-            event.target.style.cursor = e
+            (event.target as any).style.cursor = e
                 ? cursorForPosition(
                       e.position as string,
                       Boolean(elementType === 'remove')
