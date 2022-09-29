@@ -315,6 +315,7 @@ export default function TemplatePreview() {
                     width={canvasWidth}
                     height={canvasHeight}
                     ref={canvasRef}
+                    className={radiusHash[cardRadius as RadiusRange]}
                 />
             </div>
         </>

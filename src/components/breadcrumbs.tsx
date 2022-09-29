@@ -53,9 +53,9 @@ export default function Breadcrumbs({ links }: NavigationProps) {
     };
 
     return (
-        <div className="text-sm px-8 breadcrumbs h-auto overflow-hidden">
+        <div className="text-sm  breadcrumbs h-auto overflow-hidden">
             <div className="divider m-0"></div>
-            <ul className="my-2">
+            <ul className="my-2 px-8">
                 <li>
                     <Link href="/">
                         <a>
