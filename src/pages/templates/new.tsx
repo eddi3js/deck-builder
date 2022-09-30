@@ -3,7 +3,6 @@ import { AuthContext, authPage } from '@/utils/authPage';
 import { Routes } from '@/utils/constants';
 import Areas from './components/areas';
 import DefaultCardFields from './components/defaults';
-import Header from './components/header';
 import Images from './components/images';
 import TemplatePreview from './components/preview';
 

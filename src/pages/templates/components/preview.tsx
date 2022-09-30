@@ -71,7 +71,7 @@ export default function TemplatePreview() {
         setAction('none');
     };
 
-    const { showGrid, setShowGrid, action, setAction, drawGrid } = useCanvasEvents({
+    const { showGrid, createScreenshot, action, setAction, drawGrid } = useCanvasEvents({
         valid: Boolean(selectedElRef.current),
         remove: handleDelete,
         copy: handleCopy,
@@ -287,6 +287,11 @@ export default function TemplatePreview() {
                 activeElementType={elementType}
                 handleSwitchElementType={changeElementType}
             />
+            <button
+                onClick={() => createScreenshot(canvasRef.current as HTMLCanvasElement)}
+            >
+                Take screenshot
+            </button>
             {/* <div className="flex flex-row gap-10 my-2">
                 <div className="flex flex-row gap-2 items-center text-sm">
                     <input
