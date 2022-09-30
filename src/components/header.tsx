@@ -16,12 +16,18 @@ export default function Header() {
                 <ThemeSwitcher />
                 <div className="dropdown dropdown-end">
                     <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                        <Image
-                            layout="fill"
-                            src={data?.user?.image ?? ''}
-                            className="w-8 h-8 rounded-full"
-                            alt="avatar"
-                        />
+                        {data?.user ? (
+                            <Image
+                                layout="fill"
+                                src={data?.user?.image ?? ''}
+                                className="w-8 h-8 rounded-full"
+                                alt="avatar"
+                            />
+                        ) : (
+                            <div className="avatar">
+                                <div className="w-8 h-8 rounded-full bg-base-300" />
+                            </div>
+                        )}
                     </label>
                     <ul
                         tabIndex={0}
