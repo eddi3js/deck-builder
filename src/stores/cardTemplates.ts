@@ -26,7 +26,7 @@ export interface CardTemplateState {
     changeTemplateName: (name: string) => void;
     removeElement: (index: number) => void;
     changeBackgroundColor: (color: string) => void;
-    uploadBackgroundImage: (file: File | string) => void;
+    uploadBackgroundImage: (file: File | string | null) => void;
 }
 
 export const useCardTemplateStore = create<CardTemplateState>(set => ({
@@ -71,5 +71,6 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     changeTemplateName: (templateName: string) => set({ templateName }),
 
     changeBackgroundColor: (color: string) => set({ cardBackgroundColor: color }),
-    uploadBackgroundImage: (file: File | string) => set({ cardBackgroundImage: file }),
+    uploadBackgroundImage: (file: File | string | null) =>
+        set({ cardBackgroundImage: file }),
 }));
