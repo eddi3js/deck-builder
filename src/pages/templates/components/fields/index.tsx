@@ -1,13 +1,14 @@
-import React from 'react';
 import ColorPicker from './colorPicker';
-import Header from './header';
+import TemplateName from './name';
 import RangeSlider from './range';
 import Ratios from './ratios';
+import BackgroundImage from './background';
 
-export default function DefaultCardFields() {
+export default function CardFields() {
     return (
         <div className="flex flex-col">
-            <Header />
+            <BackgroundImage />
+            <TemplateName />
             <Ratios />
             <RangeSlider type="radius" />
             <ColorPicker />

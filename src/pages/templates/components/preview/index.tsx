@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { getCanvasSize } from '@/utils/canvas/aspectRatio';
-import createElement, { ImageElement } from '@/utils/canvas/createElement';
+import createElement from '@/utils/canvas/createElement';
 import getElementAtPosition, {
     adjustElementCoordinates,
     cursorForPosition,
@@ -27,6 +27,7 @@ export default function TemplatePreview() {
     const {
         ratios,
         cardBackgroundColor,
+        cardBackgroundImage,
         cardRadius,
         selectedElement,
         elementType,
@@ -42,13 +43,17 @@ export default function TemplatePreview() {
     const handleCopy = () => {
         if (!(selectedElRef.current as ElementObject)?.roughElement) return null;
         const { roughElement, x1, x2, y1, y2 } = selectedElRef.current as ElementObject;
-        const copiedElement = {
+        const copiedElement: ElementObject = {
             roughElement,
             x1: x1 + 5,
             x2: x2 + 5,
             y1: y1 + 5,
             y2: y2 + 5,
             index: elementsRef.current?.length ?? 0,
+            metadata: {
+                type: 'string',
+                name: '',
+            },
         };
         setElements([...elementsRef.current, copiedElement]);
     };
@@ -71,15 +76,35 @@ export default function TemplatePreview() {
         setAction('none');
     };
 
-    const { showGrid, createScreenshot, action, setAction, drawGrid } = useCanvasEvents({
+    const { showGrid, action, setAction, drawGrid, setShowGrid } = useCanvasEvents({
         valid: Boolean(selectedElRef.current),
         remove: handleDelete,
         copy: handleCopy,
+        ctx: canvasRef.current?.getContext('2d') as CanvasRenderingContext2D,
     });
 
     useEffect(() => {
         elementsRef.current = elements;
     }, [elements]);
+
+    useEffect(() => {
+        if (canvasContainerRef.current) {
+            const container = document.getElementById('canvas-container');
+            if (container) {
+                if (cardBackgroundImage === null) {
+                    container.style.backgroundImage = '';
+                    return;
+                }
+
+                // get url of image
+                const url =
+                    typeof cardBackgroundImage === 'string'
+                        ? cardBackgroundImage
+                        : URL.createObjectURL(cardBackgroundImage);
+                container.style.backgroundImage = `url(${url})`;
+            }
+        }
+    }, [cardBackgroundImage, canvasContainerRef]);
 
     useLayoutEffect(() => {
         if (canvasRef.current) {
@@ -93,17 +118,8 @@ export default function TemplatePreview() {
 
                 const rc: RoughCanvas = rough.canvas(canvasRef.current);
 
-                elements.forEach((e: ElementObject | ImageElement) => {
-                    if ((e as ImageElement)?.image) {
-                        const { image } = e as ImageElement;
-                        const img = new Image();
-                        img.src = image.src;
-                        img.addEventListener('load', () => {
-                            ctx.drawImage(img, 0, 0);
-                        });
-                    } else {
-                        rc?.draw((e as ElementObject).roughElement);
-                    }
+                elements.forEach((e: ElementObject) => {
+                    rc?.draw((e as ElementObject).roughElement);
                 });
             }
         }
@@ -287,12 +303,7 @@ export default function TemplatePreview() {
                 activeElementType={elementType}
                 handleSwitchElementType={changeElementType}
             />
-            <button
-                onClick={() => createScreenshot(canvasRef.current as HTMLCanvasElement)}
-            >
-                Take screenshot
-            </button>
-            {/* <div className="flex flex-row gap-10 my-2">
+            <div className="flex flex-row gap-10 my-2">
                 <div className="flex flex-row gap-2 items-center text-sm">
                     <input
                         type="checkbox"
@@ -302,7 +313,7 @@ export default function TemplatePreview() {
                     />
                     <label>Show Grid</label>
                 </div>
-            </div> */}
+            </div>
             <div
                 id="canvas-container"
                 ref={canvasContainerRef}
@@ -311,6 +322,8 @@ export default function TemplatePreview() {
                 } object-contain w-fit flex flex-col justify-center items-center`}
                 style={{
                     backgroundColor: cardBackgroundColor,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
                 }}
             >
                 <canvas

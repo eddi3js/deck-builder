@@ -2,35 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-    @apply text-gray-200 bg-black;
+.btn {
+    min-height: auto;
 }
-
-.discord-bg {
-    background-color: #7289da;
-    transition: all 0.1s ease-in-out;
-}
-.discord-bg:hover {
-    background-color: #7289da90;
-}
-
-/* Works on Chrome/Edge/Safari */
-/* *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-*::-webkit-scrollbar-track {
-    @apply bg-gray-900;
-}
-*::-webkit-scrollbar-thumb {
-    @apply bg-gray-700;
-    border-radius: 0;
-    border: none;
-}
-
-aside > div {
-    @apply bg-white/[0.1] !important;
-}
-.border-t.border-gray-200 {
-    @apply border-black !important;
-} */

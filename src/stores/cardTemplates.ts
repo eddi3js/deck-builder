@@ -2,19 +2,20 @@ import { Element } from '@/utils/canvas/getElementAtPosition';
 import create from 'zustand';
 
 export type ElementTypes = 'circle' | 'rectangle' | 'remove' | 'select';
+export type AreaTypes = 'string' | 'number' | 'image';
 export interface AreaFields {
     name: string;
-    type: 'string' | 'number' | 'image';
+    type: AreaTypes;
 }
 
 export interface CardTemplateState {
     ratios: number[];
-    areas: AreaFields[];
     elements: Element[];
     selectedElement: Element | null;
     elementType: ElementTypes;
     templateName: string;
     cardRadius: number;
+    cardBackgroundImage: File | null | string;
     cardBackgroundColor: string;
 
     setElements: (elements: Element[]) => void;
@@ -25,6 +26,7 @@ export interface CardTemplateState {
     changeTemplateName: (name: string) => void;
     removeElement: (index: number) => void;
     changeBackgroundColor: (color: string) => void;
+    uploadBackgroundImage: (file: File | string) => void;
 }
 
 export const useCardTemplateStore = create<CardTemplateState>(set => ({
@@ -33,10 +35,10 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     selectedElement: null,
     elementType: 'select' as ElementTypes,
     cardRadius: 0,
+    cardBackgroundImage: null,
     cardBackgroundColor: '#cdcdcd',
     templateImages: [],
     templateName: '',
-    areas: [] as AreaFields[],
 
     setElements: elements => set({ elements }),
     setSelectedElement: element => set({ selectedElement: element }),
@@ -67,5 +69,7 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     changeElementType: (elementType: ElementTypes) =>
         set({ elementType, selectedElement: null }),
     changeTemplateName: (templateName: string) => set({ templateName }),
+
     changeBackgroundColor: (color: string) => set({ cardBackgroundColor: color }),
+    uploadBackgroundImage: (file: File | string) => set({ cardBackgroundImage: file }),
 }));

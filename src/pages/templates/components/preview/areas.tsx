@@ -1,13 +1,38 @@
-import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { AreaTypes, useCardTemplateStore } from '@/stores/cardTemplates';
 import { ElementObject } from '@/utils/canvas/getElementAtPosition';
 
 export default function Areas() {
-    const { elements, removeElement, selectedElement } = useCardTemplateStore();
+    const { elements, removeElement, selectedElement, setElements } =
+        useCardTemplateStore();
     const selectedIndex = selectedElement?.index ?? -1;
 
     const areaElements = elements.filter(
         element => (element as ElementObject)?.roughElement
     );
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+        index: number
+    ) => {
+        const { value: targetValue, name } = e.target;
+        const updatedElements = [...(elements as ElementObject[])];
+        const value = targetValue
+            .toLowerCase()
+            .replace(/ /g, '-')
+            .replace(/[^a-z0-9-]/g, '');
+
+        updatedElements.forEach(element => {
+            if (element.index === index) {
+                if (name === 'name') {
+                    element.metadata.name = value;
+                } else if (name === 'type') {
+                    element.metadata.type = value as AreaTypes;
+                }
+            }
+        });
+
+        setElements(updatedElements);
+    };
 
     return (
         <div className="flex flex-1 flex-col">
@@ -15,7 +40,7 @@ export default function Areas() {
             {areaElements.length === 0 && (
                 <p className="text-sm px-4">No areas created</p>
             )}
-            {areaElements.map((_, index) => {
+            {areaElements.map((area, index) => {
                 return (
                     <div
                         className="area flex flex-col gap-4"
@@ -32,15 +57,24 @@ export default function Areas() {
                                         <p className="text-sm mb-1">Key Name</p>
                                         <input
                                             type="text"
+                                            name="name"
                                             id={`area-name-${index}`}
                                             className="input input-bordered w-full input-sm"
+                                            value={area.metadata.name}
+                                            onChange={e => {
+                                                handleChange(e, index);
+                                            }}
                                         />
                                     </div>
                                     <div className="flex flex-col">
                                         <p className="text-sm mb-1">Type</p>
                                         <select
                                             id={`area-type-${index}`}
+                                            name="type"
                                             className="select select-bordered w-full select-sm"
+                                            onChange={e => {
+                                                handleChange(e, index);
+                                            }}
                                         >
                                             <option value="string">String</option>
                                             <option value="number">Number</option>

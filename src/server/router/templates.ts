@@ -83,8 +83,6 @@ export const templatesRouter = createRouter()
                     method: 'POST',
                     body: formData,
                 }
-            )
-                .then(res => res.json())
-                .catch(err => console.log(err));
+            ).then(res => res.json());
         },
     });

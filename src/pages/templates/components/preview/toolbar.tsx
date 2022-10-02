@@ -1,5 +1,4 @@
-import { ElementTypes } from '../../new';
-import ImageLayer from './ImageLayer';
+import { ElementTypes } from '@/pages/templates/new';
 
 interface TooltipProps {
     handleSwitchElementType: (type: ElementTypes) => void;
@@ -91,8 +90,6 @@ export default function Toolbar({
                     </svg>
                 </button>
             </div>
-
-            <ImageLayer />
         </div>
     );
 }

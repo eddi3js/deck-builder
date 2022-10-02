@@ -1,6 +1,6 @@
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 
-export default function Header() {
+export default function TemplateName() {
     const { templateName, changeTemplateName } = useCardTemplateStore();
 
     return (

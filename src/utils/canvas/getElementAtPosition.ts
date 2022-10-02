@@ -1,6 +1,6 @@
-import { ImageElement } from './createElement';
+import { AreaTypes } from '@/stores/cardTemplates';
 
-export type Element = ElementObject | ImageElement;
+export type Element = ElementObject;
 
 export interface ElementObject {
     index: number;
@@ -12,6 +12,10 @@ export interface ElementObject {
         shape: string;
         sets: any[];
         options: any;
+    };
+    metadata: {
+        type: AreaTypes;
+        name: string;
     };
 }
 
@@ -61,17 +65,10 @@ export function cursorForPosition(position: string | null, remove?: boolean) {
     }
 }
 
-function positionWithinElement(
-    x: number,
-    y: number,
-    element: ElementObject | ImageElement
-) {
+function positionWithinElement(x: number, y: number, element: ElementObject) {
     const { x1, x2, y1, y2 } = element;
 
-    if (
-        (element as ElementObject).roughElement?.shape === 'rectangle' ||
-        (element as ImageElement).image
-    ) {
+    if ((element as ElementObject).roughElement?.shape === 'rectangle') {
         const topLeft = nearPoint(x, y, x1, y1, 'tl');
         const topRight = nearPoint(x, y, x2, y1, 'tr');
         const bottomLeft = nearPoint(x, y, x1, y2, 'bl');
@@ -89,10 +86,7 @@ export const adjustElementCoordinates = (el: Element): Element => {
     const element = el;
     const { x1, x2, y1, y2 } = element;
 
-    if (
-        (element as ElementObject).roughElement.shape === 'rectangle' ||
-        (element as ImageElement).image
-    ) {
+    if ((element as ElementObject).roughElement.shape === 'rectangle') {
         const minX = Math.min(x1, x2);
         const maxX = Math.max(x1, x2);
         const minY = Math.min(y1, y2);

@@ -3,12 +3,10 @@ import { RoughGenerator } from 'roughjs/bin/generator';
 import { ElementObject } from './getElementAtPosition';
 const rough = require('roughjs/bundled/rough.cjs');
 
-export interface ImageElement extends Omit<ElementObject, 'roughElement'> {
-    image: {
-        src: string;
-        file: File;
-    };
-}
+export const defaultAreaMetaData = {
+    name: '',
+    type: 'string',
+};
 
 export const generator: RoughGenerator = rough.generator({
     options: {
@@ -29,35 +27,20 @@ export default function createElement(
     y1: number,
     x2: number,
     y2: number,
-    type: 'circle' | 'rectangle' | 'image',
-    file?: File
-): ElementObject | ImageElement {
-    let roughElement;
-    if (type !== 'image') {
-        roughElement =
-            type === 'circle'
-                ? generator.circle(x1, y1, x2)
-                : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
-        return {
-            x1,
-            y1,
-            x2,
-            y2,
-            index,
-            ...(roughElement && { roughElement }),
-        } as ElementObject;
-    }
+    type: 'circle' | 'rectangle' | 'image'
+): ElementObject {
+    const roughElement =
+        type === 'circle'
+            ? generator.circle(x1, y1, x2)
+            : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
+
     return {
         x1,
         y1,
         x2,
         y2,
         index,
-        ...(file && {
-            image: {
-                src: URL.createObjectURL(file),
-                file,
-            },
-        }),
-    } as ImageElement;
+        ...(roughElement && { roughElement }),
+        metadata: defaultAreaMetaData,
+    } as ElementObject;
 }
