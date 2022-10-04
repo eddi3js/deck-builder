@@ -4,6 +4,7 @@ import { Routes } from '@/utils/constants';
 import Areas from './components/preview/areas';
 import CardFields from './components/fields';
 import TemplatePreview from './components/preview';
+import SaveTemplate from './save';
 
 export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
@@ -23,6 +24,7 @@ export default function NewTemplate() {
                     active: true,
                 },
             ]}
+            action={<SaveTemplate />}
         >
             <div className="flex flex-row gap-1 w-full flex-1 justify-between">
                 <div className="flex flex-col bg-base-200 h-full w-72 p-4">

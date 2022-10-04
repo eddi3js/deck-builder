@@ -21,6 +21,27 @@ export default function Toolbar({
 
     return (
         <div className="flex flex-row h-fit w-fit p-2 rounded gap-4 rounded-t-none mb-4 relative mx-auto">
+            <div className="tooltip tooltip-bottom" data-tip="Create Area Layer">
+                <button
+                    onClick={() => handleSwitchElementType('rectangle')}
+                    className={isActive('rectangle')}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6"
+                        />
+                    </svg>
+                </button>
+            </div>
             <div className="tooltip tooltip-bottom" data-tip="Move/Resize">
                 <button
                     disabled={elementsLength === 0}
@@ -41,28 +62,6 @@ export default function Toolbar({
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
-                        />
-                    </svg>
-                </button>
-            </div>
-
-            <div className="tooltip tooltip-bottom" data-tip="Create Area Layer">
-                <button
-                    onClick={() => handleSwitchElementType('rectangle')}
-                    className={isActive('rectangle')}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-5 h-5"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6"
                         />
                     </svg>
                 </button>

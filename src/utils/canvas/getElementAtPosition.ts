@@ -1,7 +1,4 @@
-import { AreaTypes } from '@/stores/cardTemplates';
-
 export type Element = ElementObject;
-
 export interface ElementObject {
     index: number;
     x1: number;
@@ -14,7 +11,7 @@ export interface ElementObject {
         options: any;
     };
     metadata: {
-        type: AreaTypes;
+        type: string;
         name: string;
     };
 }

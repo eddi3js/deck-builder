@@ -1,4 +1,4 @@
-import { Element } from '@/utils/canvas/getElementAtPosition';
+import { Element, ElementObject } from '@/utils/canvas/getElementAtPosition';
 import create from 'zustand';
 
 export type ElementTypes = 'circle' | 'rectangle' | 'remove' | 'select';
@@ -17,7 +17,11 @@ export interface CardTemplateState {
     cardRadius: number;
     cardBackgroundImage: File | null | string;
     cardBackgroundColor: string;
+    ctx: CanvasRenderingContext2D | null;
+    strokeColor: string;
 
+    updateStrokeColor: (color: string) => void;
+    setContext: (ctx: CanvasRenderingContext2D | null) => void;
     setElements: (elements: Element[]) => void;
     setSelectedElement: (element: Element | null) => void;
     changeRatios: (ratio: number, index: number) => void;
@@ -27,19 +31,31 @@ export interface CardTemplateState {
     removeElement: (index: number) => void;
     changeBackgroundColor: (color: string) => void;
     uploadBackgroundImage: (file: File | string | null) => void;
+    updateAreaMetadata: (index: number, metadata: AreaFields) => void;
 }
 
 export const useCardTemplateStore = create<CardTemplateState>(set => ({
     ratios: [2.5, 3.5],
     elements: [],
     selectedElement: null,
-    elementType: 'select' as ElementTypes,
+    elementType: 'rectangle' as ElementTypes,
     cardRadius: 0,
     cardBackgroundImage: null,
     cardBackgroundColor: '#cdcdcd',
     templateImages: [],
     templateName: '',
+    ctx: null,
+    strokeColor: '#6aabfc',
 
+    updateAreaMetadata: (index, metadata) => {
+        set(state => {
+            const elements = [...state.elements];
+            (elements[index] as ElementObject).metadata = metadata;
+            return { elements };
+        });
+    },
+    updateStrokeColor: (color: string) => set({ strokeColor: color }),
+    setContext: (ctx: CanvasRenderingContext2D | null) => set({ ctx }),
     setElements: elements => set({ elements }),
     setSelectedElement: element => set({ selectedElement: element }),
     removeElement: (index: number) => {

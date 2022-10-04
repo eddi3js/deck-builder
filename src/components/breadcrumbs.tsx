@@ -10,8 +10,9 @@ export type NavLink = {
 
 interface NavigationProps {
     links?: NavLink[];
+    action?: React.ReactNode;
 }
-export default function Breadcrumbs({ links }: NavigationProps) {
+export default function Breadcrumbs({ links, action }: NavigationProps) {
     const navLinks = links ?? [];
     const Icon = ({ type }: { type: IconType }): JSX.Element | null => {
         switch (type) {
@@ -80,6 +81,11 @@ export default function Breadcrumbs({ links }: NavigationProps) {
                         </Link>
                     </li>
                 ))}
+                {action && (
+                    <li className="flex flex-1 justify-end content-none action">
+                        {action}
+                    </li>
+                )}
             </ul>
             <div className="divider m-0"></div>
         </div>

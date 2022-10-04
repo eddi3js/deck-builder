@@ -10,10 +10,12 @@ export default function Layout({
     children,
     gutters,
     breadcrumbLinks,
+    action,
 }: {
     children: React.ReactNode;
     gutters?: boolean;
     breadcrumbLinks?: NavLink[];
+    action?: React.ReactNode;
 }) {
     const navigate = useRouter();
     const { data } = trpc.useQuery(['user.me']);
@@ -33,7 +35,7 @@ export default function Layout({
             </Head>
             <div className="flex h-screen w-full flex-col overflow-hidden">
                 <Header />
-                <Breadcrumbs links={breadcrumbLinks ?? []} />
+                <Breadcrumbs links={breadcrumbLinks ?? []} action={action} />
                 <div className="flex h-full overflow-hidden">
                     <div
                         className={`flex-1 ${

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { getCanvasSize } from '@/utils/canvas/aspectRatio';
-import createElement from '@/utils/canvas/createElement';
+import useCreateElement from '@/utils/canvas/createElement';
 import getElementAtPosition, {
     adjustElementCoordinates,
     cursorForPosition,
@@ -35,10 +35,15 @@ export default function TemplatePreview() {
         elements,
         removeElement,
         setElements,
+        setContext,
         setSelectedElement,
+        updateStrokeColor,
     } = useCardTemplateStore();
 
     const { width: canvasWidth, height: canvasHeight } = getCanvasSize(ratios);
+    const { createElement, fillColor } = useCreateElement();
+
+    useEffect(() => updateStrokeColor(fillColor()), [elements.length]);
 
     const handleCopy = () => {
         if (!(selectedElRef.current as ElementObject)?.roughElement) return null;
@@ -125,6 +130,16 @@ export default function TemplatePreview() {
         }
     }, [elements, canvasRef.current]);
 
+    // set context in the store
+    useEffect(() => {
+        if (canvasRef.current) {
+            const ctx = canvasRef?.current?.getContext('2d');
+            if (ctx) {
+                setContext(ctx);
+            }
+        }
+    }, [canvasRef.current]);
+
     const handleMouseDown = (event: React.MouseEvent) => {
         if (!canvasRef.current) return;
 
@@ -170,14 +185,7 @@ export default function TemplatePreview() {
 
         if (elementType !== 'remove' && elementType !== 'select') {
             const id = elements.length;
-            const element = createElement(
-                id,
-                clientX,
-                clientY,
-                clientX,
-                clientY,
-                'rectangle'
-            );
+            const element = createElement(id, clientX, clientY, clientX, clientY);
 
             setElements([...elements, element]);
             setSelectedElement(element as Element);
@@ -189,22 +197,18 @@ export default function TemplatePreview() {
     const handleMouseUp = () => {
         const i = selectedElement?.index;
         if (action === 'drawing' || action === 'resizing') {
-            const {
-                index,
-                roughElement: { shape },
-            } = elements[i as number] as ElementObject;
+            const { index } = elements[i as number] as ElementObject;
             if (index) {
                 const { x1, y1, x2, y2 } = adjustElementCoordinates(
                     elements[i as number] as ElementObject
                 );
-                updateElement(index, x1, y1, x2, y2, shape as 'rectangle' | 'circle');
+                updateElement(index, x1, y1, x2, y2);
                 selectedElRef.current = createElement(
                     index,
                     x1,
                     y1,
                     x2,
-                    y2,
-                    'rectangle'
+                    y2
                 ) as ElementObject;
             }
         }
@@ -235,11 +239,10 @@ export default function TemplatePreview() {
         if (action === 'drawing') {
             const index = elements.length - 1;
             const { x1, y1 } = elements[index] as ElementObject;
-            updateElement(index, x1, y1, mouseX, mouseY, 'rectangle');
+            updateElement(index, x1, y1, mouseX, mouseY);
         } else if (action === 'moving') {
             const {
                 index: id,
-                roughElement: { shape },
                 offsetX,
                 offsetY,
                 x1,
@@ -254,21 +257,9 @@ export default function TemplatePreview() {
             const newX = mouseX - offsetX;
             const newY = mouseY - offsetY;
 
-            updateElement(
-                id,
-                newX,
-                newY,
-                newX + width,
-                newY + height,
-                shape as 'circle' | 'rectangle'
-            );
+            updateElement(id, newX, newY, newX + width, newY + height);
         } else if (action === 'resizing') {
-            const {
-                index: id,
-                roughElement: { shape },
-                position,
-                ...coords
-            } = selectedElement as SelectedElement;
+            const { index: id, position, ...coords } = selectedElement as SelectedElement;
 
             const { x1, x2, y1, y2 } = resizedCoordinates(
                 mouseX,
@@ -276,7 +267,7 @@ export default function TemplatePreview() {
                 position,
                 coords
             );
-            updateElement(id, x1, y1, x2, y2, shape as 'circle' | 'rectangle');
+            updateElement(id, x1, y1, x2, y2);
         }
     };
 
@@ -285,10 +276,9 @@ export default function TemplatePreview() {
         x1: number,
         y1: number,
         x2: number,
-        y2: number,
-        type: 'circle' | 'rectangle'
+        y2: number
     ) => {
-        const updatedElement = createElement(index, x1, y1, x2, y2, type);
+        const updatedElement = createElement(index, x1, y1, x2, y2);
 
         const updatedElements = [...elements];
         updatedElements[index] = updatedElement as ElementObject;

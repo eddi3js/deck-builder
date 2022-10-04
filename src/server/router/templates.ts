@@ -2,20 +2,36 @@ import { createRouter } from './context';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+const elementSchema = z.object({
+    index: z.number(),
+    x1: z.number(),
+    y1: z.number(),
+    x2: z.number(),
+    y2: z.number(),
+    roughElement: z.object({
+        shape: z.string(),
+        sets: z.array(z.any()),
+        options: z.any(),
+    }),
+    metadata: z.object({
+        name: z.string(),
+        type: z.string().regex(/^(string|number|image)$/),
+    }),
+});
+
+export const payloadSchema = z.object({
+    elements: z.array(elementSchema),
+    name: z.string(),
+    width: z.number(),
+    height: z.number(),
+    cornerBevel: z.number(),
+    templateImage: z.string(),
+    backgroundColor: z.string(),
+});
+
 export const templatesRouter = createRouter()
-    .mutation('new-template', {
-        input: z.object({
-            name: z.string(),
-            type: z.string().regex(/^(string|number|image)$/),
-            width: z.number(),
-            height: z.number(),
-            metadata: z.array(
-                z.object({
-                    name: z.string(),
-                    type: z.string().regex(/^(string|number|image)$/),
-                })
-            ),
-        }),
+    .mutation('update', {
+        input: payloadSchema,
         resolve: async ({ input, ctx }) => {
             if (!ctx.user) {
                 throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -28,6 +44,10 @@ export const templatesRouter = createRouter()
                 },
             });
 
+            if (!user) {
+                throw new TRPCError({ code: 'UNAUTHORIZED' });
+            }
+
             // find reference to Account by user key and ctx.user.email
             const account = await ctx.prisma.account.findFirst({
                 where: {
@@ -39,25 +59,17 @@ export const templatesRouter = createRouter()
                 throw new TRPCError({ code: 'NOT_FOUND' });
             }
 
-            const meta = input.metadata.map(m => {
-                return {
-                    name: m.name,
-                    type: m.type,
-                };
-            });
             const template = await ctx.prisma.cardTemplate.create({
                 data: {
                     name: input.name,
-                    cardType: input.type,
-                    userId: user?.id,
+                    userId: user.id,
                     width: input.width,
                     height: input.height,
-                    frontCardImage: '',
-                    backCardImage: '',
+                    templateImage: input.templateImage,
+                    cornerBevel: input.cornerBevel,
+                    backgroundColor: input.backgroundColor,
                     createdAt: new Date(),
-                    metadata: {
-                        create: meta as Array<any>,
-                    },
+                    elements: input.elements,
                 },
                 include: {
                     metadata: true,

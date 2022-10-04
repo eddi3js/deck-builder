@@ -55,23 +55,27 @@ model VerificationToken {
 }
 
 model CardTemplate {
-    id             String         @id @default(cuid())
-    userId         String
-    name           String
-    width          Int
-    height         Int
-    frontCardImage String
-    backCardImage  String
-    createdAt      DateTime       @default(now())
-    updatedAt      DateTime       @updatedAt
-    metadata       CardMetaData[]
+    id              String   @id @default(cuid())
+    userId          String
+    name            String
+    width           Int
+    height          Int
+    templateImage   String
+    cornerBevel     Int
+    backgroundColor String
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    elements        Json
 }
 
-model CardMetaData {
-    id             String        @id @default(cuid())
-    name           String
-    value          String        @db.VarChar(255)
-    type           String
-    cardTemplateId String?
-    cardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
-}
+// model CardTemplateElement {
+//     id             String        @id @default(cuid())
+//     index          Int
+//     x1             Int
+//     y1             Int
+//     x2             Int
+//     y2             Int
+//     roughElement   Json
+//     CardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
+//     cardTemplateId String?
+// }

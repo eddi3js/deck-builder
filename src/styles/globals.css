@@ -5,3 +5,6 @@
 .btn {
     min-height: auto;
 }
+.breadcrumbs li.action:before {
+    display: none !important;
+}

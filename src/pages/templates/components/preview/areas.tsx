@@ -2,9 +2,8 @@ import { AreaTypes, useCardTemplateStore } from '@/stores/cardTemplates';
 import { ElementObject } from '@/utils/canvas/getElementAtPosition';
 
 export default function Areas() {
-    const { elements, removeElement, selectedElement, setElements } =
+    const { elements, removeElement, selectedElement, updateAreaMetadata } =
         useCardTemplateStore();
-    const selectedIndex = selectedElement?.index ?? -1;
 
     const areaElements = elements.filter(
         element => (element as ElementObject)?.roughElement
@@ -15,23 +14,21 @@ export default function Areas() {
         index: number
     ) => {
         const { value: targetValue, name } = e.target;
-        const updatedElements = [...(elements as ElementObject[])];
+        // const updatedElements = [...(elements as ElementObject[])];
+
+        // get the metadata from the element by the index
+        const { metadata } = areaElements[index] as ElementObject;
+
+        const key = name === 'name' ? 'name' : 'type';
         const value = targetValue
             .toLowerCase()
             .replace(/ /g, '-')
             .replace(/[^a-z0-9-]/g, '');
 
-        updatedElements.forEach(element => {
-            if (element.index === index) {
-                if (name === 'name') {
-                    element.metadata.name = value;
-                } else if (name === 'type') {
-                    element.metadata.type = value as AreaTypes;
-                }
-            }
-        });
-
-        setElements(updatedElements);
+        updateAreaMetadata(index, { ...metadata, [key]: value });
+        // (updatedElements[index] as ElementObject).metadata[key] = value as AreaTypes;
+        // console.log('updatedElements', updatedElements);
+        // setElements(updatedElements);
     };
 
     return (
@@ -43,13 +40,17 @@ export default function Areas() {
             {areaElements.map((area, index) => {
                 return (
                     <div
-                        className="area flex flex-col gap-4"
+                        className="area flex flex-col gap-4 border-2 border-transparent"
+                        style={{
+                            borderColor:
+                                selectedElement?.index !== index
+                                    ? 'transparent'
+                                    : area.roughElement.options.stroke,
+                        }}
                         key={`element-fields-${index}`}
                     >
                         <div
-                            className={`flex flex-row justify-between items-start gap-2 p-4 border-2 border-${
-                                selectedIndex === index ? 'primary' : 'transparent'
-                            } rounded`}
+                            className={`flex flex-row justify-between items-start gap-2 p-4 `}
                         >
                             <div className="flex flex-col flex-1">
                                 <div className="flex flex-row gap-4 flex-1">
@@ -61,9 +62,7 @@ export default function Areas() {
                                             id={`area-name-${index}`}
                                             className="input input-bordered w-full input-sm"
                                             value={area.metadata.name}
-                                            onChange={e => {
-                                                handleChange(e, index);
-                                            }}
+                                            onChange={e => handleChange(e, index)}
                                         />
                                     </div>
                                     <div className="flex flex-col">
@@ -72,9 +71,7 @@ export default function Areas() {
                                             id={`area-type-${index}`}
                                             name="type"
                                             className="select select-bordered w-full select-sm"
-                                            onChange={e => {
-                                                handleChange(e, index);
-                                            }}
+                                            onChange={e => handleChange(e, index)}
                                         >
                                             <option value="string">String</option>
                                             <option value="number">Number</option>

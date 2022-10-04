@@ -1,46 +1,51 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { RoughGenerator } from 'roughjs/bin/generator';
 import { ElementObject } from './getElementAtPosition';
 const rough = require('roughjs/bundled/rough.cjs');
+
+export const generator: RoughGenerator = rough.generator();
 
 export const defaultAreaMetaData = {
     name: '',
     type: 'string',
 };
 
-export const generator: RoughGenerator = rough.generator({
-    options: {
-        roughness: 1,
-        bowing: 1,
-        stroke: '#6aabfc',
-        fillType: 'zigzag',
-        fill: '#6aabfc',
-        strokeWidth: 1,
-        curveStepCount: 9,
-        simplification: 0,
-    },
-});
+const useCreateElement = () => {
+    const { strokeColor } = useCardTemplateStore();
 
-export default function createElement(
-    index: number,
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    type: 'circle' | 'rectangle' | 'image'
-): ElementObject {
-    const roughElement =
-        type === 'circle'
-            ? generator.circle(x1, y1, x2)
-            : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
+    function createElement(
+        index: number,
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number
+    ): ElementObject {
+        const roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
+            roughness: 0,
+            strokeWidth: 1,
+            curveStepCount: 9,
+            simplification: 0,
+            fill: strokeColor,
+            stroke: strokeColor,
+        });
 
-    return {
-        x1,
-        y1,
-        x2,
-        y2,
-        index,
-        ...(roughElement && { roughElement }),
-        metadata: defaultAreaMetaData,
-    } as ElementObject;
-}
+        return {
+            x1,
+            y1,
+            x2,
+            y2,
+            index,
+            ...(roughElement && { roughElement }),
+            metadata: defaultAreaMetaData,
+        } as ElementObject;
+    }
+
+    function fillColor() {
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+
+    return { createElement, fillColor };
+};
+
+export default useCreateElement;

@@ -1,3 +1,4 @@
+import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { useEffect, useState } from 'react';
 // import fileExtention from 'file-extension';
 
@@ -11,6 +12,7 @@ interface CanvasProps {
 export default function useCanvasEvents({ valid, remove, copy, ctx }: CanvasProps) {
     const [showGrid, setShowGrid] = useState<boolean>(true);
     const [action, setAction] = useState<string>('none');
+    const { selectedElement } = useCardTemplateStore();
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -28,11 +30,8 @@ export default function useCanvasEvents({ valid, remove, copy, ctx }: CanvasProp
     }, [showGrid, ctx]);
 
     const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Delete' && valid) {
+        if (e.key === 'Delete' && valid && selectedElement) {
             remove();
-        }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && valid) {
-            copy();
         }
     };
 
