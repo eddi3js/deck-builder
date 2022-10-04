@@ -22,15 +22,15 @@ const elementSchema = z.object({
 export const payloadSchema = z.object({
     elements: z.array(elementSchema),
     name: z.string(),
-    width: z.number(),
-    height: z.number(),
+    width: z.string(),
+    height: z.string(),
     cornerBevel: z.number(),
     templateImage: z.string(),
     backgroundColor: z.string(),
 });
 
 export const templatesRouter = createRouter()
-    .mutation('update', {
+    .mutation('add', {
         input: payloadSchema,
         resolve: async ({ input, ctx }) => {
             if (!ctx.user) {
@@ -59,7 +59,7 @@ export const templatesRouter = createRouter()
                 throw new TRPCError({ code: 'NOT_FOUND' });
             }
 
-            const template = await ctx.prisma.cardTemplate.create({
+            return await ctx.prisma.cardTemplate.create({
                 data: {
                     name: input.name,
                     userId: user.id,
@@ -71,12 +71,7 @@ export const templatesRouter = createRouter()
                     createdAt: new Date(),
                     elements: input.elements,
                 },
-                include: {
-                    metadata: true,
-                },
-            } as any);
-
-            return template;
+            });
         },
     })
     .mutation('upload-image', {

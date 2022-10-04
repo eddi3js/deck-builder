@@ -17,8 +17,8 @@ export default function SaveTemplate() {
 
     const body = {
         name: templateName as string,
-        width: ratios[0] as number,
-        height: ratios[1] as number,
+        width: ratios[0]?.toString() as string,
+        height: ratios[1]?.toString() as string,
         cornerBevel: cardRadius as number,
         backgroundColor: cardBackgroundColor as string,
         templateImage: cardBackgroundImage as string,
