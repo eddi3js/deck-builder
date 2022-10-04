@@ -3,6 +3,12 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 export const payloadSchema = z.object({
+    name: z.string(),
+    width: z.string(),
+    height: z.string(),
+    cornerBevel: z.number(),
+    templateImage: z.string(),
+    backgroundColor: z.string(),
     elements: z.array(
         z.object({
             index: z.number(),
@@ -12,21 +18,15 @@ export const payloadSchema = z.object({
             y2: z.number(),
             roughElement: z.object({
                 shape: z.string(),
-                sets: z.array(z.any()),
+                sets: z.any(),
                 options: z.any(),
             }),
             metadata: z.object({
                 name: z.string(),
-                type: z.string().regex(/^(string|number|image)$/),
+                type: z.string(),
             }),
         })
     ),
-    name: z.string(),
-    width: z.string(),
-    height: z.string(),
-    cornerBevel: z.number(),
-    templateImage: z.string(),
-    backgroundColor: z.string(),
 });
 
 export const templatesRouter = createRouter()

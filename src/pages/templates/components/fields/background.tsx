@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 export default function BackgroundImage() {
     const { cardBackgroundImage, uploadBackgroundImage } = useCardTemplateStore();
-    const [editType, setEditType] = useState<'upload' | 'url'>('upload');
+    const [editType, setEditType] = useState<'upload' | 'url'>('url');
 
     const handleChangeEditType = () => {
         const newEditType = editType === 'upload' ? 'url' : 'upload';
@@ -85,6 +85,7 @@ export default function BackgroundImage() {
                         return (
                             <button
                                 key={t}
+                                disabled={true}
                                 onClick={handleChangeEditType}
                                 className={
                                     editType === t ? 'text-inherit' : 'text-secondary'
