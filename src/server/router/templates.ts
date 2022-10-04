@@ -2,25 +2,25 @@ import { createRouter } from './context';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-const elementSchema = z.object({
-    index: z.number(),
-    x1: z.number(),
-    y1: z.number(),
-    x2: z.number(),
-    y2: z.number(),
-    roughElement: z.object({
-        shape: z.string(),
-        sets: z.array(z.any()),
-        options: z.any(),
-    }),
-    metadata: z.object({
-        name: z.string(),
-        type: z.string().regex(/^(string|number|image)$/),
-    }),
-});
-
 export const payloadSchema = z.object({
-    elements: z.array(elementSchema),
+    elements: z.array(
+        z.object({
+            index: z.number(),
+            x1: z.number(),
+            y1: z.number(),
+            x2: z.number(),
+            y2: z.number(),
+            roughElement: z.object({
+                shape: z.string(),
+                sets: z.array(z.any()),
+                options: z.any(),
+            }),
+            metadata: z.object({
+                name: z.string(),
+                type: z.string().regex(/^(string|number|image)$/),
+            }),
+        })
+    ),
     name: z.string(),
     width: z.string(),
     height: z.string(),

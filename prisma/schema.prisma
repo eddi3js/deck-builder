@@ -77,7 +77,37 @@ model CardTemplateElement {
     y1             Int
     x2             Int
     y2             Int
-    roughElement   Json
+    roughElement   RoughElement  @relation(fields: [id], references: [id])
     CardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
     cardTemplateId String?
+}
+
+model RoughElement {
+    id                  String                @id @default(cuid())
+    shape               String
+    sets                RoughElementSets[]
+    CardTemplateElement CardTemplateElement[]
+}
+
+model RoughElementSets {
+    id             String        @id @default(cuid())
+    type           String
+    ops            Ops[]
+    RoughElement   RoughElement? @relation(fields: [roughElementId], references: [id])
+    roughElementId String?
+}
+
+model Ops {
+    id                 String            @id @default(cuid())
+    op                 String
+    data               OpsDataSet[]
+    RoughElementSets   RoughElementSets? @relation(fields: [roughElementSetsId], references: [id])
+    roughElementSetsId String?
+}
+
+model OpsDataSet {
+    id    String  @id @default(cuid())
+    data  Int
+    opsId String?
+    Ops   Ops?    @relation(fields: [opsId], references: [id])
 }
