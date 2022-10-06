@@ -1,7 +1,7 @@
 import { createRouter } from './context';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import payloadSchema, { Payload } from '@/server/models/canvas';
+import payloadSchema from '@/server/models/canvas';
 import { User } from '@prisma/client';
 
 export const templatesRouter = createRouter()
