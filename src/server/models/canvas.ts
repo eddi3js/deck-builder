@@ -53,6 +53,26 @@ const elementSchema = z.object({
     y2: z.number(),
 });
 
+const selectedElementSchema = z.object({
+    index: z.number(),
+    metadata: metadataSchema,
+    roughElement: roughElementSchema,
+    x1: z.number(),
+    x2: z.number(),
+    y1: z.number(),
+    y2: z.number(),
+    offsetX: z.number(),
+    offsetY: z.number(),
+    position: z.union([
+        z.literal('tl'),
+        z.literal('tr'),
+        z.literal('bl'),
+        z.literal('br'),
+        z.literal('inside'),
+        z.undefined(),
+    ]),
+});
+
 const payloadSchema = z.object({
     name: z.string(),
     width: z.string(),
@@ -65,6 +85,7 @@ const payloadSchema = z.object({
 
 export type Payload = z.infer<typeof payloadSchema>;
 export type ElementObject = z.infer<typeof elementSchema>;
+export type SelectedElement = z.infer<typeof selectedElementSchema>;
 export type RoughElement = z.infer<typeof roughElementSchema>;
 export type RoughElementSets = z.infer<typeof roughElementSetsSchema>;
 export type RoughElementOptions = z.infer<typeof roughElementOptionsSchema>;

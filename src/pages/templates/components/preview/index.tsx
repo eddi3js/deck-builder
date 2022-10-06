@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { ElementObject } from '@/server/models/canvas';
+import { ElementObject, SelectedElement } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { getCanvasSize } from '@/utils/canvas/aspectRatio';
 import useCreateElement from '@/utils/canvas/createElement';
