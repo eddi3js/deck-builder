@@ -1,6 +1,10 @@
-import { Element, Positions } from '@/server/models/canvas';
+import { ElementObject, Positions } from '@/server/models/canvas';
 
-export default function getElementAtPosition(x: number, y: number, elements: Element[]) {
+export default function getElementAtPosition(
+    x: number,
+    y: number,
+    elements: ElementObject[]
+) {
     return elements
         .map(element => {
             return {
@@ -38,10 +42,10 @@ export function cursorForPosition(position: string | null, remove?: boolean) {
     }
 }
 
-function positionWithinElement(x: number, y: number, element: Element) {
+function positionWithinElement(x: number, y: number, element: ElementObject) {
     const { x1, x2, y1, y2 } = element;
 
-    if ((element as Element).roughElement?.shape === 'rectangle') {
+    if ((element as ElementObject).roughElement?.shape === 'rectangle') {
         const topLeft = nearPoint(x, y, x1, y1, 'tl');
         const topRight = nearPoint(x, y, x2, y1, 'tr');
         const bottomLeft = nearPoint(x, y, x1, y2, 'bl');
@@ -55,11 +59,11 @@ function positionWithinElement(x: number, y: number, element: Element) {
     }
 }
 
-export const adjustElementCoordinates = (el: Element): Element => {
+export const adjustElementCoordinates = (el: ElementObject): ElementObject => {
     const element = el;
     const { x1, x2, y1, y2 } = element;
 
-    if ((element as Element).roughElement.shape === 'rectangle') {
+    if ((element as ElementObject).roughElement.shape === 'rectangle') {
         const minX = Math.min(x1, x2);
         const maxX = Math.max(x1, x2);
         const minY = Math.min(y1, y2);

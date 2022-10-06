@@ -38,7 +38,7 @@ const roughElementSetsSchema = z.object({
 });
 
 const roughElementSchema = z.object({
-    options: roughElementOptionsSchema,
+    options: roughElementOptionsSchema.optional(),
     shape: z.string(),
     sets: z.array(roughElementSetsSchema),
 });
@@ -64,7 +64,7 @@ const payloadSchema = z.object({
 });
 
 export type Payload = z.infer<typeof payloadSchema>;
-export type Element = z.infer<typeof elementSchema>;
+export type ElementObject = z.infer<typeof elementSchema>;
 export type RoughElement = z.infer<typeof roughElementSchema>;
 export type RoughElementSets = z.infer<typeof roughElementSetsSchema>;
 export type RoughElementOptions = z.infer<typeof roughElementOptionsSchema>;

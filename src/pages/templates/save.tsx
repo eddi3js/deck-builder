@@ -1,4 +1,4 @@
-import { Element } from '@/server/models/canvas';
+import { ElementObject } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { trpc } from '@/utils/trpc';
 
@@ -21,7 +21,7 @@ export default function SaveTemplate() {
         cornerBevel: cardRadius as number,
         backgroundColor: cardBackgroundColor as string,
         templateImage: cardBackgroundImage as string,
-        elements: elements as Element[],
+        elements: elements as ElementObject[],
     };
 
     const save = async () => {

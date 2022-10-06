@@ -1,18 +1,20 @@
-import { Element } from '@/server/models/canvas';
+import { ElementObject } from '@/server/models/canvas';
 import { AreaFields, AreaTypes, useCardTemplateStore } from '@/stores/cardTemplates';
 
 export default function Areas() {
     const { elements, removeElement, selectedElement, updateAreaMetadata } =
         useCardTemplateStore();
 
-    const areaElements = elements.filter(element => (element as Element)?.roughElement);
+    const areaElements = elements.filter(
+        element => (element as ElementObject)?.roughElement
+    );
 
     const handleChange = (
         e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
         index: number
     ) => {
         const { value: targetValue, name } = e.target;
-        const { metadata } = areaElements[index] as Element;
+        const { metadata } = areaElements[index] as ElementObject;
 
         const key = name === 'name' ? 'name' : 'type';
         const value = targetValue

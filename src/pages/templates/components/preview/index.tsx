@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Element } from '@/server/models/canvas';
+import { ElementObject } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { getCanvasSize } from '@/utils/canvas/aspectRatio';
 import useCreateElement from '@/utils/canvas/createElement';
@@ -19,8 +19,8 @@ const rough = require('roughjs/bundled/rough.cjs');
 export default function TemplatePreview() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
-    const selectedElRef = useRef<Element | null>(null);
-    const elementsRef = useRef<Element[]>([]);
+    const selectedElRef = useRef<ElementObject | null>(null);
+    const elementsRef = useRef<ElementObject[]>([]);
 
     const {
         ratios,
@@ -44,9 +44,9 @@ export default function TemplatePreview() {
     useEffect(() => updateStrokeColor(fillColor()), [elements.length]);
 
     const handleCopy = () => {
-        if (!(selectedElRef.current as Element)?.roughElement) return null;
-        const { roughElement, x1, x2, y1, y2 } = selectedElRef.current as Element;
-        const copiedElement: Element = {
+        if (!(selectedElRef.current as ElementObject)?.roughElement) return null;
+        const { roughElement, x1, x2, y1, y2 } = selectedElRef.current as ElementObject;
+        const copiedElement: ElementObject = {
             roughElement,
             x1: x1 + 5,
             x2: x2 + 5,
@@ -121,7 +121,7 @@ export default function TemplatePreview() {
 
                 const rc: RoughCanvas = rough.canvas(canvasRef.current);
 
-                elements.forEach((e: Element) => rc?.draw((e as Element).roughElement));
+                elements.forEach((e: ElementObject) => rc?.draw(e.roughElement as any));
             }
         }
     }, [elements, canvasRef.current]);
@@ -184,8 +184,8 @@ export default function TemplatePreview() {
             const element = createElement(id, clientX, clientY, clientX, clientY);
 
             setElements([...elements, element]);
-            setSelectedElement(element as Element);
-            selectedElRef.current = element as Element;
+            setSelectedElement(element as ElementObject);
+            selectedElRef.current = element as ElementObject;
             setAction('drawing');
         }
     };
@@ -193,13 +193,19 @@ export default function TemplatePreview() {
     const handleMouseUp = () => {
         const i = selectedElement?.index;
         if (action === 'drawing' || action === 'resizing') {
-            const { index } = elements[i as number] as Element;
+            const { index } = elements[i as number] as ElementObject;
             if (index) {
                 const { x1, y1, x2, y2 } = adjustElementCoordinates(
-                    elements[i as number] as Element
+                    elements[i as number] as ElementObject
                 );
                 updateElement(index, x1, y1, x2, y2);
-                selectedElRef.current = createElement(index, x1, y1, x2, y2) as Element;
+                selectedElRef.current = createElement(
+                    index,
+                    x1,
+                    y1,
+                    x2,
+                    y2
+                ) as ElementObject;
             }
         }
         setAction('none');
@@ -228,7 +234,7 @@ export default function TemplatePreview() {
 
         if (action === 'drawing') {
             const index = elements.length - 1;
-            const { x1, y1 } = elements[index] as Element;
+            const { x1, y1 } = elements[index] as ElementObject;
             updateElement(index, x1, y1, mouseX, mouseY);
         } else if (action === 'moving') {
             const {
@@ -271,7 +277,7 @@ export default function TemplatePreview() {
         const updatedElement = createElement(index, x1, y1, x2, y2);
 
         const updatedElements = [...elements];
-        updatedElements[index] = updatedElement as Element;
+        updatedElements[index] = updatedElement as ElementObject;
         elementsRef.current = updatedElements;
         setElements(updatedElements);
     };
