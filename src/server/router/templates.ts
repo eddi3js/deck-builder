@@ -31,12 +31,11 @@ export const templatesRouter = createRouter()
                 templateImage: input.templateImage,
                 cornerBevel: input.cornerBevel,
                 backgroundColor: input.backgroundColor,
-                createdAt: new Date(),
                 elements: input.elements,
             } as Payload;
 
             return await ctx.prisma.cardTemplate.create({
-                data: { ...template, userId: user.id },
+                data: { ...template, userId: user.id, createdAt: new Date() },
             });
         },
     })
