@@ -1,59 +1,73 @@
-import { AreaTypes } from '@/stores/cardTemplates';
+import { z } from 'zod';
 
-export type RoughElement = {
-    shape: string;
-    sets: RoughElementSets[];
-    options: RoughElementOptions;
-};
+const metadataSchema = z.object({
+    name: z.string(),
+    type: z.string().regex(/^(string|number|image)$/),
+});
 
-export type RoughElementSets = {
-    type: string;
-    ops: {
-        op: string;
-        data: number[];
-    }[];
-};
+const roughElementOptionsSchema = z.object({
+    bowing: z.number(),
+    curveFitting: z.number(),
+    curveStepCount: z.number(),
+    curveTightness: z.number(),
+    dashGap: z.number(),
+    dashOffset: z.number(),
+    disableMultiStroke: z.boolean(),
+    disableMultiStrokeFill: z.boolean(),
+    fill: z.string(),
+    fillStyle: z.string(),
+    fillWeight: z.number(),
+    hachureAngle: z.number(),
+    hachureGap: z.number(),
+    id: z.string(),
+    roughness: z.number(),
+    seed: z.number(),
+    stroke: z.string(),
+    strokeWidth: z.number(),
+    zigzagOffset: z.number(),
+});
 
-export type RoughElementOptions = {
-    id: string;
-    bowing: number;
-    curveTightness: number;
-    curveFitting: number;
-    curveStepCount: number;
-    dashGap: number;
-    dashOffset: number;
-    disableMultiStroke: boolean;
-    disableMultiStrokeFill: boolean;
-    fill: string;
-    fillStyle: string;
-    fillWeight: number;
-    hachureAngle: number;
-    hachureGap: number;
-    roughness: number;
-    seed: number;
-    stroke: string;
-    strokeWidth: number;
-    zigzagOffset: number;
-};
+const roughElementSetsSchema = z.object({
+    ops: z.array(
+        z.object({
+            data: z.array(z.number()),
+            op: z.string(),
+        })
+    ),
+    type: z.string(),
+});
 
-export type Element = ElementObject;
-export interface ElementObject {
-    index: number;
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-    roughElement: RoughElement;
-    metadata: {
-        type: AreaTypes;
-        name: string;
-    };
-}
+const roughElementSchema = z.object({
+    options: roughElementOptionsSchema,
+    shape: z.string(),
+    sets: z.array(roughElementSetsSchema),
+});
 
-export type Positions = 'tl' | 'tr' | 'bl' | 'br' | 'inside' | undefined;
+const elementSchema = z.object({
+    index: z.number(),
+    metadata: metadataSchema,
+    roughElement: roughElementSchema,
+    x1: z.number(),
+    x2: z.number(),
+    y1: z.number(),
+    y2: z.number(),
+});
 
-export interface SelectedElement extends ElementObject {
-    position: Positions;
-    offsetX: number;
-    offsetY: number;
-}
+const payloadSchema = z.object({
+    name: z.string(),
+    width: z.string(),
+    height: z.string(),
+    cornerBevel: z.number(),
+    templateImage: z.string(),
+    backgroundColor: z.string(),
+    elements: z.array(elementSchema),
+});
+
+export type Payload = z.infer<typeof payloadSchema>;
+export type Element = z.infer<typeof elementSchema>;
+export type RoughElement = z.infer<typeof roughElementSchema>;
+export type RoughElementSets = z.infer<typeof roughElementSetsSchema>;
+export type RoughElementOptions = z.infer<typeof roughElementOptionsSchema>;
+export type Metadata = z.infer<typeof metadataSchema>;
+
+export default payloadSchema;

@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-var-requires */
+import { Element } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { getCanvasSize } from '@/utils/canvas/aspectRatio';
 import useCreateElement from '@/utils/canvas/createElement';
 import getElementAtPosition, {
     adjustElementCoordinates,
     cursorForPosition,
-    Element,
-    ElementObject,
     resizedCoordinates,
-    SelectedElement,
 } from '@/utils/canvas/getElementAtPosition';
 import { radiusHash, RadiusRange } from '@/utils/canvas/ranges';
 import useCanvasEvents from '@/utils/canvas/useCanvas';
@@ -46,9 +44,9 @@ export default function TemplatePreview() {
     useEffect(() => updateStrokeColor(fillColor()), [elements.length]);
 
     const handleCopy = () => {
-        if (!(selectedElRef.current as ElementObject)?.roughElement) return null;
-        const { roughElement, x1, x2, y1, y2 } = selectedElRef.current as ElementObject;
-        const copiedElement: ElementObject = {
+        if (!(selectedElRef.current as Element)?.roughElement) return null;
+        const { roughElement, x1, x2, y1, y2 } = selectedElRef.current as Element;
+        const copiedElement: Element = {
             roughElement,
             x1: x1 + 5,
             x2: x2 + 5,
@@ -123,9 +121,7 @@ export default function TemplatePreview() {
 
                 const rc: RoughCanvas = rough.canvas(canvasRef.current);
 
-                elements.forEach((e: ElementObject) => {
-                    rc?.draw((e as ElementObject).roughElement);
-                });
+                elements.forEach((e: Element) => rc?.draw((e as Element).roughElement));
             }
         }
     }, [elements, canvasRef.current]);
@@ -189,7 +185,7 @@ export default function TemplatePreview() {
 
             setElements([...elements, element]);
             setSelectedElement(element as Element);
-            selectedElRef.current = element as ElementObject;
+            selectedElRef.current = element as Element;
             setAction('drawing');
         }
     };
@@ -197,19 +193,13 @@ export default function TemplatePreview() {
     const handleMouseUp = () => {
         const i = selectedElement?.index;
         if (action === 'drawing' || action === 'resizing') {
-            const { index } = elements[i as number] as ElementObject;
+            const { index } = elements[i as number] as Element;
             if (index) {
                 const { x1, y1, x2, y2 } = adjustElementCoordinates(
-                    elements[i as number] as ElementObject
+                    elements[i as number] as Element
                 );
                 updateElement(index, x1, y1, x2, y2);
-                selectedElRef.current = createElement(
-                    index,
-                    x1,
-                    y1,
-                    x2,
-                    y2
-                ) as ElementObject;
+                selectedElRef.current = createElement(index, x1, y1, x2, y2) as Element;
             }
         }
         setAction('none');
@@ -238,7 +228,7 @@ export default function TemplatePreview() {
 
         if (action === 'drawing') {
             const index = elements.length - 1;
-            const { x1, y1 } = elements[index] as ElementObject;
+            const { x1, y1 } = elements[index] as Element;
             updateElement(index, x1, y1, mouseX, mouseY);
         } else if (action === 'moving') {
             const {
@@ -281,7 +271,7 @@ export default function TemplatePreview() {
         const updatedElement = createElement(index, x1, y1, x2, y2);
 
         const updatedElements = [...elements];
-        updatedElements[index] = updatedElement as ElementObject;
+        updatedElements[index] = updatedElement as Element;
         elementsRef.current = updatedElements;
         setElements(updatedElements);
     };

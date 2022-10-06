@@ -37,13 +37,14 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String         @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?        @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
+    CardTemplate  CardTemplate[]
 }
 
 model VerificationToken {
@@ -67,6 +68,7 @@ model CardTemplate {
     updatedAt        DateTime              @updatedAt
     elements         CardTemplateElement[]
     TemplateMetaData TemplateMetaData[]
+    user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([id])
 }
@@ -102,34 +104,9 @@ model RoughElement {
     id                    String                @id @default(cuid())
     shape                 String
     sets                  RoughElementSets[]
-    options               RoughElementOptions   @relation(fields: [roughElementOptionsId], references: [id])
+    options               Json
     CardTemplateElement   CardTemplateElement[]
     roughElementOptionsId String
-
-    @@unique([id])
-}
-
-model RoughElementOptions {
-    id                     String         @id @default(cuid())
-    bowing                 Int
-    curveTightness         Int
-    curveFitting           Int
-    curveStepCount         Int
-    dashGap                Int
-    dashOffset             Int
-    disableMultiStroke     Boolean
-    disableMultiStrokeFill Boolean
-    fill                   String
-    fillStyle              String
-    fillWeight             Int
-    hachureAngle           Int
-    hachureGap             Int
-    roughness              Int
-    seed                   Int
-    stroke                 String
-    strokeWidth            Int
-    zigzagOffset           Int
-    RoughElement           RoughElement[]
 
     @@unique([id])
 }
