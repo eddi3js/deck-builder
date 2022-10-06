@@ -1,21 +1,20 @@
-import { ElementObject } from '@/server/models/canvas';
+import { ElementObject, RoughElementOptions } from '@/server/models/canvas';
 import { AreaFields, AreaTypes, useCardTemplateStore } from '@/stores/cardTemplates';
 
 export default function Areas() {
     const { elements, removeElement, selectedElement, updateAreaMetadata } =
         useCardTemplateStore();
 
-    const areaElements = elements.filter(
-        element => (element as ElementObject)?.roughElement
-    );
-
     const handleChange = (
         e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
         index: number
     ) => {
         const { value: targetValue, name } = e.target;
-        const { metadata } = areaElements[index] as ElementObject;
+        // get the meta data from elements based on the index
+        const element = elements[index] as ElementObject | undefined;
+        if (!element) return;
 
+        const { metadata } = element;
         const key = name === 'name' ? 'name' : 'type';
         const value = targetValue
             .toLowerCase()
@@ -30,11 +29,9 @@ export default function Areas() {
 
     return (
         <div className="flex flex-1 flex-col">
-            <h2 className="text-sm mb-2 px-4">Template Areas ({areaElements.length}):</h2>
-            {areaElements.length === 0 && (
-                <p className="text-sm px-4">No areas created</p>
-            )}
-            {areaElements.map((area, index) => {
+            <h2 className="text-sm mb-2 px-4">Template Areas ({elements.length}):</h2>
+            {elements.length === 0 && <p className="text-sm px-4">No areas created</p>}
+            {elements.map((area, index) => {
                 return (
                     <div
                         className="area flex flex-col gap-4 border-2 border-transparent"
@@ -42,7 +39,8 @@ export default function Areas() {
                             borderColor:
                                 selectedElement?.index !== index
                                     ? 'transparent'
-                                    : area.roughElement.options.stroke,
+                                    : (area.roughElement.options as RoughElementOptions)
+                                          .stroke,
                         }}
                         key={`element-fields-${index}`}
                     >

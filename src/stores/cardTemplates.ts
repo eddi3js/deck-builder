@@ -1,4 +1,4 @@
-import { Element, ElementObject } from '@/utils/canvas/getElementAtPosition';
+import { ElementObject } from '@/server/models/canvas';
 import create from 'zustand';
 
 export type ElementTypes = 'circle' | 'rectangle' | 'remove' | 'select';
@@ -10,8 +10,8 @@ export interface AreaFields {
 
 export interface CardTemplateState {
     ratios: number[];
-    elements: Element[];
-    selectedElement: Element | null;
+    elements: ElementObject[];
+    selectedElement: ElementObject | null;
     elementType: ElementTypes;
     templateName: string;
     cardRadius: number;
@@ -22,8 +22,8 @@ export interface CardTemplateState {
 
     updateStrokeColor: (color: string) => void;
     setContext: (ctx: CanvasRenderingContext2D | null) => void;
-    setElements: (elements: Element[]) => void;
-    setSelectedElement: (element: Element | null) => void;
+    setElements: (elements: ElementObject[]) => void;
+    setSelectedElement: (element: ElementObject | null) => void;
     changeRatios: (ratio: number, index: number) => void;
     changeRadius: (radius: number) => void;
     changeElementType: (type: ElementTypes) => void;
@@ -49,8 +49,16 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
 
     updateAreaMetadata: (index, metadata) => {
         set(state => {
-            const elements = [...state.elements];
-            (elements[index] as ElementObject).metadata = metadata;
+            const elements = state.elements.map((element, i) => {
+                if (i === index) {
+                    return {
+                        ...element,
+                        metadata,
+                    };
+                }
+                return element;
+            });
+
             return { elements };
         });
     },

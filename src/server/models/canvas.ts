@@ -19,7 +19,6 @@ const roughElementOptionsSchema = z.object({
     fillWeight: z.number(),
     hachureAngle: z.number(),
     hachureGap: z.number(),
-    id: z.string(),
     roughness: z.number(),
     seed: z.number(),
     stroke: z.string(),
@@ -83,9 +82,15 @@ const payloadSchema = z.object({
     elements: z.array(elementSchema),
 });
 
+const positionSchema = z
+    .string()
+    .regex(/^(tl|tr|bl|br|inside)$/)
+    .optional();
+
 export type Payload = z.infer<typeof payloadSchema>;
 export type ElementObject = z.infer<typeof elementSchema>;
 export type SelectedElement = z.infer<typeof selectedElementSchema>;
+export type Positions = z.infer<typeof positionSchema>;
 export type RoughElement = z.infer<typeof roughElementSchema>;
 export type RoughElementSets = z.infer<typeof roughElementSetsSchema>;
 export type RoughElementOptions = z.infer<typeof roughElementOptionsSchema>;

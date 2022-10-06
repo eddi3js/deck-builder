@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import { ElementObject } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { RoughGenerator } from 'roughjs/bin/generator';
-import { ElementObject } from './getElementAtPosition';
 const rough = require('roughjs/bundled/rough.cjs');
 
 export const generator: RoughGenerator = rough.generator();
