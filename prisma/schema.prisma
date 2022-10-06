@@ -71,23 +71,24 @@ model CardTemplate {
 }
 
 model CardTemplateElement {
-    id             String        @id @unique @default(cuid())
+    id             String         @id @unique @default(cuid())
     index          Int
     x1             Int
     x2             Int
     y1             Int
     y2             Int
     metadata       Json
-    roughElement   RoughElement  @relation(fields: [roughElementId], references: [id])
-    CardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
+    roughElement   Json
+    CardTemplate   CardTemplate?  @relation(fields: [cardTemplateId], references: [id])
     cardTemplateId String?
-    roughElementId String        @unique
+    RoughElement   RoughElement[]
 }
 
 model RoughElement {
-    id                  String               @id @unique @default(cuid())
-    shape               String
-    options             Json?
-    sets                Json
-    cardTemplateElement CardTemplateElement?
+    id                    String               @id @unique @default(cuid())
+    shape                 String
+    options               Json?
+    sets                  Json
+    cardTemplateElement   CardTemplateElement? @relation(fields: [cardTemplateElementId], references: [id])
+    cardTemplateElementId String?
 }
