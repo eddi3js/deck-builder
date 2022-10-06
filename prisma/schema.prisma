@@ -99,11 +99,37 @@ model TemplateMetaData {
 }
 
 model RoughElement {
-    id                  String                @id @default(cuid())
-    shape               String
-    sets                RoughElementSets[]
-    options             Json
-    CardTemplateElement CardTemplateElement[]
+    id                    String                @id @default(cuid())
+    shape                 String
+    sets                  RoughElementSets[]
+    options               RoughElementOptions   @relation(fields: [roughElementOptionsId], references: [id])
+    CardTemplateElement   CardTemplateElement[]
+    roughElementOptionsId String
+
+    @@unique([id])
+}
+
+model RoughElementOptions {
+    id                     String         @id @default(cuid())
+    bowing                 Int
+    curveTightness         Int
+    curveFitting           Int
+    curveStepCount         Int
+    dashGap                Int
+    dashOffset             Int
+    disableMultiStroke     Boolean
+    disableMultiStrokeFill Boolean
+    fill                   String
+    fillStyle              String
+    fillWeight             Int
+    hachureAngle           Int
+    hachureGap             Int
+    roughness              Int
+    seed                   Int
+    stroke                 String
+    strokeWidth            Int
+    zigzagOffset           Int
+    RoughElement           RoughElement[]
 
     @@unique([id])
 }

@@ -29,7 +29,8 @@ export default function SaveTemplate() {
 
     const save = async () => {
         try {
-            await mutateAsync(body);
+            console.log(body, 'body');
+            // await mutateAsync(body);
         } catch (error) {
             console.log(error);
         }

@@ -9,24 +9,7 @@ export const payloadSchema = z.object({
     cornerBevel: z.number(),
     templateImage: z.string(),
     backgroundColor: z.string(),
-    elements: z.array(
-        z.object({
-            index: z.number(),
-            x1: z.number(),
-            y1: z.number(),
-            x2: z.number(),
-            y2: z.number(),
-            roughElement: z.object({
-                shape: z.string(),
-                sets: z.any(),
-                options: z.any(),
-            }),
-            metadata: z.object({
-                name: z.string(),
-                type: z.string(),
-            }),
-        })
-    ),
+    elements: z.any(),
 });
 
 export const templatesRouter = createRouter()
@@ -59,7 +42,7 @@ export const templatesRouter = createRouter()
                 throw new TRPCError({ code: 'NOT_FOUND' });
             }
 
-            return await ctx.prisma.cardTemplate.create({
+            const newTemplate = await ctx.prisma.cardTemplate.create({
                 data: {
                     name: input.name,
                     userId: user.id,
@@ -72,6 +55,7 @@ export const templatesRouter = createRouter()
                     elements: input.elements,
                 },
             });
+            console.log('newTemplate', newTemplate);
         },
     })
     .mutation('upload-image', {
@@ -79,7 +63,7 @@ export const templatesRouter = createRouter()
             file: z.any(),
             uploadPreset: z.string(),
         }),
-        resolve: async ({ input, ctx }) => {
+        resolve: async ({ input }) => {
             const formData = new FormData();
             formData.append('file', input.file as File);
             formData.append('upload_preset', input.uploadPreset);
