@@ -1,7 +1,7 @@
 import { createRouter } from './context';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import payloadSchema, { Payload } from '@/server/models/canvas';
+import payloadSchema, { ElementObject, Payload } from '@/server/models/canvas';
 import { User } from '@prisma/client';
 
 export const templatesRouter = createRouter()
@@ -31,12 +31,44 @@ export const templatesRouter = createRouter()
                 templateImage: input.templateImage,
                 cornerBevel: input.cornerBevel,
                 backgroundColor: input.backgroundColor,
-                elements: input.elements,
-            } as Payload;
+                elements: input.elements.map((el: ElementObject) => {
+                    return {
+                        ...el,
+                        metadata: JSON.stringify(el.metadata),
+                        options: JSON.stringify(el.roughElement.options),
+                        roughElement: {
+                            ...el.roughElement,
+                            sets: JSON.stringify(el.roughElement.sets),
+                        },
+                    };
+                }),
+            };
 
-            return await ctx.prisma.cardTemplate.create({
-                data: { ...template, userId: user.id, createdAt: new Date() },
-            });
+            try {
+                const result = await ctx.prisma.cardTemplate.create({
+                    data: {
+                        ...template,
+                        userId: user.id,
+                        createdAt: new Date(),
+                    },
+                });
+                return result;
+            } catch (err) {
+                console.log(
+                    input.elements.map((el: ElementObject) => {
+                        return {
+                            ...el,
+                            metadata: JSON.stringify(el.metadata),
+                            roughElement: {
+                                ...el.roughElement,
+                                options: JSON.stringify(el.roughElement.options),
+                                sets: JSON.stringify(el.roughElement.sets),
+                            },
+                        };
+                    }),
+                    'THE ERROR'
+                );
+            }
         },
     })
     .mutation('upload-image', {
