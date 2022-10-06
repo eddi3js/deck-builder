@@ -1,6 +1,5 @@
-import { payloadSchema } from '@/server/router/templates';
+import { Element } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
-import { Element } from '@/utils/canvas/getElementAtPosition';
 import { trpc } from '@/utils/trpc';
 
 export default function SaveTemplate() {
@@ -24,8 +23,6 @@ export default function SaveTemplate() {
         templateImage: cardBackgroundImage as string,
         elements: elements as Element[],
     };
-
-    // using zod, validate body
 
     const save = async () => {
         try {

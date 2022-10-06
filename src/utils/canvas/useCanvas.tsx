@@ -9,7 +9,7 @@ interface CanvasProps {
     ctx?: CanvasRenderingContext2D | undefined;
 }
 
-export default function useCanvasEvents({ valid, remove, copy, ctx }: CanvasProps) {
+export default function useCanvasEvents({ valid, remove, ctx }: CanvasProps) {
     const [showGrid, setShowGrid] = useState<boolean>(true);
     const [action, setAction] = useState<string>('none');
     const { selectedElement } = useCardTemplateStore();

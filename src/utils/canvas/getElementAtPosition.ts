@@ -1,28 +1,4 @@
-export type Element = ElementObject;
-export interface ElementObject {
-    index: number;
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-    roughElement: {
-        shape: string;
-        sets: any[];
-        options: any;
-    };
-    metadata: {
-        type: string;
-        name: string;
-    };
-}
-
-export type Positions = 'tl' | 'tr' | 'bl' | 'br' | 'inside' | undefined;
-
-export interface SelectedElement extends ElementObject {
-    position: Positions;
-    offsetX: number;
-    offsetY: number;
-}
+import { Element, Positions } from '@/server/models/canvas';
 
 export default function getElementAtPosition(x: number, y: number, elements: Element[]) {
     return elements
@@ -62,10 +38,10 @@ export function cursorForPosition(position: string | null, remove?: boolean) {
     }
 }
 
-function positionWithinElement(x: number, y: number, element: ElementObject) {
+function positionWithinElement(x: number, y: number, element: Element) {
     const { x1, x2, y1, y2 } = element;
 
-    if ((element as ElementObject).roughElement?.shape === 'rectangle') {
+    if ((element as Element).roughElement?.shape === 'rectangle') {
         const topLeft = nearPoint(x, y, x1, y1, 'tl');
         const topRight = nearPoint(x, y, x2, y1, 'tr');
         const bottomLeft = nearPoint(x, y, x1, y2, 'bl');
@@ -83,7 +59,7 @@ export const adjustElementCoordinates = (el: Element): Element => {
     const element = el;
     const { x1, x2, y1, y2 } = element;
 
-    if ((element as ElementObject).roughElement.shape === 'rectangle') {
+    if ((element as Element).roughElement.shape === 'rectangle') {
         const minX = Math.min(x1, x2);
         const maxX = Math.max(x1, x2);
         const minY = Math.min(y1, y2);

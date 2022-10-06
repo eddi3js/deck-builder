@@ -1,5 +1,5 @@
+import { ElementObject } from '@/server/models/canvas';
 import { AreaFields, AreaTypes, useCardTemplateStore } from '@/stores/cardTemplates';
-import { ElementObject } from '@/utils/canvas/getElementAtPosition';
 
 export default function Areas() {
     const { elements, removeElement, selectedElement, updateAreaMetadata } =
@@ -14,9 +14,6 @@ export default function Areas() {
         index: number
     ) => {
         const { value: targetValue, name } = e.target;
-        // const updatedElements = [...(elements as ElementObject[])];
-
-        // get the metadata from the element by the index
         const { metadata } = areaElements[index] as ElementObject;
 
         const key = name === 'name' ? 'name' : 'type';
