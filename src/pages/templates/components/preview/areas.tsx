@@ -29,9 +29,6 @@ export default function Areas() {
             ...metadata,
             [key as AreaTypes]: value,
         } as AreaFields);
-        // (updatedElements[index] as ElementObject).metadata[key] = value as AreaTypes;
-        // console.log('updatedElements', updatedElements);
-        // setElements(updatedElements);
     };
 
     return (

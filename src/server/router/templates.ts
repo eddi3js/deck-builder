@@ -69,7 +69,7 @@ export const templatesRouter = createRouter()
                     cornerBevel: input.cornerBevel,
                     backgroundColor: input.backgroundColor,
                     createdAt: new Date(),
-                    elements: input.elements,
+                    elements: input.elements as any,
                 },
             });
         },
