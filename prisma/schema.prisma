@@ -56,86 +56,38 @@ model VerificationToken {
 }
 
 model CardTemplate {
-    id               String                @id @default(cuid())
-    userId           String
-    name             String
-    width            String
-    height           String
-    templateImage    String
-    cornerBevel      Int
-    backgroundColor  String
-    createdAt        DateTime              @default(now())
-    updatedAt        DateTime              @updatedAt
-    elements         CardTemplateElement[]
-    TemplateMetaData TemplateMetaData[]
-    user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([id])
+    id              String                @id @unique @default(cuid())
+    userId          String
+    name            String
+    width           String
+    height          String
+    templateImage   String
+    cornerBevel     Int
+    backgroundColor String?
+    createdAt       DateTime
+    updatedAt       DateTime?             @updatedAt
+    elements        CardTemplateElement[]
+    User            User                  @relation(fields: [userId], references: [id])
 }
 
 model CardTemplateElement {
-    id                 String           @id @default(cuid())
-    index              Int
-    x1                 Int
-    y1                 Int
-    x2                 Int
-    y2                 Int
-    metadata           TemplateMetaData @relation(fields: [templateMetaDataId], references: [id])
-    roughElement       RoughElement     @relation(fields: [id], references: [id])
-    CardTemplate       CardTemplate?    @relation(fields: [cardTemplateId], references: [id])
-    cardTemplateId     String?
-    templateMetaDataId String
-
-    @@unique([id])
-}
-
-model TemplateMetaData {
-    id                  String                @id @default(cuid())
-    name                String
-    type                String
-    CardTemplate        CardTemplate?         @relation(fields: [cardTemplateId], references: [id])
-    cardTemplateId      String?
-    CardTemplateElement CardTemplateElement[]
-
-    @@unique([id])
+    id             String        @id @unique @default(cuid())
+    index          Int
+    x1             Int
+    x2             Int
+    y1             Int
+    y2             Int
+    metadata       Json
+    roughElement   RoughElement  @relation(fields: [roughElementId], references: [id])
+    CardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
+    cardTemplateId String?
+    roughElementId String        @unique
 }
 
 model RoughElement {
-    id                    String                @id @default(cuid())
-    shape                 String
-    sets                  RoughElementSets[]
-    options               Json
-    CardTemplateElement   CardTemplateElement[]
-    roughElementOptionsId String
-
-    @@unique([id])
-}
-
-model RoughElementSets {
-    id             String        @id @default(cuid())
-    type           String
-    ops            Ops[]
-    RoughElement   RoughElement? @relation(fields: [roughElementId], references: [id])
-    roughElementId String?
-
-    @@unique([id])
-}
-
-model Ops {
-    id                 String            @id @default(cuid())
-    op                 String
-    data               OpsDataSet[]
-    RoughElementSets   RoughElementSets? @relation(fields: [roughElementSetsId], references: [id])
-    roughElementSetsId String?
-
-    @@unique([id])
-}
-
-model OpsDataSet {
-    id    String  @id @default(cuid())
-    data  Int
-    opsId String?
-    Ops   Ops?    @relation(fields: [opsId], references: [id])
-
-    @@unique([id])
+    id                  String               @id @unique @default(cuid())
+    shape               String
+    options             Json?
+    sets                Json
+    cardTemplateElement CardTemplateElement?
 }
