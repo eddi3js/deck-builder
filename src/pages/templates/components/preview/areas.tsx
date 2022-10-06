@@ -1,4 +1,4 @@
-import { AreaTypes, useCardTemplateStore } from '@/stores/cardTemplates';
+import { AreaFields, AreaTypes, useCardTemplateStore } from '@/stores/cardTemplates';
 import { ElementObject } from '@/utils/canvas/getElementAtPosition';
 
 export default function Areas() {
@@ -25,7 +25,10 @@ export default function Areas() {
             .replace(/ /g, '-')
             .replace(/[^a-z0-9-]/g, '');
 
-        updateAreaMetadata(index, { ...metadata, [key]: value });
+        updateAreaMetadata(index, {
+            ...metadata,
+            [key as AreaTypes]: value,
+        } as AreaFields);
         // (updatedElements[index] as ElementObject).metadata[key] = value as AreaTypes;
         // console.log('updatedElements', updatedElements);
         // setElements(updatedElements);
