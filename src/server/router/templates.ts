@@ -26,12 +26,12 @@ export const templatesRouter = createRouter()
 
             const template = {
                 name: input.name,
-                width: input.width,
-                height: input.height,
-                templateImage: input.templateImage,
-                cornerBevel: input.cornerBevel,
-                backgroundColor: input.backgroundColor,
-                elements: input.elements,
+                // width: input.width,
+                // height: input.height,
+                // templateImage: input.templateImage,
+                // cornerBevel: input.cornerBevel,
+                // backgroundColor: input.backgroundColor,
+                // elements: input.elements,
             };
 
             try {
@@ -39,7 +39,7 @@ export const templatesRouter = createRouter()
                     data: {
                         ...template,
                         userId: user.id,
-                        createdAt: new Date(),
+                        // createdAt: new Date(),
                     },
                 });
                 return result;

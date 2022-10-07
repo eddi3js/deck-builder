@@ -56,29 +56,29 @@ model VerificationToken {
 }
 
 model CardTemplate {
-    id              String                @id @unique @default(cuid())
-    userId          String
-    name            String
-    width           String
-    height          String
-    templateImage   String
-    cornerBevel     Int
-    backgroundColor String?
-    createdAt       DateTime
-    updatedAt       DateTime?             @updatedAt
-    elements        CardTemplateElement[]
-    User            User                  @relation(fields: [userId], references: [id])
+    id     String @id @unique @default(cuid())
+    userId String
+    name   String
+    // width           String
+    // height          String
+    // templateImage   String
+    // cornerBevel     Int
+    // backgroundColor String?
+    // createdAt       DateTime
+    // updatedAt       DateTime?             @updatedAt
+    // elements        CardTemplateElement[]
+    User   User   @relation(fields: [userId], references: [id])
 }
 
 model CardTemplateElement {
-    id             String        @id @unique @default(cuid())
-    index          Int
-    x1             Int
-    x2             Int
-    y1             Int
-    y2             Int
-    metadata       Json
-    roughElement   Json
-    CardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
-    cardTemplateId String?
+    id    String @id @unique @default(cuid())
+    index Int
+    x1    Int
+    x2    Int
+    y1    Int
+    y2    Int
+    // metadata       Json
+    // roughElement   Json
+    // CardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
+    // cardTemplateId String?
 }
