@@ -1,6 +1,6 @@
 generator client {
     provider        = "prisma-client-js"
-    previewFeatures = ["referentialIntegrity"]
+    previewFeatures = ["referentialIntegrity", "interactiveTransactions"]
 }
 
 datasource db {
@@ -70,6 +70,7 @@ model CardTemplate {
 
 model CardTemplateElement {
     id             String        @id @unique @default(cuid())
+    cardTemplateId String
     index          Int
     x1             Int
     x2             Int
@@ -78,5 +79,4 @@ model CardTemplateElement {
     metadata       Json
     roughElement   Json
     CardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
-    cardTemplateId String?
 }

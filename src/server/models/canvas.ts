@@ -37,7 +37,7 @@ const roughElementSetsSchema = z.object({
 });
 
 const roughElementSchema = z.object({
-    options: roughElementOptionsSchema.optional(),
+    options: roughElementOptionsSchema,
     shape: z.string(),
     sets: z.array(roughElementSetsSchema),
 });

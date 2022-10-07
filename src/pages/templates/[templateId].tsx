@@ -4,11 +4,15 @@ import { Routes } from '@/utils/constants';
 import Areas from './components/preview/areas';
 import CardFields from './components/fields';
 import TemplatePreview from './components/preview';
-import SaveTemplate from './save';
+import SaveTemplate from './components/fields/save';
+import { useRouter } from 'next/router';
 
 export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
 export default function NewTemplate() {
+    const { query } = useRouter();
+    // TODO: turn this into a fetch if the templateId is not "new"
+    console.log('query', query);
     return (
         <Layout
             breadcrumbLinks={[

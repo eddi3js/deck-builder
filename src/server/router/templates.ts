@@ -24,27 +24,27 @@ export const templatesRouter = createRouter()
                 throw new TRPCError({ code: 'UNAUTHORIZED' });
             }
 
-            const template = {
-                name: input.name,
-                width: input.width,
-                height: input.height,
-                templateImage: input.templateImage,
-                cornerBevel: input.cornerBevel,
-                backgroundColor: input.backgroundColor,
-                elements: input.elements,
-            };
+            const newTemplate = await ctx.prisma.cardTemplate.create({
+                data: {
+                    userId: user.id,
+                    name: input.name,
+                    width: input.width,
+                    height: input.height,
+                    templateImage: input.templateImage,
+                    cornerBevel: input.cornerBevel,
+                    backgroundColor: input.backgroundColor,
+                },
+            });
 
-            try {
-                const result = await ctx.prisma.cardTemplate.create({
-                    data: {
-                        ...template,
-                        userId: user.id,
-                    },
-                });
-                return result;
-            } catch (err) {
-                console.log(err, 'THE ERROR');
-            }
+            // add the cardTemplateElements to the cardTemplateElements table
+            await ctx.prisma.cardTemplateElement.createMany({
+                data: input.elements.map(element => ({
+                    cardTemplateId: newTemplate.id,
+                    ...element,
+                })),
+            });
+
+            return newTemplate.id;
         },
     })
     .mutation('upload-image', {
