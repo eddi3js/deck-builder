@@ -7,8 +7,8 @@ import BackgroundImage from './background';
 export default function CardFields() {
     return (
         <div className="flex flex-col">
-            <BackgroundImage />
             <TemplateName />
+            <BackgroundImage />
             <Ratios />
             <RangeSlider type="radius" />
             <ColorPicker />

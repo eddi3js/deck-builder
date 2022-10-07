@@ -77,7 +77,7 @@ export default function BackgroundImage() {
     );
 
     return (
-        <div className="mb-4">
+        <div className="mt-4">
             <div className="flex flex-row gap-4 justify-between items-center">
                 <p className="text-sm">Template Background:</p>
                 <div className="flex flex-row gap-4 items-center mb-1">
