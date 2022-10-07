@@ -31,7 +31,7 @@ export const templatesRouter = createRouter()
                 templateImage: input.templateImage,
                 cornerBevel: input.cornerBevel,
                 backgroundColor: input.backgroundColor,
-                // elements: input.elements,
+                elements: input.elements,
             };
 
             try {
