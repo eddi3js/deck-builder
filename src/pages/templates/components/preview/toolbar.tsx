@@ -1,4 +1,4 @@
-import { ElementTypes } from '@/pages/templates/new';
+import { ElementTypes } from '@/pages/templates/[templateId]';
 
 interface TooltipProps {
     handleSwitchElementType: (type: ElementTypes) => void;

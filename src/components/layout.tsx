@@ -30,8 +30,7 @@ export default function Layout({
     return (
         <>
             <Head>
-                <title>DeckBuilder.gg</title>
-                <link rel="icon" href="/favicon.ico" />
+                <title>cards.eddie.gg</title>
             </Head>
             <div className="flex h-screen w-full flex-col overflow-hidden">
                 <Header />
