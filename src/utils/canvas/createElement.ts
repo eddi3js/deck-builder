@@ -4,9 +4,14 @@ import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { RoughGenerator } from 'roughjs/bin/generator';
 const rough = require('roughjs/bundled/rough.cjs');
 
+export type AreaMetaData = {
+    name: string;
+    type: string;
+};
+
 export const generator: RoughGenerator = rough.generator();
 
-export const defaultAreaMetaData = {
+export const defaultAreaMetaData: AreaMetaData = {
     name: '',
     type: 'string',
 };
@@ -19,7 +24,8 @@ const useCreateElement = () => {
         x1: number,
         y1: number,
         x2: number,
-        y2: number
+        y2: number,
+        metadata?: AreaMetaData
     ): ElementObject {
         const roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
             roughness: 0,
@@ -37,7 +43,7 @@ const useCreateElement = () => {
             y2,
             index,
             ...(roughElement && { roughElement }),
-            metadata: defaultAreaMetaData,
+            metadata: metadata ?? defaultAreaMetaData,
         } as ElementObject;
     }
 

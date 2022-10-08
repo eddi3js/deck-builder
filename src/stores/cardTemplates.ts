@@ -32,6 +32,7 @@ export interface CardTemplateState {
     changeBackgroundColor: (color: string) => void;
     uploadBackgroundImage: (file: File | string | null) => void;
     updateAreaMetadata: (index: number, metadata: AreaFields) => void;
+    updateStateWithTemplateData: (template: CardTemplateState) => void;
 }
 
 export const useCardTemplateStore = create<CardTemplateState>(set => ({
@@ -42,11 +43,11 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     cardRadius: 0,
     cardBackgroundImage: null,
     cardBackgroundColor: '#cdcdcd',
-    templateImages: [],
     templateName: '',
     ctx: null,
     strokeColor: '#6aabfc',
 
+    updateStateWithTemplateData: (template: CardTemplateState) => set(template),
     updateAreaMetadata: (index, metadata) => {
         set(state => {
             const elements = state.elements.map((element, i) => {

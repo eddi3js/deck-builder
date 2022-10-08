@@ -6,13 +6,47 @@ import CardFields from './components/fields';
 import TemplatePreview from './components/preview';
 import SaveTemplate from './components/fields/save';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { trpc } from '@/utils/trpc';
+import { useCardTemplateStore } from '@/stores/cardTemplates';
 
 export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
 export default function NewTemplate() {
     const { query } = useRouter();
-    // TODO: turn this into a fetch if the templateId is not "new"
-    console.log('query', query);
+
+    const isNew = query.templateId === 'new';
+    const { refetch: fetchTemplateData } = trpc.useQuery(
+        ['templates.getById', { id: query.templateId as string }],
+        {
+            enabled: false,
+        }
+    );
+    const { updateStateWithTemplateData } = useCardTemplateStore();
+
+    useEffect(() => {
+        if (!isNew) {
+            grabAllNecessaryData();
+        }
+    }, [isNew]);
+
+    const grabAllNecessaryData = async () => {
+        try {
+            const fetch = await fetchTemplateData();
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { width, height, userId, ...rest } = fetch.data as any;
+            const templateState = {
+                ...rest,
+                ratios: [parseInt(width), parseInt(height)],
+                cardBackgroundImage: rest.templateImage,
+                templateName: rest.name,
+            };
+            updateStateWithTemplateData(templateState);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <Layout
             breadcrumbLinks={[

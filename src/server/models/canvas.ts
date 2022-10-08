@@ -43,6 +43,7 @@ const roughElementSchema = z.object({
 });
 
 const elementSchema = z.object({
+    id: z.string().optional(),
     index: z.number(),
     metadata: metadataSchema,
     roughElement: roughElementSchema,

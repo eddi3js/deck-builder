@@ -47,6 +47,27 @@ export const templatesRouter = createRouter()
             return newTemplate.id;
         },
     })
+    .query('getById', {
+        input: z.object({
+            id: z.string(),
+        }),
+        resolve: async ({ input, ctx }) => {
+            const template = await ctx.prisma.cardTemplate.findUnique({
+                where: {
+                    id: input.id,
+                },
+                include: {
+                    elements: true,
+                },
+            });
+
+            if (!template) {
+                throw new TRPCError({ code: 'NOT_FOUND' });
+            }
+
+            return template;
+        },
+    })
     .mutation('upload-image', {
         input: z.object({
             file: z.any(),

@@ -9,7 +9,7 @@ export default function Header() {
         <div className="navbar">
             <div className="flex-1">
                 <div className="btn btn-ghost normal-case text-xl">
-                    <Link href="/">DeckBuilder.gg</Link>
+                    <Link href="/">cards.eddie.gg</Link>
                 </div>
             </div>
             <div className="flex-none">
