@@ -2,7 +2,12 @@ import { ElementObject } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { trpc } from '@/utils/trpc';
 
-export default function SaveTemplate() {
+interface SaveTemplateProps {
+    templateId: string | undefined;
+    userId: string | undefined;
+}
+
+export default function SaveTemplate({ templateId, userId }: SaveTemplateProps) {
     const {
         elements,
         templateName,
@@ -12,7 +17,7 @@ export default function SaveTemplate() {
         cardBackgroundColor,
     } = useCardTemplateStore();
 
-    const { mutateAsync, isLoading } = trpc.useMutation(['templates.add']);
+    const { mutateAsync, isLoading } = trpc.useMutation(['templates.post']);
 
     const body = {
         name: templateName as string,
@@ -22,6 +27,7 @@ export default function SaveTemplate() {
         backgroundColor: cardBackgroundColor as string,
         templateImage: cardBackgroundImage as string,
         elements: elements as ElementObject[],
+        ...(userId && { userId, id: templateId }),
     };
 
     const save = async () => {
@@ -36,7 +42,7 @@ export default function SaveTemplate() {
         <button
             onClick={save}
             className={`btn text-white btn-sm px-7 btn-info ${
-                isLoading ? 'loading' : ''
+                isLoading ? 'loading bg-gray-500 text-gray-800 border-gray-500' : ''
             }`}
         >
             Save

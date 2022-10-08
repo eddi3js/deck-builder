@@ -1,14 +1,66 @@
 import { createRouter } from './context';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import payloadSchema from '@/server/models/canvas';
-import { User } from '@prisma/client';
+import payloadSchema, { ElementObject, Payload } from '@/server/models/canvas';
+import { PrismaClient, User } from '@prisma/client';
+
+const templateUpsert = async (payload: Payload, prisma: PrismaClient, userId: string) => {
+    const postBody = {
+        data: {
+            userId: payload.userId ?? userId,
+            name: payload.name,
+            width: payload.width,
+            height: payload.height,
+            templateImage: payload.templateImage,
+            cornerBevel: payload.cornerBevel,
+            backgroundColor: payload.backgroundColor,
+        },
+    };
+
+    if (payload.id) {
+        return await prisma.cardTemplate.update({
+            where: {
+                id: payload.id,
+            },
+            ...postBody,
+        });
+    }
+
+    return await prisma.cardTemplate.create(postBody);
+};
+
+const formattedElements = (elements: ElementObject[], templateId: string) => {
+    return elements.map(element => ({
+        cardTemplateId: templateId,
+        ...element,
+    }));
+};
+
+const elementsUpsert = async (
+    elements: ElementObject[],
+    prisma: PrismaClient,
+    templateId: string,
+    isNew: boolean
+) => {
+    const formatted = formattedElements(elements, templateId);
+
+    if (!isNew) {
+        await prisma.cardTemplateElement.deleteMany({
+            where: {
+                cardTemplateId: templateId,
+            },
+        });
+    }
+
+    return await prisma.cardTemplateElement.createMany({
+        data: formatted,
+    });
+};
 
 export const templatesRouter = createRouter()
-    .mutation('add', {
+    .mutation('post', {
         input: payloadSchema,
-        resolve: async ({ input, ctx }) => {
-            console.log('ctx.user', ctx.user);
+        resolve: async ({ input, ctx }: { input: Payload; ctx: any }) => {
             if (!ctx.user) {
                 throw new TRPCError({ code: 'UNAUTHORIZED' });
             }
@@ -24,27 +76,15 @@ export const templatesRouter = createRouter()
                 throw new TRPCError({ code: 'UNAUTHORIZED' });
             }
 
-            const newTemplate = await ctx.prisma.cardTemplate.create({
-                data: {
-                    userId: user.id,
-                    name: input.name,
-                    width: input.width,
-                    height: input.height,
-                    templateImage: input.templateImage,
-                    cornerBevel: input.cornerBevel,
-                    backgroundColor: input.backgroundColor,
-                },
-            });
+            const templateResponse = await templateUpsert(input, ctx.prisma, user.id);
+            await elementsUpsert(
+                input.elements,
+                ctx.prisma,
+                templateResponse.id,
+                !input.id
+            );
 
-            // add the cardTemplateElements to the cardTemplateElements table
-            await ctx.prisma.cardTemplateElement.createMany({
-                data: input.elements.map(element => ({
-                    cardTemplateId: newTemplate.id,
-                    ...element,
-                })),
-            });
-
-            return newTemplate.id;
+            return templateResponse.id;
         },
     })
     .query('getById', {

@@ -67,6 +67,7 @@ export default function Areas() {
                                             name="type"
                                             className="select select-bordered w-full select-sm"
                                             onChange={e => handleChange(e, index)}
+                                            value={area.metadata.type}
                                         >
                                             <option value="string">String</option>
                                             <option value="number">Number</option>

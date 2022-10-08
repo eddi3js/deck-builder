@@ -54,6 +54,7 @@ const elementSchema = z.object({
 });
 
 const selectedElementSchema = z.object({
+    id: z.string().optional(),
     index: z.number(),
     metadata: metadataSchema,
     roughElement: roughElementSchema,
@@ -74,6 +75,8 @@ const selectedElementSchema = z.object({
 });
 
 const payloadSchema = z.object({
+    id: z.string().optional(),
+    userId: z.string().optional(),
     name: z.string(),
     width: z.string(),
     height: z.string(),
@@ -83,12 +86,24 @@ const payloadSchema = z.object({
     elements: z.array(elementSchema),
 });
 
+const cardTemplatePayloadSchema = z.object({
+    id: z.string().optional(),
+    userId: z.string().optional(),
+    name: z.string(),
+    width: z.string(),
+    height: z.string(),
+    cornerBevel: z.number(),
+    templateImage: z.string(),
+    backgroundColor: z.string(),
+});
+
 const positionSchema = z
     .string()
     .regex(/^(tl|tr|bl|br|inside)$/)
     .optional();
 
 export type Payload = z.infer<typeof payloadSchema>;
+export type CardTemplatePayload = z.infer<typeof cardTemplatePayloadSchema>;
 export type ElementObject = z.infer<typeof elementSchema>;
 export type SelectedElement = z.infer<typeof selectedElementSchema>;
 export type Positions = z.infer<typeof positionSchema>;
