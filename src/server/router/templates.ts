@@ -57,6 +57,17 @@ const elementsUpsert = async (
     });
 };
 
+const getAccount = async (prisma: PrismaClient, email?: string): Promise<User | null> => {
+    if (!email) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+    return await prisma.user.findUnique({
+        where: {
+            email: email,
+        },
+    });
+};
+
 export const templatesRouter = createRouter()
     .mutation('post', {
         input: payloadSchema,
@@ -85,6 +96,18 @@ export const templatesRouter = createRouter()
             );
 
             return templateResponse.id;
+        },
+    })
+    .query('get', {
+        resolve: async ({ ctx }: { ctx: any }) => {
+            const account: User | null = await getAccount(ctx.prisma, ctx?.user?.email);
+            // get all the card templates based on the account.id
+            const templates = await ctx.prisma.cardTemplate.findMany({
+                where: {
+                    userId: account?.id,
+                },
+            });
+            return templates;
         },
     })
     .query('getById', {

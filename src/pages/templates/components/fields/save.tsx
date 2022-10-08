@@ -32,7 +32,8 @@ export default function SaveTemplate({ templateId, userId }: SaveTemplateProps) 
 
     const save = async () => {
         try {
-            await mutateAsync(body);
+            const response = await mutateAsync(body);
+            console.log(response);
         } catch (error) {
             console.log(error);
         }
