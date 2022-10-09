@@ -48,7 +48,7 @@ export default function Areas() {
                             className={`flex flex-row justify-between items-start gap-2 p-4 `}
                         >
                             <div className="flex flex-col flex-1">
-                                <div className="flex flex-row gap-4 flex-1">
+                                <div className="flex flex-row gap-1 flex-1">
                                     <div className="flex flex-col">
                                         <p className="text-sm mb-1">Key Name</p>
                                         <input

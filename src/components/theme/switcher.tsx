@@ -3,7 +3,7 @@ import { useLocalStorage } from 'usehooks-ts';
 
 export default function ThemeSwitcher() {
     const [mounted, setMounted] = useState(false);
-    const [theme, setTheme] = useLocalStorage('theme', 'wireframe');
+    const [theme, setTheme] = useLocalStorage('theme', 'emerald');
 
     useEffect(() => setMounted(true), []);
     useEffect(() => {
@@ -17,7 +17,7 @@ export default function ThemeSwitcher() {
     const isDarkTheme = theme === 'business';
 
     const handleChangeTheme = () => {
-        const newTheme = isDarkTheme ? 'wireframe' : 'business';
+        const newTheme = isDarkTheme ? 'emerald' : 'business';
         document.documentElement.dataset.theme = newTheme;
         setTheme(newTheme);
     };

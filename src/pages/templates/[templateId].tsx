@@ -4,7 +4,7 @@ import { Routes } from '@/utils/constants';
 import Areas from './components/preview/areas';
 import CardFields from './components/fields';
 import TemplatePreview from './components/preview';
-import SaveTemplate from './components/fields/save';
+import TemplateActions from './components/fields/actions';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { trpc } from '@/utils/trpc';
@@ -60,12 +60,12 @@ export default function NewTemplate() {
                 },
                 {
                     icon: 'document',
-                    label: 'New Template',
-                    href: `${Routes.Templates}/new`,
+                    label: isNew ? 'New Template' : data?.name ?? '',
+                    href: `${Routes.Templates}/${isNew ? 'new' : query.templateId}`,
                     active: true,
                 },
             ]}
-            action={<SaveTemplate templateId={data?.id} userId={data?.userId} />}
+            action={<TemplateActions templateId={data?.id} userId={data?.userId} />}
         >
             <div className="flex flex-row gap-1 w-full flex-1 justify-between">
                 <div className="flex flex-col bg-base-200 h-full w-72 p-4">

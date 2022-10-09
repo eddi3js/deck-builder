@@ -98,6 +98,25 @@ export const templatesRouter = createRouter()
             return templateResponse.id;
         },
     })
+    .mutation('deleteById', {
+        input: z.string(),
+        resolve: async ({ input, ctx }: { input: string; ctx: any }) => {
+            const user: User | null = await getAccount(
+                ctx.prisma,
+                ctx?.user?.email as string
+            );
+
+            if (!user) {
+                throw new TRPCError({ code: 'UNAUTHORIZED' });
+            }
+
+            return await ctx.prisma.cardTemplate.delete({
+                where: {
+                    id: input,
+                },
+            });
+        },
+    })
     .query('get', {
         resolve: async ({ ctx }: { ctx: any }) => {
             const account: User | null = await getAccount(ctx.prisma, ctx?.user?.email);
