@@ -34,7 +34,7 @@ export default function Areas() {
             {elements.map((area, index) => {
                 return (
                     <div
-                        className="area flex flex-col gap-4 border-2 border-transparent"
+                        className="area flex flex-col gap-2 border-2 border-transparent"
                         style={{
                             borderColor:
                                 selectedElement?.index !== index
@@ -44,9 +44,7 @@ export default function Areas() {
                         }}
                         key={`element-fields-${index}`}
                     >
-                        <div
-                            className={`flex flex-row justify-between items-start gap-2 p-4 `}
-                        >
+                        <div className="flex flex-row justify-between items-start gap-2 px-4 py-1.5">
                             <div className="flex flex-col flex-1">
                                 <div className="flex flex-row gap-1 flex-1">
                                     <div className="flex flex-col">
@@ -68,6 +66,7 @@ export default function Areas() {
                                             className="select select-bordered w-full select-sm"
                                             onChange={e => handleChange(e, index)}
                                             value={area.metadata.type}
+                                            style={{ minWidth: 100 }}
                                         >
                                             <option value="string">String</option>
                                             <option value="number">Number</option>

@@ -8,3 +8,6 @@
 .breadcrumbs li.action:before {
     display: none !important;
 }
+.react-colorful {
+    z-index: 50;
+}

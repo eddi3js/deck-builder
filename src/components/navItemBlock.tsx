@@ -27,9 +27,9 @@ export default function NavItemBlock({ to, icon, label, count }: NavItemBlockPro
         >
             <div className="flex flex-row gap-4">
                 <Icon />
-                <span>{label}</span>
+                <span className="flex flex-1 text-left">{label}</span>
             </div>
-            {count && <span className="text-xs">({count ?? 0})</span>}
+            {count && <span className="text-xs">({count})</span>}
         </button>
     );
 }

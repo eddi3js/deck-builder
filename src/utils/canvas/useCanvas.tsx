@@ -1,18 +1,18 @@
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { useEffect, useState } from 'react';
+import { generator } from './createElement';
 // import fileExtention from 'file-extension';
 
 interface CanvasProps {
     valid: boolean;
     remove: () => void;
     copy: () => void;
-    ctx?: CanvasRenderingContext2D | undefined;
 }
 
-export default function useCanvasEvents({ valid, remove, ctx }: CanvasProps) {
+export default function useCanvasEvents({ valid, remove }: CanvasProps) {
     const [showGrid, setShowGrid] = useState<boolean>(true);
     const [action, setAction] = useState<string>('none');
-    const { selectedElement } = useCardTemplateStore();
+    const { selectedElement, ctx } = useCardTemplateStore();
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);

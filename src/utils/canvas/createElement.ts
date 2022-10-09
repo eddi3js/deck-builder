@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { ElementObject } from '@/server/models/canvas';
-import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { ElementObject, RoughElementOptions } from '@/server/models/canvas';
+import { useToolsetStore } from '@/stores/toolset';
+import { Options } from 'roughjs/bin/core';
 import { RoughGenerator } from 'roughjs/bin/generator';
 const rough = require('roughjs/bundled/rough.cjs');
 
@@ -17,7 +18,23 @@ export const defaultAreaMetaData: AreaMetaData = {
 };
 
 const useCreateElement = () => {
-    const { strokeColor } = useCardTemplateStore();
+    const { strokeColor, fillStyle, backgroundColor } = useToolsetStore();
+
+    const color = (key: keyof Options, options?: Options): string => {
+        if (options && options[key]) {
+            return options[key] as string;
+        }
+        switch (key) {
+            case 'stroke':
+                return strokeColor;
+            case 'fill':
+                return backgroundColor;
+            case 'fillStyle':
+                return fillStyle;
+            default:
+                return '#000';
+        }
+    };
 
     function createElement(
         index: number,
@@ -25,15 +42,21 @@ const useCreateElement = () => {
         y1: number,
         x2: number,
         y2: number,
-        metadata?: AreaMetaData
+        metadata?: AreaMetaData,
+        options?: Options
     ): ElementObject {
         const roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
             roughness: 0,
             strokeWidth: 1,
             curveStepCount: 9,
             simplification: 0,
-            fill: strokeColor,
-            stroke: strokeColor,
+            ...(options
+                ? options
+                : {
+                      fill: color('fill', options),
+                      stroke: color('stroke', options),
+                      fillStyle: color('fillStyle', options),
+                  }),
         });
 
         return {
@@ -47,11 +70,7 @@ const useCreateElement = () => {
         } as ElementObject;
     }
 
-    function fillColor() {
-        return '#' + Math.floor(Math.random() * 16777215).toString(16);
-    }
-
-    return { createElement, fillColor };
+    return { createElement };
 };
 
 export default useCreateElement;

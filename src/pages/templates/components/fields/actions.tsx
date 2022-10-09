@@ -11,6 +11,7 @@ interface TemplateActionProps {
 }
 
 export default function TemplateActions({ templateId, userId }: TemplateActionProps) {
+    const { push } = useRouter();
     const {
         elements,
         templateName,
@@ -36,7 +37,7 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
     const save = async () => {
         try {
             const response = await mutateAsync(body);
-            console.log(response);
+            push(`${Routes.Templates}/${response}`);
         } catch (error) {
             console.log(error);
         }
@@ -54,9 +55,7 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
             </button>
             <label
                 htmlFor="delete-modal-confirm"
-                className={`btn modal-button text-red-500 btn-sm bg-gray-700 border-gray-500 hover:bg-red-500 hover:border-red-500 hover:text-white ${
-                    isLoading ? 'loading' : ''
-                }`}
+                className="btn modal-button text-red-500 btn-sm bg-gray-700 border-gray-500 hover:bg-red-500 hover:border-red-500 hover:text-white"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +72,7 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
                     />
                 </svg>
             </label>
-            <DeleteModal templateName={templateName} id={templateId} />
+            {templateId && <DeleteModal templateName={templateName} id={templateId} />}
         </div>
     );
 }
@@ -81,7 +80,9 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
 const DeleteModal = ({ templateName, id }: { templateName: string; id: string }) => {
     const { push } = useRouter();
     const [copiedTemplateName, setCopiedTemplateName] = useState('');
-    const { mutateAsync, isLoading } = trpc.useMutation(['templates.deleteById']);
+    const { mutateAsync, isLoading: isDeleting } = trpc.useMutation([
+        'templates.deleteById',
+    ]);
     const isConfirmed = copiedTemplateName === templateName;
 
     const handleDeleteTemplate = async () => {
@@ -122,10 +123,10 @@ const DeleteModal = ({ templateName, id }: { templateName: string; id: string })
                     />
 
                     <button
-                        disabled={!isConfirmed || isLoading}
+                        disabled={!isConfirmed || isDeleting}
                         onClick={handleDeleteTemplate}
                         className={`${
-                            isLoading ? 'loading' : ''
+                            isDeleting ? 'loading' : ''
                         } btn btn-sm btn-error hover:bg-red-500 text-white w-full`}
                     >
                         I understand the consequences, delete this template

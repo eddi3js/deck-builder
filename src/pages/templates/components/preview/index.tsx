@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { ElementObject, SelectedElement } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { useToolsetStore } from '@/stores/toolset';
 import { getCanvasSize } from '@/utils/canvas/aspectRatio';
 import useCreateElement, { AreaMetaData } from '@/utils/canvas/createElement';
 import getElementAtPosition, {
@@ -13,6 +14,7 @@ import { radiusHash, RadiusRange } from '@/utils/canvas/ranges';
 import useCanvasEvents from '@/utils/canvas/useCanvas';
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { RoughCanvas } from 'roughjs/bin/canvas';
+import { Options } from 'roughjs/bin/core';
 import Toolbar from './toolbar';
 const rough = require('roughjs/bundled/rough.cjs');
 
@@ -35,13 +37,12 @@ export default function TemplatePreview() {
         setElements,
         setContext,
         setSelectedElement,
-        updateStrokeColor,
     } = useCardTemplateStore();
 
-    const { width: canvasWidth, height: canvasHeight } = getCanvasSize(ratios);
-    const { createElement, fillColor } = useCreateElement();
+    const { backgroundColor, strokeColor, fillStyle } = useToolsetStore();
 
-    useEffect(() => updateStrokeColor(fillColor()), [elements.length]);
+    const { width: canvasWidth, height: canvasHeight } = getCanvasSize(ratios);
+    const { createElement } = useCreateElement();
 
     const handleCopy = () => {
         if (!(selectedElRef.current as ElementObject)?.roughElement) return null;
@@ -83,7 +84,6 @@ export default function TemplatePreview() {
         valid: Boolean(selectedElRef.current),
         remove: handleDelete,
         copy: handleCopy,
-        ctx: canvasRef.current?.getContext('2d') as CanvasRenderingContext2D,
     });
 
     useEffect(() => {
@@ -181,7 +181,19 @@ export default function TemplatePreview() {
 
         if (elementType !== 'remove' && elementType !== 'select') {
             const id = elements.length;
-            const element = createElement(id, clientX, clientY, clientX, clientY);
+            const element = createElement(
+                id,
+                clientX,
+                clientY,
+                clientX,
+                clientY,
+                undefined,
+                {
+                    fillStyle,
+                    fill: backgroundColor,
+                    stroke: strokeColor,
+                }
+            );
 
             setElements([...elements, element]);
             setSelectedElement(element as ElementObject);
@@ -195,16 +207,23 @@ export default function TemplatePreview() {
         if (action === 'drawing' || action === 'resizing') {
             const { index } = elements[i as number] as ElementObject;
             if (index) {
-                const { x1, y1, x2, y2, metadata } = adjustElementCoordinates(
-                    elements[i as number] as ElementObject
-                );
-                updateElement(index, x1, y1, x2, y2, metadata);
+                const {
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    metadata,
+                    roughElement: { options },
+                } = adjustElementCoordinates(elements[i as number] as ElementObject);
+                updateElement(index, x1, y1, x2, y2, metadata, options);
                 selectedElRef.current = createElement(
                     index,
                     x1,
                     y1,
                     x2,
-                    y2
+                    y2,
+                    metadata,
+                    options
                 ) as ElementObject;
             }
         }
@@ -232,10 +251,18 @@ export default function TemplatePreview() {
                 : 'default';
         }
 
+        if (!elements.length) return;
+
+        const index = elements.length - 1;
+        const {
+            x1,
+            y1,
+            metadata,
+            roughElement: { options },
+        } = elements[index] as ElementObject;
+
         if (action === 'drawing') {
-            const index = elements.length - 1;
-            const { x1, y1, metadata } = elements[index] as ElementObject;
-            updateElement(index, x1, y1, mouseX, mouseY, metadata);
+            updateElement(index, x1, y1, mouseX, mouseY, metadata, options);
         } else if (action === 'moving') {
             const {
                 index: id,
@@ -246,6 +273,7 @@ export default function TemplatePreview() {
                 y1,
                 y2,
                 metadata,
+                roughElement,
             } = selectedElement as SelectedElement;
 
             const width = x2 - x1;
@@ -254,7 +282,15 @@ export default function TemplatePreview() {
             const newX = mouseX - offsetX;
             const newY = mouseY - offsetY;
 
-            updateElement(id, newX, newY, newX + width, newY + height, metadata);
+            updateElement(
+                id,
+                newX,
+                newY,
+                newX + width,
+                newY + height,
+                metadata,
+                roughElement.options
+            );
         } else if (action === 'resizing') {
             const {
                 index: id,
@@ -269,7 +305,7 @@ export default function TemplatePreview() {
                 position,
                 coords
             );
-            updateElement(id, x1, y1, x2, y2, metadata);
+            updateElement(id, x1, y1, x2, y2, metadata, options);
         }
     };
 
@@ -279,9 +315,10 @@ export default function TemplatePreview() {
         y1: number,
         x2: number,
         y2: number,
-        metadata: AreaMetaData
+        metadata: AreaMetaData,
+        options?: Options
     ) => {
-        const updatedElement = createElement(index, x1, y1, x2, y2, metadata);
+        const updatedElement = createElement(index, x1, y1, x2, y2, metadata, options);
 
         const updatedElements = [...elements];
         updatedElements[index] = updatedElement as ElementObject;

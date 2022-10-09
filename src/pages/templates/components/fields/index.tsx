@@ -1,8 +1,8 @@
-import ColorPicker from './colorPicker';
 import TemplateName from './name';
 import RangeSlider from './range';
 import Ratios from './ratios';
 import BackgroundImage from './background';
+import Toolset from '../toolset';
 
 export default function CardFields() {
     return (
@@ -11,7 +11,8 @@ export default function CardFields() {
             <BackgroundImage />
             <Ratios />
             <RangeSlider type="radius" />
-            <ColorPicker />
+            <Toolset />
+            {/* <ColorPicker /> */}
         </div>
     );
 }

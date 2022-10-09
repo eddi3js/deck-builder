@@ -42,7 +42,7 @@ const RangeSlider = ({ type }: RangeSliderProps) => {
     const max = minMaxValues().max;
 
     return (
-        <div className="flex flex-row gap-4 justify-between items-center my-4">
+        <div className="flex flex-row gap-4 justify-between items-center my-3">
             <label htmlFor="default-range" className="text-xs">
                 Corner Bevel
             </label>

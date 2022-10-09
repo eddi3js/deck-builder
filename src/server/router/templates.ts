@@ -98,6 +98,19 @@ export const templatesRouter = createRouter()
             return templateResponse.id;
         },
     })
+    .query('templateCount', {
+        resolve: async ({ ctx }: { ctx: any }) => {
+            const user = await getAccount(ctx.prisma, ctx.user?.email as string);
+            if (!user) {
+                throw new TRPCError({ code: 'UNAUTHORIZED' });
+            }
+            return await ctx.prisma.cardTemplate.count({
+                where: {
+                    userId: user.id,
+                },
+            });
+        },
+    })
     .mutation('deleteById', {
         input: z.string(),
         resolve: async ({ input, ctx }: { input: string; ctx: any }) => {

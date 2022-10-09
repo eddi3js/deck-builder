@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { trpc } from '@/utils/trpc';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { useToolsetStore } from '@/stores/toolset';
 
 export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
@@ -22,11 +23,15 @@ export default function NewTemplate() {
             enabled: false,
         }
     );
-    const { updateStateWithTemplateData } = useCardTemplateStore();
+    const { updateStateWithTemplateData, resetState } = useCardTemplateStore();
+    const { resetState: resetStoreState } = useToolsetStore();
 
     useEffect(() => {
         if (!isNew) {
             grabAllNecessaryData();
+        } else {
+            resetState();
+            resetStoreState();
         }
     }, [isNew]);
 
