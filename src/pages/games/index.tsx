@@ -6,6 +6,7 @@ import NewGameModal from './newGameModal';
 
 export default function Games() {
     const { data, isLoading } = trpc.useQuery(['games.getAll']);
+    console.log(isLoading, 'data');
     return (
         <Layout
             breadcrumbLinks={[

@@ -1,7 +1,23 @@
+import { Routes } from '@/utils/constants';
+import { trpc } from '@/utils/trpc';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 export default function NewGameModal() {
     const [name, setName] = useState('');
+    const { push } = useRouter();
+    const { mutateAsync, isLoading } = trpc.useMutation(['games.post']);
+
+    const createGame = async () => {
+        try {
+            const response = await mutateAsync({ name });
+            push(`${Routes.Games}/${response.id}`);
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <>
             <label
@@ -46,8 +62,10 @@ export default function NewGameModal() {
                     />
 
                     <button
+                        onClick={createGame}
+                        disabled={isLoading || name.length === 0}
                         className={`${
-                            false ? 'loading' : ''
+                            isLoading ? 'loading' : ''
                         } btn btn-sm btn-info text-white w-full`}
                     >
                         Add New Game

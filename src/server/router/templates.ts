@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import payloadSchema, { ElementObject, Payload } from '@/server/models/canvas';
 import { PrismaClient, User } from '@prisma/client';
-import getAccount from '@/server/services/getAccount';
+import authAccount from '@/server/services/authAccount';
 
 const templateUpsert = async (payload: Payload, prisma: PrismaClient, userId: string) => {
     const postBody = {
@@ -90,7 +90,7 @@ export const templatesRouter = createRouter()
     })
     .query('templateCount', {
         resolve: async ({ ctx }: { ctx: any }) => {
-            const user = await getAccount(ctx.prisma, ctx.user?.email as string);
+            const user = await authAccount(ctx.prisma, ctx.user?.email as string);
             if (!user) {
                 throw new TRPCError({ code: 'UNAUTHORIZED' });
             }
@@ -104,7 +104,7 @@ export const templatesRouter = createRouter()
     .mutation('deleteById', {
         input: z.string(),
         resolve: async ({ input, ctx }: { input: string; ctx: any }) => {
-            await getAccount(ctx.prisma, ctx?.user?.email as string);
+            await authAccount(ctx.prisma, ctx?.user?.email as string);
 
             return await ctx.prisma.cardTemplate.delete({
                 where: {
@@ -115,7 +115,7 @@ export const templatesRouter = createRouter()
     })
     .query('get', {
         resolve: async ({ ctx }: { ctx: any }) => {
-            const account: User | null = await getAccount(ctx.prisma, ctx?.user?.email);
+            const account: User | null = await authAccount(ctx.prisma, ctx?.user?.email);
             // get all the card templates based on the account.id
             const templates = await ctx.prisma.cardTemplate.findMany({
                 where: {
