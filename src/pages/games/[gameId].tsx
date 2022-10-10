@@ -11,7 +11,7 @@ export default function GamePage() {
     const { query } = useRouter();
     const isNew = query.gameId === 'new';
 
-    const { resetGameStore } = useGameStore();
+    const { resetGameStore, setState } = useGameStore();
     const { refetch, isLoading, data } = trpc.useQuery(
         ['games.getById', { id: query.gameId as string }],
         {
@@ -26,6 +26,12 @@ export default function GamePage() {
             resetGameStore();
         }
     }, [query]);
+
+    useEffect(() => {
+        if (data) {
+            setState(data);
+        }
+    }, [data]);
 
     return (
         <Layout

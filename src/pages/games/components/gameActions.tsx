@@ -1,16 +1,29 @@
 import DeleteModal from '@/components/deleteModal';
+import { useGameStore } from '@/stores/games';
 import { Routes } from '@/utils/constants';
+import { trpc } from '@/utils/trpc';
 
 interface GameActionProps {
     gameId: string | undefined;
     name: string;
 }
 
-export default function GameActions({ gameId, name }: GameActionProps) {
-    const isLoading = false;
+export default function GameActions({ gameId }: GameActionProps) {
+    const { mutateAsync, isLoading } = trpc.useMutation(['games.post']);
+    const { name } = useGameStore();
+
+    const saveGame = async () => {
+        try {
+            await mutateAsync({ name, id: gameId });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div className="flex flex-row gap-2">
             <button
+                onClick={saveGame}
                 className={`btn text-white btn-secondary btn-sm px-5 btn-action ${
                     isLoading ? 'loading' : ''
                 }`}

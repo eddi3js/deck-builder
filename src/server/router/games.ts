@@ -5,7 +5,12 @@ import { z } from 'zod';
 
 export const gamesRouter = createRouter()
     .query('get', {
-        resolve: async ({ ctx }) => {
+        input: z
+            .object({
+                listOnly: z.boolean(),
+            })
+            .optional(),
+        resolve: async ({ ctx, input }) => {
             const user = await authAccount(ctx.prisma, ctx.user?.email as string);
             const games = await ctx.prisma.games.findMany({
                 where: {
@@ -17,15 +22,32 @@ export const gamesRouter = createRouter()
                 throw new TRPCError({ code: 'NOT_FOUND' });
             }
 
+            if (input?.listOnly) {
+                return games.map(game => ({ id: game.id, name: game.name }));
+            }
+
             return games;
         },
     })
     .mutation('post', {
         input: z.object({
+            id: z.string().optional(),
             name: z.string(),
         }),
         resolve: async ({ ctx, input }) => {
             const user = await authAccount(ctx.prisma, ctx.user?.email as string);
+
+            if (input.id) {
+                return await ctx.prisma.games.update({
+                    where: {
+                        id: input.id,
+                    },
+                    data: {
+                        name: input.name,
+                    },
+                });
+            }
+
             return await ctx.prisma.games.create({
                 data: {
                     name: input.name,
