@@ -21,7 +21,7 @@ export default function CardTemplates() {
             ]}
         >
             <Link href={`${Routes.Templates}/new`}>
-                <a className="mb-4 flex flex-row gap-3 btn-info btn font-normal rounded text-white w-48">
+                <a className="mb-4 flex flex-row gap-3 btn-info btn font-normal rounded text-white w-fit">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"

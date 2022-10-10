@@ -1,8 +1,11 @@
 import Layout from '@/components/layout';
 import { AuthContext, authPage } from '@/utils/authPage';
 import { Routes } from '@/utils/constants';
+import { trpc } from '@/utils/trpc';
+import NewGameModal from './newGameModal';
 
 export default function Games() {
+    const { data, isLoading } = trpc.useQuery(['games.getAll']);
     return (
         <Layout
             breadcrumbLinks={[
@@ -14,7 +17,7 @@ export default function Games() {
                 },
             ]}
         >
-            <h1>Games Page</h1>
+            <NewGameModal />
         </Layout>
     );
 }

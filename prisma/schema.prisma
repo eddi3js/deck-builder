@@ -55,6 +55,7 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+// CARD TEMPLATES
 model CardTemplate {
     id              String                @id @unique @default(cuid())
     userId          String
@@ -79,4 +80,12 @@ model CardTemplateElement {
     metadata       Json
     roughElement   Json
     CardTemplate   CardTemplate? @relation(fields: [cardTemplateId], references: [id])
+}
+
+// GAMES
+
+model Games {
+    id     String @id @unique @default(cuid())
+    name   String
+    userId String
 }

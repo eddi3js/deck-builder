@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import payloadSchema, { ElementObject, Payload } from '@/server/models/canvas';
 import { PrismaClient, User } from '@prisma/client';
+import getAccount from '@/server/services/getAccount';
 
 const templateUpsert = async (payload: Payload, prisma: PrismaClient, userId: string) => {
     const postBody = {
@@ -57,17 +58,6 @@ const elementsUpsert = async (
     });
 };
 
-const getAccount = async (prisma: PrismaClient, email?: string): Promise<User | null> => {
-    if (!email) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
-    return await prisma.user.findUnique({
-        where: {
-            email: email,
-        },
-    });
-};
-
 export const templatesRouter = createRouter()
     .mutation('post', {
         input: payloadSchema,
@@ -114,14 +104,7 @@ export const templatesRouter = createRouter()
     .mutation('deleteById', {
         input: z.string(),
         resolve: async ({ input, ctx }: { input: string; ctx: any }) => {
-            const user: User | null = await getAccount(
-                ctx.prisma,
-                ctx?.user?.email as string
-            );
-
-            if (!user) {
-                throw new TRPCError({ code: 'UNAUTHORIZED' });
-            }
+            await getAccount(ctx.prisma, ctx?.user?.email as string);
 
             return await ctx.prisma.cardTemplate.delete({
                 where: {

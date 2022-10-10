@@ -13,7 +13,7 @@ import { useToolsetStore } from '@/stores/toolset';
 
 export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
-export default function NewTemplate() {
+export default function TemplatePage() {
     const { query } = useRouter();
 
     const isNew = query.templateId === 'new';

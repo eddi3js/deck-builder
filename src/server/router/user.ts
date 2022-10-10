@@ -1,5 +1,6 @@
 import { createRouter } from './context';
 import { TRPCError } from '@trpc/server';
+import getAccount from '../services/getAccount';
 
 export const userRouter = createRouter().query('me', {
     resolve: ({ ctx }) => {
@@ -7,11 +8,7 @@ export const userRouter = createRouter().query('me', {
             throw new TRPCError({ code: 'UNAUTHORIZED' });
         }
 
-        const user = ctx.prisma.user.findUnique({
-            where: {
-                email: ctx.user.email as string,
-            },
-        });
+        const user = getAccount(ctx.prisma, ctx.user?.email as string);
 
         if (!user) {
             throw new TRPCError({ code: 'NOT_FOUND' });
