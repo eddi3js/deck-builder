@@ -6,6 +6,7 @@ export enum Routes {
     Unauthorized = '/unauthorized',
     Templates = '/templates',
     Games = '/games',
+    Decks = '/decks',
     Login = '/api/auth/signin',
     Logout = '/api/auth/signout',
     Home = '/',

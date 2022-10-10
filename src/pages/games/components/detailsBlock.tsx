@@ -1,11 +1,13 @@
 import { useGameStore } from '@/stores/games';
+import { Routes } from '@/utils/constants';
+import Link from 'next/link';
 
 export default function GameDetails() {
-    const { name, updateName } = useGameStore();
+    const { name, updateName, id } = useGameStore();
     return (
         <div className="flex flex-col w-full gap-3">
             <div className="my-4">
-                <p className="text-sm font-bold mb-1">Game Name</p>
+                <p className="text-sm font-bold mb-1">Name</p>
                 <input
                     placeholder="Enter game name"
                     value={name}
@@ -20,7 +22,10 @@ export default function GameDetails() {
 
             <p className="text-sm">
                 No decks found. please{' '}
-                <button className="underline text-secondary">create one</button>.
+                <Link href={`${Routes.Games}/${id ?? ''}/${Routes.Decks}/new`}>
+                    <a className="underline text-secondary">create one</a>
+                </Link>
+                .
             </p>
         </div>
     );

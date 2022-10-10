@@ -1,10 +1,14 @@
+import { Game } from '@/server/models/games';
 import create from 'zustand';
 
 export interface GameState {
     id: string | null;
     name: string;
     userId: string | null;
-    setState: (state: Partial<GameState>) => void;
+}
+
+interface GameStore extends GameState {
+    setGameData: (state: Game) => void;
     updateName: (name: string) => void;
     resetGameStore: () => void;
 }
@@ -15,12 +19,12 @@ const initialState = {
     userId: '',
 };
 
-export const useGameStore = create<GameState>(set => ({
+export const useGameStore = create<GameStore>(set => ({
     id: null,
     userId: null,
     name: '',
 
-    setState: (state: Partial<GameState>) => set(state),
+    setGameData: (state: Game) => set(state),
     resetGameStore: () => set(initialState),
     updateName: (name: string) => set({ name }),
 }));
