@@ -4,12 +4,13 @@ import { Routes } from '@/utils/constants';
 import Areas from './components/preview/areas';
 import CardFields from './components/fields';
 import TemplatePreview from './components/preview';
-import TemplateActions from './components/fields/actions';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { trpc } from '@/utils/trpc';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { useToolsetStore } from '@/stores/toolset';
+import Actions from '@/components/actions';
+import { ElementObject } from '@/server/models/canvas';
 
 export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
@@ -23,8 +24,30 @@ export default function TemplatePage() {
             enabled: false,
         }
     );
-    const { updateStateWithTemplateData, resetState } = useCardTemplateStore();
+    const {
+        updateStateWithTemplateData,
+        resetState,
+        elements,
+        templateName,
+        ratios,
+        cardRadius,
+        cardBackgroundImage,
+        cardBackgroundColor,
+    } = useCardTemplateStore();
     const { resetState: resetStoreState } = useToolsetStore();
+
+    const payload = {
+        ...(!isNew && {
+            id: data?.id,
+        }),
+        name: templateName as string,
+        width: ratios[0]?.toString() as string,
+        height: ratios[1]?.toString() as string,
+        cornerBevel: cardRadius as number,
+        backgroundColor: cardBackgroundColor as string,
+        templateImage: cardBackgroundImage as string,
+        elements: elements as ElementObject[],
+    };
 
     useEffect(() => {
         if (!isNew) {
@@ -71,7 +94,19 @@ export default function TemplatePage() {
                     active: true,
                 },
             ]}
-            action={<TemplateActions templateId={data?.id} userId={data?.userId} />}
+            action={
+                data && (
+                    <Actions
+                        isNew={isNew}
+                        redirect={Routes.Templates}
+                        deleteApi="templates.deleteById"
+                        deleteConfirmName={templateName}
+                        postApi="templates.post"
+                        modalId="delete-modal-confirm"
+                        payload={payload}
+                    />
+                )
+            }
         >
             <div className="flex flex-row gap-1 w-full flex-1 justify-between">
                 <div className="flex flex-col bg-base-200 h-full w-72 p-4">

@@ -1,44 +1,36 @@
 import DeleteModal from '@/components/deleteModal';
-import { ElementObject } from '@/server/models/canvas';
-import { useCardTemplateStore } from '@/stores/cardTemplates';
-import { Routes } from '@/utils/constants';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
-interface TemplateActionProps {
-    templateId: string | undefined;
-    userId: string | undefined;
+
+interface ActionProps {
+    isNew: boolean;
+    modalId: string;
+    payload: any;
+    postApi: string;
+    deleteApi: string;
+    redirect: string;
+    deleteConfirmName: string;
 }
 
-export default function TemplateActions({ templateId, userId }: TemplateActionProps) {
+export default function Actions({
+    deleteApi,
+    postApi,
+    payload,
+    modalId,
+    redirect,
+    isNew,
+    deleteConfirmName,
+}: ActionProps) {
+    const { mutateAsync, isLoading } = trpc.useMutation([postApi as any]);
     const { push } = useRouter();
-    const {
-        elements,
-        templateName,
-        ratios,
-        cardRadius,
-        cardBackgroundImage,
-        cardBackgroundColor,
-    } = useCardTemplateStore();
-
-    const { mutateAsync, isLoading } = trpc.useMutation(['templates.post']);
-
-    const body = {
-        name: templateName as string,
-        width: ratios[0]?.toString() as string,
-        height: ratios[1]?.toString() as string,
-        cornerBevel: cardRadius as number,
-        backgroundColor: cardBackgroundColor as string,
-        templateImage: cardBackgroundImage as string,
-        elements: elements as ElementObject[],
-        ...(userId && { userId, id: templateId }),
-    };
 
     const save = async () => {
         try {
-            const response = await mutateAsync(body);
-            push(`${Routes.Templates}/${response}`);
+            const doc = await mutateAsync(payload);
+            if (isNew) {
+                push(`${redirect}/${doc.id}`);
+            }
         } catch (error) {
-            // TODO: Handle error
             console.log(error);
         }
     };
@@ -54,7 +46,7 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
                 Save
             </button>
             <label
-                htmlFor="delete-modal-confirm"
+                htmlFor={modalId}
                 className="btn modal-button text-red-500 btn-sm bg-gray-700 border-gray-500 hover:bg-red-500 hover:border-red-500 hover:text-white"
             >
                 <svg
@@ -72,13 +64,13 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
                     />
                 </svg>
             </label>
-            {templateId && (
+            {payload.id && (
                 <DeleteModal
-                    redirect={Routes.Templates}
-                    modalId="delete-modal-confirm"
-                    api="templates.deleteById"
-                    name={templateName}
-                    id={templateId}
+                    redirect={redirect}
+                    modalId={modalId}
+                    api={deleteApi}
+                    name={deleteConfirmName}
+                    id={payload.id}
                 />
             )}
         </div>

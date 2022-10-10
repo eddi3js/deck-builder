@@ -85,7 +85,7 @@ export const templatesRouter = createRouter()
                 !input.id
             );
 
-            return templateResponse.id;
+            return templateResponse;
         },
     })
     .query('templateCount', {

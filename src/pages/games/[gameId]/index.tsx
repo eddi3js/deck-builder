@@ -1,17 +1,17 @@
+import Actions from '@/components/actions';
 import Layout from '@/components/layout';
 import { useGameStore } from '@/stores/games';
 import { Routes } from '@/utils/constants';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import GameDetails from '../components/detailsBlock';
-import GameActions from '../components/gameActions';
+import GameDetails from '../components/details';
 
 export default function GamePage() {
     const { query } = useRouter();
     const isNew = query.gameId === 'new';
 
-    const { setGameData } = useGameStore();
+    const { setGameData, name } = useGameStore();
     const { isLoading, data } = trpc.useQuery([
         'games.getById',
         { id: query.gameId as string },
@@ -38,7 +38,22 @@ export default function GamePage() {
                     active: true,
                 },
             ]}
-            action={data && <GameActions name={data.name} gameId={data.id} />}
+            action={
+                data && (
+                    <Actions
+                        isNew={isNew}
+                        redirect={Routes.Games}
+                        postApi="games.post"
+                        deleteApi="games.delete"
+                        deleteConfirmName={name}
+                        modalId="delete-game-confirm"
+                        payload={{
+                            id: data.id,
+                            name,
+                        }}
+                    />
+                )
+            }
         >
             <div className="flex flex-row gap-1 w-full flex-1 justify-between">
                 {isLoading && !isNew ? 'Loading Game...' : <GameDetails />}

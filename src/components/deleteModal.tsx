@@ -46,8 +46,8 @@ export default function DeleteModal({
                         Are you sure absolutely sure?
                     </h3>
                     <p className="py-3">
-                        This action <b>cannot</b> be undone. This will permanently delete
-                        the <b>{name}</b> template.
+                        This action <b>cannot</b> be undone. This will permanently delete{' '}
+                        <b>{name}</b>.
                     </p>
                     <p className="py-3">
                         Please type <b>{name}</b> to confirm.
