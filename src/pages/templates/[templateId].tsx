@@ -51,6 +51,7 @@ export default function TemplatePage() {
             };
             updateStateWithTemplateData(templateState);
         } catch (error) {
+            // TODO: Handle error
             console.log(error);
         }
     };

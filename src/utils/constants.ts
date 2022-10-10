@@ -10,3 +10,5 @@ export enum Routes {
     Logout = '/api/auth/signout',
     Home = '/',
 }
+
+export type RouteTypes = typeof Routes;

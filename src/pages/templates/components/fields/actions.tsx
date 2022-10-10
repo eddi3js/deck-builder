@@ -1,10 +1,9 @@
+import DeleteModal from '@/components/deleteModal';
 import { ElementObject } from '@/server/models/canvas';
 import { useCardTemplateStore } from '@/stores/cardTemplates';
 import { Routes } from '@/utils/constants';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-
 interface TemplateActionProps {
     templateId: string | undefined;
     userId: string | undefined;
@@ -39,6 +38,7 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
             const response = await mutateAsync(body);
             push(`${Routes.Templates}/${response}`);
         } catch (error) {
+            // TODO: Handle error
             console.log(error);
         }
     };
@@ -47,7 +47,7 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
         <div className="flex flex-row gap-2">
             <button
                 onClick={save}
-                className={`btn text-white btn-primary btn-sm px-5 btn-action ${
+                className={`btn text-white btn-secondary btn-sm px-5 btn-action ${
                     isLoading ? 'loading' : ''
                 }`}
             >
@@ -72,67 +72,15 @@ export default function TemplateActions({ templateId, userId }: TemplateActionPr
                     />
                 </svg>
             </label>
-            {templateId && <DeleteModal templateName={templateName} id={templateId} />}
+            {templateId && (
+                <DeleteModal
+                    redirect={Routes.Templates}
+                    modalId="delete-modal-confirm"
+                    api="templates.deleteById"
+                    name={templateName}
+                    id={templateId}
+                />
+            )}
         </div>
     );
 }
-
-const DeleteModal = ({ templateName, id }: { templateName: string; id: string }) => {
-    const { push } = useRouter();
-    const [copiedTemplateName, setCopiedTemplateName] = useState('');
-    const { mutateAsync, isLoading: isDeleting } = trpc.useMutation([
-        'templates.deleteById',
-    ]);
-    const isConfirmed = copiedTemplateName === templateName;
-
-    const handleDeleteTemplate = async () => {
-        try {
-            await mutateAsync(id);
-            push(Routes.Templates);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    return (
-        <>
-            <input type="checkbox" id="delete-modal-confirm" className="modal-toggle" />
-            <div className="modal">
-                <div className="modal-box max-w-xl relative overflow-x-hidden whitespace-normal">
-                    <label
-                        htmlFor="delete-modal-confirm"
-                        className="btn btn-sm btn-circle absolute right-2 top-2"
-                    >
-                        ✕
-                    </label>
-                    <h3 className="font-bold text-lg mb-1">
-                        Are you sure absolutely sure?
-                    </h3>
-                    <p className="py-3">
-                        This action <b>cannot</b> be undone. This will permanently delete
-                        the <b>{templateName}</b> template.
-                    </p>
-                    <p>Current copies of this template in games will still be usable.</p>
-                    <p className="py-3">
-                        Please type <b>{templateName}</b> to confirm.
-                    </p>
-
-                    <input
-                        type="text"
-                        onChange={e => setCopiedTemplateName(e.target.value)}
-                        className="input input-bordered input-sm w-full mb-3"
-                    />
-
-                    <button
-                        disabled={!isConfirmed || isDeleting}
-                        onClick={handleDeleteTemplate}
-                        className={`${
-                            isDeleting ? 'loading' : ''
-                        } btn btn-sm btn-error hover:bg-red-500 text-white w-full`}
-                    >
-                        I understand the consequences, delete this template
-                    </button>
-                </div>
-            </div>
-        </>
-    );
-};

@@ -12,8 +12,8 @@ export default function NewGameModal() {
         try {
             const response = await mutateAsync({ name });
             push(`${Routes.Games}/${response.id}`);
-            console.log(response);
         } catch (error) {
+            // TODO: Handle error
             console.log(error);
         }
     };

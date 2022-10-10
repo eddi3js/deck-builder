@@ -104,7 +104,16 @@ export const templatesRouter = createRouter()
     .mutation('deleteById', {
         input: z.string(),
         resolve: async ({ input, ctx }: { input: string; ctx: any }) => {
-            await authAccount(ctx.prisma, ctx?.user?.email as string);
+            const account = await authAccount(ctx.prisma, ctx?.user?.email as string);
+            const template = await ctx.prisma.cardTemplate.findUnique({
+                where: {
+                    id: input,
+                },
+            });
+
+            if (!template || template.userId !== account?.id) {
+                throw new TRPCError({ code: 'NOT_FOUND' });
+            }
 
             return await ctx.prisma.cardTemplate.delete({
                 where: {

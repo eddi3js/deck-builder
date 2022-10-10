@@ -1,15 +1,19 @@
 import Layout from '@/components/layout';
+import { useGameStore } from '@/stores/games';
 import { Routes } from '@/utils/constants';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import GameDetails from './components/detailsBlock';
+import GameActions from './components/gameActions';
 
 export default function GamePage() {
     const { query } = useRouter();
     const isNew = query.gameId === 'new';
 
+    const { resetGameStore } = useGameStore();
     const { refetch, isLoading, data } = trpc.useQuery(
-        ['games.getGameById', { id: query.gameId as string }],
+        ['games.getById', { id: query.gameId as string }],
         {
             enabled: false,
         }
@@ -17,15 +21,11 @@ export default function GamePage() {
 
     useEffect(() => {
         if (!isNew && query.gameId) {
-            console.log('fired');
             refetch();
         } else {
-            // resetState();
-            // resetStoreState();
+            resetGameStore();
         }
     }, [query]);
-
-    console.log(data, 'THE DATA');
 
     return (
         <Layout
@@ -42,10 +42,10 @@ export default function GamePage() {
                     active: true,
                 },
             ]}
-            // action={<TemplateActions templateId={data?.id} userId={data?.userId} />}
+            action={data && <GameActions name={data.name} gameId={data.id} />}
         >
             <div className="flex flex-row gap-1 w-full flex-1 justify-between">
-                <h1>Game Details</h1>
+                {isLoading || !data ? 'Loading Game...' : <GameDetails {...data} />}
             </div>
         </Layout>
     );
