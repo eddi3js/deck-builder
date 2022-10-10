@@ -64,7 +64,7 @@ export default function NewTemplate() {
                     href: Routes.Templates,
                 },
                 {
-                    icon: 'document',
+                    icon: isNew ? 'new-document' : 'document',
                     label: isNew ? 'New Template' : data?.name ?? '',
                     href: `${Routes.Templates}/${isNew ? 'new' : query.templateId}`,
                     active: true,

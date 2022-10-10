@@ -47,6 +47,7 @@ export default function CardTemplates() {
                               key={template.id}
                               to={`${Routes.Templates}/${template.id}`}
                               label={template.name}
+                              icon="document"
                           />
                       ))}
             </div>
