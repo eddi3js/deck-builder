@@ -21,7 +21,7 @@ export default function CardTemplates() {
             ]}
         >
             <Link href={`${Routes.Templates}/new`}>
-                <a className="mb-4 flex flex-row gap-3 btn-info btn font-normal rounded text-white w-fit">
+                <a className="mb-4 flex flex-row gap-3 btn-secondary btn font-normal rounded text-white w-fit">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -39,7 +39,7 @@ export default function CardTemplates() {
                     New Template
                 </a>
             </Link>
-            <div className="my-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="my-4 flex flex-row flex-wrap gap-4">
                 {isLoading
                     ? 'Loading...'
                     : data?.map((template: CardTemplatePayload) => (

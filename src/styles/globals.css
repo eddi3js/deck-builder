@@ -11,3 +11,7 @@
 .react-colorful {
     z-index: 50;
 }
+
+.menu .active {
+    @apply text-primary-content;
+}

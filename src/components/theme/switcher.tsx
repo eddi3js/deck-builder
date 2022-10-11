@@ -14,10 +14,10 @@ export default function ThemeSwitcher() {
 
     if (!mounted) return null;
 
-    const isDarkTheme = theme === 'business';
+    const isDarkTheme = theme === 'night';
 
     const handleChangeTheme = () => {
-        const newTheme = isDarkTheme ? 'emerald' : 'business';
+        const newTheme = isDarkTheme ? 'emerald' : 'night';
         document.documentElement.dataset.theme = newTheme;
         setTheme(newTheme);
     };

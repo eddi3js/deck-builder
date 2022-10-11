@@ -18,7 +18,7 @@ module.exports = {
         logs: true,
         rtl: false,
         prefix: '',
-        darkTheme: 'business',
+        darkTheme: 'night',
     },
     theme: {
         extend: {

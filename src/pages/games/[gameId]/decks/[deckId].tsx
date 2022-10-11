@@ -5,12 +5,10 @@ import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
 
 export default function Deck() {
-    const { name } = useGameStore();
     const { query } = useRouter();
-
     const { data } = trpc.useQuery(['games.getById', { id: query.gameId as string }]);
-
     const isNew = query.deckId === 'new';
+
     return (
         <Layout
             breadcrumbLinks={[

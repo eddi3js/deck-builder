@@ -14,18 +14,18 @@ export default function NavItemBlock({ to, icon, label, count }: NavItemBlockPro
     const Icon = () => {
         switch (icon) {
             case 'document':
-                return <DocumentIcon className="w-6 h-6" />;
+                return <DocumentIcon className="w-7 h-7" />;
             default:
-                return <FolderIcon className="w-6 h-6" />;
+                return <FolderIcon className="w-7 h-7" />;
         }
     };
 
     return (
         <button
             onClick={() => navigate.push(to)}
-            className="card p-4 border rounded flex flex-row justify-between items-center hover:cursor-pointer hover:border-primary"
+            className="card p-4 px-6 border rounded flex flex-row justify-between items-center hover:cursor-pointer hover:border-secondary"
         >
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row gap-4 items-center">
                 <Icon />
                 <span className="flex flex-1 text-left">{label}</span>
             </div>
