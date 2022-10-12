@@ -16,6 +16,9 @@ export const gamesRouter = createRouter()
                 where: {
                     userId: user?.id,
                 },
+                include: {
+                    decks: true,
+                },
             });
 
             if (!games) {
@@ -65,6 +68,9 @@ export const gamesRouter = createRouter()
             const game = await ctx.prisma.games.findUnique({
                 where: {
                     id: input.id,
+                },
+                include: {
+                    decks: true,
                 },
             });
 

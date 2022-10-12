@@ -130,6 +130,9 @@ export const templatesRouter = createRouter()
                 where: {
                     userId: account?.id,
                 },
+                include: {
+                    elements: true,
+                },
             });
             return templates;
         },

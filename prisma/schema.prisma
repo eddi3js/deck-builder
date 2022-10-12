@@ -45,6 +45,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     CardTemplate  CardTemplate[]
+    Games         Games[]
 }
 
 model VerificationToken {
@@ -85,7 +86,25 @@ model CardTemplateElement {
 // GAMES
 
 model Games {
-    id     String @id @unique @default(cuid())
+    id     String  @id @unique @default(cuid())
     name   String
+    user   User    @relation(fields: [userId], references: [id])
     userId String
+    decks  Decks[]
+}
+
+model Decks {
+    id     String  @id @unique @default(cuid())
+    name   String
+    game   Games?  @relation(fields: [gameId], references: [id])
+    gameId String?
+    cards  Cards[]
+}
+
+model Cards {
+    id       String  @id @unique @default(cuid())
+    name     String
+    template Json
+    deck     Decks?  @relation(fields: [deckId], references: [id])
+    deckId   String?
 }
