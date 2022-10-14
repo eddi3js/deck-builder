@@ -1,4 +1,4 @@
-import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { useCardTemplateStore } from '@/stores/templates';
 
 export default function TemplateName() {
     const { templateName, changeTemplateName } = useCardTemplateStore();

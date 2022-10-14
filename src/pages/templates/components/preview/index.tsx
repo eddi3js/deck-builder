@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { ElementObject, SelectedElement } from '@/server/models/canvas';
-import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { useCardTemplateStore } from '@/stores/templates';
 import { useToolsetStore } from '@/stores/toolset';
 import { getCanvasSize } from '@/utils/canvas/aspectRatio';
 import useCreateElement, { AreaMetaData } from '@/utils/canvas/createElement';
@@ -45,21 +45,21 @@ export default function TemplatePreview() {
     const { createElement } = useCreateElement();
 
     const handleCopy = () => {
-        if (!(selectedElRef.current as ElementObject)?.roughElement) return null;
-        const { roughElement, x1, x2, y1, y2 } = selectedElRef.current as ElementObject;
-        const copiedElement: ElementObject = {
-            roughElement,
-            x1: x1 + 5,
-            x2: x2 + 5,
-            y1: y1 + 5,
-            y2: y2 + 5,
-            index: elementsRef.current?.length ?? 0,
-            metadata: {
-                type: 'string',
-                name: '',
-            },
-        };
-        setElements([...elementsRef.current, copiedElement]);
+        // if (!(selectedElRef.current as ElementObject)?.roughElement) return null;
+        // const { roughElement, x1, x2, y1, y2 } = selectedElRef.current as ElementObject;
+        // const copiedElement: ElementObject = {
+        //     roughElement,
+        //     x1: x1 + 5,
+        //     x2: x2 + 5,
+        //     y1: y1 + 5,
+        //     y2: y2 + 5,
+        //     index: elementsRef.current?.length ?? 0,
+        //     metadata: {
+        //         type: 'string',
+        //         name: '',
+        //     },
+        // };
+        // setElements([...elementsRef.current, copiedElement]);
     };
 
     const handleDelete = () => {
@@ -93,7 +93,7 @@ export default function TemplatePreview() {
     useEffect(() => {
         if (canvasContainerRef.current) {
             const container = document.getElementById('canvas-container');
-            if (container) {
+            if (container && cardBackgroundImage) {
                 if (cardBackgroundImage === null) {
                     container.style.backgroundImage = '';
                     return;

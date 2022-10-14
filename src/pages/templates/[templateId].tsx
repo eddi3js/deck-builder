@@ -7,10 +7,12 @@ import TemplatePreview from './components/preview';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { trpc } from '@/utils/trpc';
-import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { useCardTemplateStore } from '@/stores/templates';
 import { useToolsetStore } from '@/stores/toolset';
 import Actions from '@/components/actions';
-import { ElementObject } from '@/server/models/canvas';
+import { ElementObject, Payload } from '@/server/models/canvas';
+import { CardTemplate } from '@prisma/client';
+import { ratioConverter } from '@/utils/canvas/aspectRatio';
 
 export type ElementTypes = 'rectangle' | 'circle' | 'remove' | 'select';
 
@@ -59,18 +61,17 @@ export default function TemplatePage() {
     }, [isNew]);
 
     const grabAllNecessaryData = async () => {
-        const ratioConverter = (ratio: string) => {
-            return parseFloat(ratio.replace(/, /g, '.')).toFixed(1);
-        };
         try {
             const fetch = await fetchTemplateData();
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { width, height, userId, ...rest } = fetch.data as any;
             const templateState = {
-                ...rest,
-                ratios: [ratioConverter(width), ratioConverter(height)],
-                cardBackgroundImage: rest.templateImage,
-                templateName: rest.name,
+                ...(fetch.data as CardTemplate),
+                ratios: [
+                    ratioConverter(fetch.data?.width ?? '0'),
+                    ratioConverter(fetch.data?.height ?? '0'),
+                ],
+                cardBackgroundImage: fetch.data?.templateImage,
+                templateName: fetch.data?.name,
             };
             updateStateWithTemplateData(templateState);
         } catch (error) {

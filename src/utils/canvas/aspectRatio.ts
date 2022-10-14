@@ -5,3 +5,7 @@ export const getCanvasSize = (ratios: number[]) => {
         height: (height as number) * 96 * 1.5,
     };
 };
+
+export const ratioConverter = (ratio: string) => {
+    return parseFloat(ratio.replace(/, /g, '.')).toFixed(1);
+};

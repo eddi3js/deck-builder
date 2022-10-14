@@ -105,6 +105,7 @@ model Cards {
     id       String  @id @unique @default(cuid())
     name     String
     template Json
+    areas    Json
     deck     Decks?  @relation(fields: [deckId], references: [id])
     deckId   String?
 }

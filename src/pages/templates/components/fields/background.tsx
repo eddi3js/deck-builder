@@ -1,4 +1,4 @@
-import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { useCardTemplateStore } from '@/stores/templates';
 import { useState } from 'react';
 
 export default function BackgroundImage() {

@@ -1,14 +1,14 @@
 import Actions from '@/components/actions';
 import Layout from '@/components/layout';
-import { CardTemplatePayload } from '@/server/models/canvas';
-import { useCardStore } from '@/stores/cards';
 import { useDeckStore } from '@/stores/decks';
 import { useGameStore } from '@/stores/games';
 import { Routes } from '@/utils/constants';
-import { trpc } from '@/utils/trpc';
 import useFetchDataGameData from '@/utils/useFetchData';
 import { useRouter } from 'next/router';
-import CardName from '../components/cardName';
+import Areas from './components/areas';
+import CardName from './components/cardName';
+import ChooseTemplate from './components/chooseTemplate';
+import Preview from './components/preview';
 
 export default function Card() {
     const { query } = useRouter();
@@ -76,56 +76,14 @@ export default function Card() {
                 </div>
 
                 <div className="flex flex-1 justify-center">
-                    <h1>Card Preview</h1>
+                    <Preview />
+                </div>
+
+                <div className="flex flex-col w-80 bg-base-200 h-full p-4">
+                    <p className="text-sm font-bold mb-3">Area Layers</p>
+                    <Areas />
                 </div>
             </div>
         </Layout>
     );
 }
-
-const ChooseTemplate = () => {
-    const { template, setTemplate } = useCardStore();
-
-    const query = trpc.useQuery(['templates.get']);
-    const choices = query.data?.map((t: CardTemplatePayload) => ({
-        label: t.name,
-        value: t.id,
-    }));
-
-    const selectValue = query?.data?.find(
-        (c: CardTemplatePayload) => c.id === template?.id
-    );
-
-    const handleSelectTemplate = (templateId: string) => {
-        const selectedTemplate = query?.data?.find(
-            (c: CardTemplatePayload) => c.id === templateId
-        );
-        setTemplate(selectedTemplate);
-    };
-
-    return (
-        <>
-            <p className="text-sm mb-1">Card Template</p>
-            <select
-                value={selectValue}
-                onChange={e => handleSelectTemplate(e.target.value)}
-                className="select select-bordered w-full select-sm"
-            >
-                <option disabled selected={!template}>
-                    Choose Template
-                </option>
-                {choices?.map(
-                    ({ value, label }: { value: string; label: string }, i: number) => (
-                        <option
-                            selected={Boolean(value === template?.id)}
-                            key={`${value}-${i}`}
-                            value={value}
-                        >
-                            {label}
-                        </option>
-                    )
-                )}
-            </select>
-        </>
-    );
-};

@@ -6,6 +6,14 @@ import { trpc } from './trpc';
 interface UseFetchDataProps {
     deckId?: string;
     gameId?: string;
+    options?: {
+        deck: {
+            returnType: 'normal' | 'slim';
+        };
+        game: {
+            returnType: 'normal' | 'slim';
+        };
+    };
 }
 
 export default function useFetchDataGameData({ deckId, gameId }: UseFetchDataProps) {

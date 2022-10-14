@@ -1,4 +1,4 @@
-import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { useCardTemplateStore } from '@/stores/templates';
 import { useEffect, useState } from 'react';
 import { generator } from './createElement';
 // import fileExtention from 'file-extension';

@@ -89,22 +89,24 @@ export default function Breadcrumbs({ links, action }: NavigationProps) {
                         </a>
                     </Link>
                 </li>
-                {navLinks.map((link: NavLink, i: number) => (
-                    <li key={`${link.label.replace(' ', '')}-${i}`}>
-                        <Link href={link.href}>
-                            <a
-                                className={`${
-                                    link?.active
-                                        ? 'underline text-secondary'
-                                        : 'text-current'
-                                }`}
-                            >
-                                <Icon type={link.icon} />
-                                {link.label}
-                            </a>
-                        </Link>
-                    </li>
-                ))}
+                {navLinks.map((link: NavLink, i: number) => {
+                    return (
+                        <li key={`${link.label.replace(' ', '')}-${i}`}>
+                            <Link href={link.href}>
+                                <a
+                                    className={`${
+                                        link?.active
+                                            ? 'underline text-secondary'
+                                            : 'text-current'
+                                    }`}
+                                >
+                                    <Icon type={link.icon} />
+                                    {link.label}
+                                </a>
+                            </Link>
+                        </li>
+                    );
+                })}
                 {action && (
                     <li className="flex flex-1 justify-end content-none action">
                         {action}

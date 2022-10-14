@@ -1,4 +1,5 @@
 import { ElementObject } from '@/server/models/canvas';
+import { CardTemplate } from '@prisma/client';
 import create from 'zustand';
 
 export type ElementTypes = 'circle' | 'rectangle' | 'remove' | 'select';
@@ -6,6 +7,23 @@ export type AreaTypes = 'string' | 'number' | 'image';
 export interface AreaFields {
     name: string;
     type: AreaTypes;
+}
+
+export interface CardTemplateStore extends CardTemplateState {
+    updateStrokeColor: (color: string) => void;
+    setContext: (ctx: CanvasRenderingContext2D | null) => void;
+    setElements: (elements: ElementObject[]) => void;
+    setSelectedElement: (element: ElementObject | null) => void;
+    changeRatios: (ratio: number, index: number) => void;
+    changeRadius: (radius: number) => void;
+    changeElementType: (type: ElementTypes) => void;
+    changeTemplateName: (name: string) => void;
+    removeElement: (index: number) => void;
+    changeBackgroundColor: (color: string) => void;
+    uploadBackgroundImage: (file: File | string | null) => void;
+    updateAreaMetadata: (index: number, metadata: AreaFields) => void;
+    updateStateWithTemplateData: (template: CardTemplate) => void;
+    resetState: () => void;
 }
 
 export interface CardTemplateState {
@@ -19,21 +37,6 @@ export interface CardTemplateState {
     cardBackgroundColor: string;
     ctx: CanvasRenderingContext2D | null;
     strokeColor: string;
-
-    updateStrokeColor: (color: string) => void;
-    setContext: (ctx: CanvasRenderingContext2D | null) => void;
-    setElements: (elements: ElementObject[]) => void;
-    setSelectedElement: (element: ElementObject | null) => void;
-    changeRatios: (ratio: number, index: number) => void;
-    changeRadius: (radius: number) => void;
-    changeElementType: (type: ElementTypes) => void;
-    changeTemplateName: (name: string) => void;
-    removeElement: (index: number) => void;
-    changeBackgroundColor: (color: string) => void;
-    uploadBackgroundImage: (file: File | string | null) => void;
-    updateAreaMetadata: (index: number, metadata: AreaFields) => void;
-    updateStateWithTemplateData: (template: CardTemplateState) => void;
-    resetState: () => void;
 }
 
 const initialStateData = {
@@ -49,7 +52,7 @@ const initialStateData = {
     strokeColor: '#6aabfc',
 };
 
-export const useCardTemplateStore = create<CardTemplateState>(set => ({
+export const useCardTemplateStore = create<CardTemplateStore>(set => ({
     ratios: [2.5, 3.5],
     elements: [],
     selectedElement: null,
@@ -62,7 +65,11 @@ export const useCardTemplateStore = create<CardTemplateState>(set => ({
     strokeColor: '#6aabfc',
 
     resetState: () => set(initialStateData),
-    updateStateWithTemplateData: (template: CardTemplateState) => set(template),
+    updateStateWithTemplateData: (template: CardTemplate) => {
+        set(state => {
+            return { ...state, ...template };
+        });
+    },
     updateAreaMetadata: (index, metadata) => {
         set(state => {
             const elements = state.elements.map((element, i) => {

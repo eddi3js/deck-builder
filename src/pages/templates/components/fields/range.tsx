@@ -1,4 +1,4 @@
-import { useCardTemplateStore } from '@/stores/cardTemplates';
+import { useCardTemplateStore } from '@/stores/templates';
 import { RangeSliderProps } from '@/utils/canvas/ranges';
 
 const RangeSlider = ({ type }: RangeSliderProps) => {

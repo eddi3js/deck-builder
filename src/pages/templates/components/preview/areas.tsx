@@ -1,5 +1,5 @@
 import { ElementObject, RoughElementOptions } from '@/server/models/canvas';
-import { AreaFields, AreaTypes, useCardTemplateStore } from '@/stores/cardTemplates';
+import { AreaFields, AreaTypes, useCardTemplateStore } from '@/stores/templates';
 
 export default function Areas() {
     const { elements, removeElement, selectedElement, updateAreaMetadata } =
