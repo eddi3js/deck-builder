@@ -1,5 +1,5 @@
 import { CardTemplatePayload, Metadata } from '@/server/models/canvas';
-import { useCardStore } from '@/stores/cards';
+import { defaultFontState, useCardStore } from '@/stores/cards';
 import { trpc } from '@/utils/trpc';
 import { CardTemplateElement } from '@prisma/client';
 import type { RoughElement, RoughElementOptions } from '@/server/models/canvas';
@@ -47,10 +47,11 @@ const ChooseTemplate = () => {
                     name: (element.metadata as Metadata).name,
                     stroke: formattedTemplate.elements[i]?.options.stroke,
                     value: null,
+                    font: defaultFontState,
                 };
             }
         );
-
+        console.log(areas, 'areas');
         setAreas(areas);
         setTemplate(formattedTemplate);
     };

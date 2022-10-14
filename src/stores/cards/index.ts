@@ -1,7 +1,16 @@
 import { CardTemplatePayload, Metadata } from '@/server/models/canvas';
 import { Options } from 'roughjs/bin/core';
 import create from 'zustand';
-import { AreaTypes } from './templates';
+import { AreaTypes } from '../templates';
+
+type AlignTypes = 'start' | 'center' | 'end';
+export interface Font {
+    family: string;
+    color: string;
+    size: number;
+    align: AlignTypes;
+    vAlign: AlignTypes;
+}
 
 export interface Areas {
     areaId: string;
@@ -9,6 +18,7 @@ export interface Areas {
     name: string;
     value: string | number | null;
     stroke: string;
+    font: Font;
 }
 
 export interface AreaElementObject {
@@ -41,7 +51,16 @@ interface CardStore extends CardState {
     updateAreaByIndex: (index: number, updatedValue: string | number) => void;
     setHoveringArea: (areaId: string | null) => void;
     setFocusArea: (areaId: string | null) => void;
+    setFont: (areaId: string, data: object) => void;
 }
+
+export const defaultFontState = {
+    family: 'Open Sans',
+    color: '#000000',
+    size: 16,
+    align: 'center',
+    vAlign: 'center',
+};
 
 export const useCardStore = create<CardStore>(set => ({
     id: null,
@@ -51,6 +70,25 @@ export const useCardStore = create<CardStore>(set => ({
     hovervingArea: null,
     focusArea: null,
 
+    setFont: (areaId, data) => {
+        set(state => {
+            const areas = state.areas.map(area => {
+                if (area.areaId === areaId) {
+                    return {
+                        ...area,
+                        font: {
+                            ...area.font,
+                            ...data,
+                        },
+                    };
+                }
+                return area;
+            });
+            return {
+                areas,
+            };
+        });
+    },
     setAreas: areas => set({ areas }),
     updateAreaById: (areaId, value) =>
         set(state => ({
